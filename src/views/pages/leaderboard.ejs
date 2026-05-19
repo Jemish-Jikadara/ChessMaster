@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Leaderboard</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <main>
+            <section class="cm-page">
+                <div class="cm-container">
+                    <div class="cm-page-head">
+                        <div>
+                            <span class="cm-kicker">Saved Matches</span>
+                            <h1>Leaderboard</h1>
+                            <p>View recently saved chess matches, winners, total
+                                moves, and player names.</p>
+                        </div>
+
+                        <a href="/play" class="cm-btn cm-btn-primary">Play New
+                            Match</a>
+                    </div>
+
+                    <% if (!games || games.length === 0) { %>
+                    <section class="cm-empty">
+                        <div>♟</div>
+                        <h2>No saved games yet</h2>
+                        <p>Play a match and save the result to see it here.</p>
+                        <a href="/play" class="cm-btn cm-btn-primary">Start
+                            Playing</a>
+                    </section>
+                    <% } else { %>
+
+                    <section class="cm-mobile-games">
+                        <% games.forEach((game, index) => { %>
+                        <article class="cm-game-card">
+                            <div class="cm-game-card-head">
+                                <div>
+                                    <span>Match #<%= index + 1 %></span>
+                                    <h2><%= game.whitePlayer %> vs <%=
+                                        game.blackPlayer %></h2>
+                                </div>
+
+                                <% if (game.winner === "white") { %>
+                                <strong class="cm-badge-white">White</strong>
+                                <% } else if (game.winner === "black") { %>
+                                <strong class="cm-badge-black">Black</strong>
+                                <% } else { %>
+                                <strong class="cm-badge-draw">Draw</strong>
+                                <% } %>
+                            </div>
+
+                            <div class="cm-game-meta">
+                                <div><span>White</span><strong><%=
+                                        game.whitePlayer %></strong></div>
+                                <div><span>Black</span><strong><%=
+                                        game.blackPlayer %></strong></div>
+                                <div><span>Moves</span><strong><%=
+                                        game.totalMoves %></strong></div>
+                                <div><span>Date</span><strong><%= new
+                                        Date(game.createdAt).toLocaleDateString()
+                                        %></strong></div>
+                            </div>
+                        </article>
+                        <% }) %>
+                    </section>
+
+                    <section class="cm-table-wrap">
+                        <table class="cm-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>White Player</th>
+                                    <th>Black Player</th>
+                                    <th>Winner</th>
+                                    <th>Moves</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <% games.forEach((game, index) => { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= game.whitePlayer %></td>
+                                    <td><%= game.blackPlayer %></td>
+                                    <td>
+                                        <% if (game.winner === "white") { %>
+                                        <span
+                                            class="cm-badge-white">White</span>
+                                        <% } else if (game.winner === "black") {
+                                        %>
+                                        <span
+                                            class="cm-badge-black">Black</span>
+                                        <% } else { %>
+                                        <span class="cm-badge-draw">Draw</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= game.totalMoves %></td>
+                                    <td><%= new
+                                        Date(game.createdAt).toLocaleDateString()
+                                        %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <% } %>
+                </div>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+    </body>
+</html>

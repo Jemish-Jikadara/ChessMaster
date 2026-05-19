@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChessMaster | About</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body class="cm-body">
+
+    <%- include("../partials/navbar") %>
+
+    <main>
+      <section class="cm-page-hero">
+        <div class="cm-container cm-about-grid">
+          <div>
+            <span class="cm-kicker">About Project</span>
+            <h1>A full-stack chess platform built for serious players.</h1>
+            <p>
+              ChessMaster is a browser-based chess project built without React.
+              It uses EJS pages, JavaScript board logic, Express routes, and
+              MongoDB
+              for storing match results.
+            </p>
+
+            <div class="cm-tech-grid">
+              <div>
+                <strong>Frontend</strong>
+                <span>HTML, EJS, CSS, JavaScript</span>
+              </div>
+              <div>
+                <strong>Backend</strong>
+                <span>Node.js, Express.js, MongoDB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cm-panel">
+            <h2>Project Features</h2>
+
+            <div class="cm-feature-list">
+              <article>
+                <h3>Interactive Chess Board</h3>
+                <p>Custom 8x8 board with clickable pieces, legal move dots, and
+                  check highlight.</p>
+              </article>
+
+              <article>
+                <h3>Legal Move Validation</h3>
+                <p>Chess rules are handled with chess.js for moves, turns,
+                  check, checkmate, and draw.</p>
+              </article>
+
+              <article>
+                <h3>MongoDB Leaderboard</h3>
+                <p>Saved games are stored in MongoDB and shown on the
+                  leaderboard page.</p>
+              </article>
+
+              <article>
+                <h3>Future Platform Features</h3>
+                <p>Authentication, online multiplayer, Elo ratings, reviews, and
+                  player preferences.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include("../partials/footer") %>
+
+  </body>
+</html>

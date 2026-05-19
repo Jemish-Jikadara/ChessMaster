@@ -1,0 +1,39 @@
+<nav class="cm-nav">
+  <div class="cm-nav-inner">
+    <a href="/" class="cm-brand">
+      <span class="cm-brand-icon">♞</span>
+      <span>ChessMaster</span>
+    </a>
+
+    <button class="cm-menu-btn" id="menuBtn" type="button">☰</button>
+
+    <div class="cm-nav-links" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/play">Play</a>
+      <a href="/leaderboard">Leaderboard</a>
+      <a href="/about">About</a>
+
+      <% if (currentUser) { %>
+      <a href="/profile">Profile</a>
+
+      <form action="/logout" method="POST" class="cm-nav-form">
+        <button type="submit">Logout</button>
+      </form>
+      <% } else { %>
+      <a href="/login">Login</a>
+      <a href="/register" class="cm-nav-cta">Register</a>
+      <% } %>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const menuBtn = document.getElementById("menuBtn");
+  const navLinks = document.getElementById("navLinks");
+
+  if (menuBtn && navLinks) {
+    menuBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("cm-open");
+    });
+  }
+</script>

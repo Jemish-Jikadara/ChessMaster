@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Profile</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <main class="cm-page">
+            <div class="cm-container">
+                <div class="cm-page-head">
+                    <div>
+                        <span class="cm-kicker">Player Profile</span>
+                        <h1><%= user.username %></h1>
+                        <p>Your account, rating, and future match
+                            statistics.</p>
+                    </div>
+
+                    <form action="/logout" method="POST">
+                        <button type="submit"
+                            class="cm-btn cm-btn-secondary">Logout</button>
+                    </form>
+                </div>
+
+                <section class="cm-profile-grid">
+                    <article>
+                        <span>Email</span>
+                        <strong><%= user.email %></strong>
+                    </article>
+                    <article>
+                        <span>Rapid Rating</span>
+                        <strong><%= user.rapidRating || 1200%></strong>
+                    </article>
+
+                    <article>
+                        <span>Blitz Rating</span>
+                        <strong><%= user.blitzRating || 1200 %></strong>
+                    </article>
+
+                    <article>
+                        <span>Bullet Rating</span>
+                        <strong><%= user.bulletRating || 1200 %></strong>
+                    </article>
+                    <article>
+                        <span>Role</span>
+                        <strong><%= user.role %></strong>
+                    </article>
+                    <article>
+                        <span>Games Played</span>
+                        <strong><%= user.gamesPlayed %></strong>
+                    </article>
+
+                    <article>
+                        <span>Wins</span>
+                        <strong><%= user.wins %></strong>
+                    </article>
+
+                    <article>
+                        <span>Losses</span>
+                        <strong><%= user.losses %></strong>
+                    </article>
+
+                    <article>
+                        <span>Draws</span>
+                        <strong><%= user.draws %></strong>
+                    </article>
+                </section>
+
+                <section class="cm-table-wrap" style="margin-top: 28px;">
+                    <table class="cm-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>White</th>
+                                <th>Black</th>
+                                <th>Winner</th>
+                                <th>Moves</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <% if (!games || games.length === 0) { %>
+                            <tr>
+                                <td colspan="6">No saved games yet.</td>
+                            </tr>
+                            <% } else { %>
+                            <% games.forEach((game, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= game.whitePlayer %></td>
+                                <td><%= game.blackPlayer %></td>
+                                <td><%= game.winner %></td>
+                                <td><%= game.totalMoves %></td>
+                                <td><%= new
+                                    Date(game.createdAt).toLocaleDateString()
+                                    %></td>
+                            </tr>
+                            <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+    </body>
+</html>

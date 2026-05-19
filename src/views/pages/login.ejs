@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Login</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <main class="cm-auth-page">
+            <section class="cm-auth-card">
+                <div class="cm-auth-head">
+                    <span class="cm-kicker">Player Login</span>
+                    <h1>Welcome back</h1>
+                    <p>Login to continue your chess journey and save your match
+                        history.</p>
+                </div>
+
+                <% if (error && error.length > 0) { %>
+                <div class="cm-alert cm-alert-error"><%= error[0] %></div>
+                <% } %>
+
+                <% if (success && success.length > 0) { %>
+                <div class="cm-alert cm-alert-success"><%= success[0] %></div>
+                <% } %>
+
+                <form action="/login" method="POST" class="cm-auth-form">
+                    <label>
+                        Email
+                        <input type="email" name="email"
+                            placeholder="Enter email" required>
+                    </label>
+
+                    <label>
+                        Password
+                        <input type="password" name="password"
+                            placeholder="Enter password" required>
+                    </label>
+
+                    <button type="submit"
+                        class="cm-btn cm-btn-primary">Login</button>
+                </form>
+
+                <p class="cm-auth-switch">
+                    New to ChessMaster?
+                    <a href="/register">Create account</a>
+                </p>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+    </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Home</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <main>
+            <section class="cm-hero">
+                <div class="cm-container cm-hero-grid">
+                    <div class="cm-hero-content">
+                        <div class="cm-badge">
+                            <span></span>
+                            Full-stack chess platform
+                        </div>
+
+                        <h1>
+                            Play sharper chess with a smarter board.
+                        </h1>
+
+                        <p>
+                            ChessMaster is a full-stack chess project built with
+                            Node.js,
+                            Express, EJS, JavaScript, MongoDB, and real chess
+                            logic.
+                        </p>
+
+                        <div class="cm-actions">
+                            <a href="/play" class="cm-btn cm-btn-primary">Play
+                                Chess</a>
+                            <a href="/leaderboard"
+                                class="cm-btn cm-btn-secondary">Leaderboard</a>
+                        </div>
+
+                        <div class="cm-stats">
+                            <div>
+                                <strong>64</strong>
+                                <span>Squares</span>
+                            </div>
+                            <div>
+                                <strong>32</strong>
+                                <span>Pieces</span>
+                            </div>
+                            <div>
+                                <strong>2P</strong>
+                                <span>Local Mode</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cm-board-card">
+                        <div class="cm-card-head">
+                            <div>
+                                <span>Live Preview</span>
+                                <h2>Chess Board</h2>
+                            </div>
+                            <p>Ready</p>
+                        </div>
+
+                        <div class="cm-preview-board">
+                            <% for(let row = 0; row < 8; row++) { %>
+                            <% for(let col = 0; col < 8; col++) { %>
+                            <div
+                                class="<%= (row + col) % 2 === 0 ? 'cm-light' : 'cm-dark' %>"></div>
+                            <% } %>
+                            <% } %>
+                        </div>
+
+                        <div class="cm-mini-panel">
+                            <div>
+                                <span>Turn</span>
+                                <strong>White</strong>
+                            </div>
+                            <div>
+                                <span>Status</span>
+                                <strong>Active</strong>
+                            </div>
+                            <div>
+                                <span>Mode</span>
+                                <strong>2 Player</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cm-features">
+                <div class="cm-container">
+                    <div class="cm-section-title">
+                        <span>Game Features</span>
+                        <h2>Built like a real chess product</h2>
+                    </div>
+
+                    <div class="cm-feature-grid">
+                        <article>
+                            <h3>Interactive Board</h3>
+                            <p>Click pieces, see legal move dots, capture
+                                pieces, and play on a custom chess board.</p>
+                        </article>
+
+                        <article>
+                            <h3>Chess Logic</h3>
+                            <p>Turns, legal moves, check, checkmate, draw, move
+                                history, and game state handling.</p>
+                        </article>
+
+                        <article>
+                            <h3>Leaderboard</h3>
+                            <p>Save match results in MongoDB and show player
+                                results on a dedicated leaderboard.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+    </body>
+</html>

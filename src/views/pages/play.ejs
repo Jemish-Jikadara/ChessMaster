@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Play</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <main>
+            <section class="cm-play-page">
+                <div class="cm-container">
+                    <div class="cm-play-head">
+                        <div>
+                            <span class="cm-kicker">Local Match</span>
+                            <h1>Play Chess</h1>
+                            <p>Select a piece, choose a legal square, and track
+                                every move in the match history.</p>
+                        </div>
+
+                        <div class="cm-play-controls">
+                            <input
+                                id="whitePlayer"
+                                type="text"
+                                value="<%= currentUser ? currentUser.username : '' %>"
+                                placeholder="White player name"
+                                readonly>
+                            <input id="blackPlayer" type="text"
+                                placeholder="Black player name">
+                            <button id="restartBtn"
+                                class="cm-btn cm-btn-primary">Restart
+                                Game</button>
+                            <button id="saveGameBtn"
+                                class="cm-btn cm-btn-secondary">Save
+                                Result</button>
+                        </div>
+                    </div>
+                    <section id="timeControlScreen" class="cm-time-screen">
+                        <div class="cm-time-head">
+                            <span class="cm-kicker">Choose Time Control</span>
+                            <h2>Select your game mode</h2>
+                            <p>Pick Rapid, Blitz, or Bullet before starting the
+                                match.</p>
+                        </div>
+
+                        <div class="cm-time-grid">
+                            <article>
+                                <h3>Rapid</h3>
+                                <p>Longer games with deeper calculation.</p>
+
+                                <div class="cm-time-buttons">
+                                    <button type="button" data-mode="rapid"
+                                        data-minutes="10"
+                                        data-increment="0">10+0</button>
+                                    <button type="button" data-mode="rapid"
+                                        data-minutes="15"
+                                        data-increment="10">15+10</button>
+                                    <button type="button" data-mode="rapid"
+                                        data-minutes="30"
+                                        data-increment="0">30+0</button>
+                                </div>
+                            </article>
+
+                            <article>
+                                <h3>Blitz</h3>
+                                <p>Fast games with practical decisions.</p>
+
+                                <div class="cm-time-buttons">
+                                    <button type="button" data-mode="blitz"
+                                        data-minutes="3"
+                                        data-increment="0">3+0</button>
+                                    <button type="button" data-mode="blitz"
+                                        data-minutes="3"
+                                        data-increment="2">3+2</button>
+                                    <button type="button" data-mode="blitz"
+                                        data-minutes="5"
+                                        data-increment="0">5+0</button>
+                                </div>
+                            </article>
+
+                            <article>
+                                <h3>Bullet</h3>
+                                <p>Speed chess with instant reactions.</p>
+
+                                <div class="cm-time-buttons">
+                                    <button type="button" data-mode="bullet"
+                                        data-minutes="1"
+                                        data-increment="0">1+0</button>
+                                    <button type="button" data-mode="bullet"
+                                        data-minutes="1"
+                                        data-increment="1">1+1</button>
+                                    <button type="button" data-mode="bullet"
+                                        data-minutes="2"
+                                        data-increment="1">2+1</button>
+                                </div>
+                            </article>
+                        </div>
+                    </section><div id="gameArea" class="cm-play-layout"
+                        style="display: none;">
+                        <section class="cm-board-shell">
+                            <div class="cm-board-top">
+
+                                <div>
+                                    <span>Current Turn</span>
+                                    <strong id="turnIndicator">White to
+                                        move</strong>
+                                </div>
+
+                                <div>
+                                    <span>Game Status</span>
+                                    <strong id="gameStatus">Active</strong>
+                                </div>
+                            </div>
+
+                            <div class="cm-clock-row">
+                                <div class="cm-clock">
+                                    <span>White Clock</span>
+                                    <strong id="whiteClock">00:00</strong>
+                                </div>
+
+                                <div class="cm-clock">
+                                    <span>Black Clock</span>
+                                    <strong id="blackClock">00:00</strong>
+                                </div>
+                            </div>
+                            <button id="changeTimeBtn" type="button"
+                                class="cm-change-time-btn">
+                                Change Time Control
+                            </button>
+                            <div class="cm-board-scroll">
+                                <div id="chessBoard"
+                                    class="cm-game-board"></div>
+                            </div>
+                        </section>
+
+                        <aside class="cm-history-panel">
+                            <div class="cm-history-head">
+                                <div>
+                                    <span>Match Log</span>
+                                    <h2>Move History</h2>
+                                </div>
+                                <strong id="moveCount">0</strong>
+                            </div>
+
+                            <div id="moveHistory" class="cm-move-history">
+                                <p>No moves yet.</p>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+        <script src="/js/board.js"></script>
+
+    </body>
+</html>
