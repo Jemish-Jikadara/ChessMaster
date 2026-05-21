@@ -2206,6 +2206,26 @@ video {
   border-color: #facc15;
   color: #facc15;
 }
+.cm-start-game-btn {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  border: none;
+  background: #facc15;
+  color: #050816;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.cm-start-game-btn:hover {
+  background: #fde047;
+}
+
+.cm-start-game-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 @media (max-width: 760px) {
   .cm-auth-card {

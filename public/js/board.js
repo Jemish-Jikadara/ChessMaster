@@ -12,6 +12,7 @@ const gameArea = document.getElementById("gameArea");
 const whiteClock = document.getElementById("whiteClock");
 const blackClock = document.getElementById("blackClock");
 const changeTimeBtn = document.getElementById("changeTimeBtn");
+const startGameBtn = document.getElementById("startGameBtn");
 
 const game = new Chess();
 
@@ -25,6 +26,7 @@ let whiteTime = 0;
 let blackTime = 0;
 let timerInterval = null;
 let gameStarted = false;
+let draggedSquare = null;
 
 const pieceImages = {
   wp: "white-pawn",
@@ -95,28 +97,105 @@ if (isLastMoveSquare && !isCheckedKing) {
 
         square.appendChild(moveMark);
       }
+if (piece) {
+  const img = document.createElement("img");
+  const imageName = pieceImages[piece.color + piece.type];
 
-      if (piece) {
-        const img = document.createElement("img");
-        const imageName = pieceImages[piece.color + piece.type];
+  img.src = `/images/pieces/${imageName}.png`;
+  img.alt = imageName;
+  img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
+  img.draggable = true;
+  img.style.touchAction = "none";
 
-        img.src = `/images/pieces/${imageName}.png`;
-        img.alt = imageName;
-        img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
-        img.draggable = false;
+  img.addEventListener("dragstart", (event) => {
+    handleDragStart(event, squareName, piece);
+  });
 
-        square.appendChild(img);
-      }
+  img.addEventListener("dragend", () => {
+    draggedSquare = null;
+    selectedSquare = null;
+    legalMoves = [];
+    createBoard();
+  });
+
+  square.appendChild(img);
+}
 
       square.addEventListener("click", () => {
         handleSquareClick(squareName);
       });
+      square.addEventListener("dragover", (event) => {
+  event.preventDefault();
+});
+
+square.addEventListener("drop", (event) => {
+  handleDrop(event, squareName);
+});
 
       chessBoard.appendChild(square);
     }
   }
 }
+function handleDragStart(event, squareName, piece) {
+  if (!gameStarted) {
+    event.preventDefault();
+    return;
+  }
 
+  if (!piece || piece.color !== game.turn()) {
+    event.preventDefault();
+    return;
+  }
+
+  draggedSquare = squareName;
+  selectedSquare = squareName;
+
+  legalMoves = game.moves({
+    square: squareName,
+    verbose: true
+  });
+
+  event.dataTransfer.setData("text/plain", squareName);
+  event.dataTransfer.effectAllowed = "move";
+
+  setTimeout(() => {
+    createBoard();
+  }, 0);
+}
+function handleDrop(event, targetSquare) {
+  event.preventDefault();
+
+  if (!gameStarted || !draggedSquare) return;
+
+  const move = game.move({
+    from: draggedSquare,
+    to: targetSquare,
+    promotion: "q"
+  });
+
+  if (move) {
+    lastMove = {
+      from: move.from,
+      to: move.to
+    };
+
+    applyIncrement(move.color);
+
+    draggedSquare = null;
+    selectedSquare = null;
+    legalMoves = [];
+
+    updateInfo();
+    updateClocks();
+    createBoard();
+    return;
+  }
+
+  draggedSquare = null;
+  selectedSquare = null;
+  legalMoves = [];
+  createBoard();
+}
 function handleSquareClick(squareName) {
   if (!gameStarted) return;
   const piece = game.get(squareName);
@@ -385,8 +464,11 @@ document.querySelectorAll("[data-mode]").forEach((button) => {
     timeControlScreen.style.display = "none";
     gameArea.style.display = "grid";
 
-    updateClocks();
-    startTimer();
+    gameStarted = false;
+    startGameBtn.disabled = false;
+    startGameBtn.textContent = "Start Game";
+
+updateClocks();
   });
 });
 changeTimeBtn.addEventListener("click", () => {
@@ -408,6 +490,19 @@ changeTimeBtn.addEventListener("click", () => {
 
   gameArea.style.display = "none";
   timeControlScreen.style.display = "block";
+});
+startGameBtn.addEventListener("click", () => {
+  if (!selectedMode) {
+    alert("Please select a time control first.");
+    return;
+  }
+
+  gameStarted = true;
+  startGameBtn.disabled = true;
+  startGameBtn.textContent = "Game Started";
+
+  updateClocks();
+  startTimer();
 });
 createBoard();
 updateInfo();
