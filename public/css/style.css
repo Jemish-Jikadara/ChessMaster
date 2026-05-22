@@ -2201,6 +2201,43 @@ video {
   font-weight: 900;
   cursor: pointer;
 }
+.cm-review-controls {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cm-review-controls button {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: #facc15;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.cm-review-controls button:hover {
+  background: #facc15;
+  color: #050816;
+}
+
+.cm-review-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cm-review-controls span {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 800;
+}
 
 .cm-change-time-btn:hover {
   border-color: #facc15;
@@ -2384,6 +2421,88 @@ video {
   }
 
   .cm-clock-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.cm-player-setup {
+  margin-bottom: 28px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.cm-player-form {
+  max-width: 620px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.cm-player-form label {
+  display: grid;
+  gap: 8px;
+  color: #e5e7eb;
+  font-weight: 800;
+}
+
+.cm-player-form input {
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: #111827;
+  color: #fff;
+  padding: 0 16px;
+  outline: none;
+}
+
+.cm-player-form input:focus {
+  border-color: #facc15;
+}
+.cm-game-over-modal {
+  margin-bottom: 18px;
+  place-items: center;
+}
+
+.cm-game-over-card {
+  width: 100%;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  text-align: center;
+}
+
+.cm-game-over-card span {
+  color: #facc15;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.cm-game-over-card h2 {
+  margin-top: 6px;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.cm-game-over-card p {
+  margin-top: 8px;
+  color: #cbd5e1;
+}
+
+.cm-game-over-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+@media (max-width: 520px) {
+  .cm-game-over-actions {
     grid-template-columns: 1fr;
   }
 }

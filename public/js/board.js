@@ -8,25 +8,41 @@ const saveGameBtn = document.getElementById("saveGameBtn");
 const whitePlayerInput = document.getElementById("whitePlayer");
 const blackPlayerInput = document.getElementById("blackPlayer");
 const timeControlScreen = document.getElementById("timeControlScreen");
+const playerSetupScreen = document.getElementById("playerSetupScreen");
 const gameArea = document.getElementById("gameArea");
 const whiteClock = document.getElementById("whiteClock");
 const blackClock = document.getElementById("blackClock");
 const changeTimeBtn = document.getElementById("changeTimeBtn");
 const startGameBtn = document.getElementById("startGameBtn");
+const confirmPlayersBtn = document.getElementById("confirmPlayersBtn");
+const prevMoveBtn = document.getElementById("prevMoveBtn");
+const nextMoveBtn = document.getElementById("nextMoveBtn");
+const reviewStatus = document.getElementById("reviewStatus");
+const gameOverModal = document.getElementById("gameOverModal");
+const gameOverTitle = document.getElementById("gameOverTitle");
+const gameOverMessage = document.getElementById("gameOverMessage");
+const newGameBtn = document.getElementById("newGameBtn");
+const gameOverSaveBtn = document.getElementById("gameOverSaveBtn");
 
 const game = new Chess();
 
 let selectedSquare = null;
-let selectedMinutes = 0;
 let legalMoves = [];
 let lastMove = null;
+let draggedSquare = null;
+
 let selectedMode = null;
+let selectedMinutes = 0;
 let incrementSeconds = 0;
 let whiteTime = 0;
 let blackTime = 0;
 let timerInterval = null;
 let gameStarted = false;
-let draggedSquare = null;
+let gameOver = false;
+
+let positionHistory = [game.fen()];
+let reviewIndex = 0;
+let isReviewing = false;
 
 const pieceImages = {
   wp: "white-pawn",
@@ -44,9 +60,12 @@ const pieceImages = {
 };
 
 function createBoard() {
+  if (!chessBoard) return;
+
   chessBoard.innerHTML = "";
 
-  const board = game.board();
+  const displayGame = isReviewing ? new Chess(positionHistory[reviewIndex]) : game;
+  const board = displayGame.board();
 
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
@@ -55,30 +74,31 @@ function createBoard() {
       const isLightSquare = (row + col) % 2 === 0;
       const isSelected = selectedSquare === squareName;
       const legalMove = legalMoves.find((move) => move.to === squareName);
-      const isLastMoveSquare =
-  lastMove &&
-  (lastMove.from === squareName || lastMove.to === squareName);
       const piece = board[row][col];
-      const isCheckedKing = isKingInCheck(piece);
+
+      const isLastMoveSquare =
+        !isReviewing &&
+        lastMove &&
+        (lastMove.from === squareName || lastMove.to === squareName);
+
+      const isCheckedKing = !isReviewing && isKingInCheck(piece);
 
       square.className = `
-  aspect-square relative flex items-center justify-center
-  ${isLightSquare ? "bg-stone-200" : "bg-red-700"}
-  ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""}
-  hover:brightness-110 transition
-`;
+        aspect-square relative flex items-center justify-center
+        ${isLightSquare ? "bg-stone-200" : "bg-red-700"}
+        ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""}
+        hover:brightness-110 transition
+      `;
 
-if (isCheckedKing) {
-  square.style.backgroundColor = "#dc2626";
-  square.style.boxShadow = "inset 0 0 0 4px rgba(254, 202, 202, 0.9)";
-}
+      if (isCheckedKing) {
+        square.style.backgroundColor = "#dc2626";
+        square.style.boxShadow = "inset 0 0 0 4px rgba(254, 202, 202, 0.9)";
+      } else if (isLastMoveSquare) {
+        square.style.backgroundColor = isLightSquare ? "#fef08a" : "#ca8a04";
+      }
 
-if (isLastMoveSquare && !isCheckedKing) {
-  square.style.backgroundColor = isLightSquare ? "#fef08a" : "#ca8a04";
-}
-      if (legalMove) {
+      if (!isReviewing && legalMove) {
         const moveMark = document.createElement("div");
-
         moveMark.style.position = "absolute";
         moveMark.style.pointerEvents = "none";
         moveMark.style.zIndex = "20";
@@ -97,47 +117,86 @@ if (isLastMoveSquare && !isCheckedKing) {
 
         square.appendChild(moveMark);
       }
-if (piece) {
-  const img = document.createElement("img");
-  const imageName = pieceImages[piece.color + piece.type];
 
-  img.src = `/images/pieces/${imageName}.png`;
-  img.alt = imageName;
-  img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
-  img.draggable = true;
-  img.style.touchAction = "none";
+      if (piece) {
+        const img = document.createElement("img");
+        const imageName = pieceImages[piece.color + piece.type];
 
-  img.addEventListener("dragstart", (event) => {
-    handleDragStart(event, squareName, piece);
-  });
+        img.src = `/images/pieces/${imageName}.png`;
+        img.alt = imageName;
+        img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
+        img.draggable = !isReviewing && !gameOver;
+        img.style.touchAction = "none";
 
-  img.addEventListener("dragend", () => {
-    draggedSquare = null;
-    selectedSquare = null;
-    legalMoves = [];
-    createBoard();
-  });
+        img.addEventListener("dragstart", (event) => {
+          handleDragStart(event, squareName, piece);
+        });
 
-  square.appendChild(img);
-}
+        img.addEventListener("dragend", () => {
+          if (draggedSquare) {
+            draggedSquare = null;
+            selectedSquare = null;
+            legalMoves = [];
+            createBoard();
+          }
+        });
+
+        square.appendChild(img);
+      }
 
       square.addEventListener("click", () => {
         handleSquareClick(squareName);
       });
-      square.addEventListener("dragover", (event) => {
-  event.preventDefault();
-});
 
-square.addEventListener("drop", (event) => {
-  handleDrop(event, squareName);
-});
+      square.addEventListener("dragover", (event) => {
+        event.preventDefault();
+      });
+
+      square.addEventListener("drop", (event) => {
+        handleDrop(event, squareName);
+      });
 
       chessBoard.appendChild(square);
     }
   }
 }
+
+function handleSquareClick(squareName) {
+  if (!gameStarted || isReviewing || gameOver) return;
+
+  const piece = game.get(squareName);
+
+  if (!selectedSquare) {
+    if (!piece) return;
+    if (piece.color !== game.turn()) return;
+
+    selectSquare(squareName);
+    return;
+  }
+
+  const move = game.move({
+    from: selectedSquare,
+    to: squareName,
+    promotion: "q"
+  });
+
+  if (move) {
+    afterSuccessfulMove(move);
+    return;
+  }
+
+  if (piece && piece.color === game.turn()) {
+    selectSquare(squareName);
+    return;
+  }
+
+  selectedSquare = null;
+  legalMoves = [];
+  createBoard();
+}
+
 function handleDragStart(event, squareName, piece) {
-  if (!gameStarted) {
+  if (!gameStarted || isReviewing || gameOver) {
     event.preventDefault();
     return;
   }
@@ -162,10 +221,11 @@ function handleDragStart(event, squareName, piece) {
     createBoard();
   }, 0);
 }
+
 function handleDrop(event, targetSquare) {
   event.preventDefault();
 
-  if (!gameStarted || !draggedSquare) return;
+  if (!gameStarted || isReviewing || gameOver || !draggedSquare) return;
 
   const move = game.move({
     from: draggedSquare,
@@ -174,20 +234,8 @@ function handleDrop(event, targetSquare) {
   });
 
   if (move) {
-    lastMove = {
-      from: move.from,
-      to: move.to
-    };
-
-    applyIncrement(move.color);
-
     draggedSquare = null;
-    selectedSquare = null;
-    legalMoves = [];
-
-    updateInfo();
-    updateClocks();
-    createBoard();
+    afterSuccessfulMove(move);
     return;
   }
 
@@ -196,24 +244,8 @@ function handleDrop(event, targetSquare) {
   legalMoves = [];
   createBoard();
 }
-function handleSquareClick(squareName) {
-  if (!gameStarted) return;
-  const piece = game.get(squareName);
 
-  if (!selectedSquare) {
-    if (!piece) return;
-    if (piece.color !== game.turn()) return;
-
-    selectSquare(squareName);
-    return;
-  }
-
-  const move = game.move({
-    from: selectedSquare,
-    to: squareName,
-    promotion: "q"
-  });
-  if (move) {
+function afterSuccessfulMove(move) {
   lastMove = {
     from: move.from,
     to: move.to
@@ -221,21 +253,45 @@ function handleSquareClick(squareName) {
 
   applyIncrement(move.color);
 
-  selectedSquare = null;
-  legalMoves = [];
-  updateInfo();
-  updateClocks();
-  createBoard();
-  return;
-}
-  if (piece && piece.color === game.turn()) {
-    selectSquare(squareName);
-    return;
-  }
+  positionHistory.push(game.fen());
+  reviewIndex = positionHistory.length - 1;
+  isReviewing = false;
 
   selectedSquare = null;
   legalMoves = [];
+
+  updateInfo();
+  checkGameOver();
+  updateClocks();
+  updateReviewControls();
   createBoard();
+}
+
+function checkGameOver() {
+  if (game.in_checkmate()) {
+    const winner = game.turn() === "w" ? "Black" : "White";
+    finishGame("Checkmate", `${winner} wins by checkmate.`);
+    return;
+  }
+
+  if (game.in_draw()) {
+    finishGame("Draw", "The game ended in a draw.");
+  }
+}
+
+function finishGame(title, message) {
+  clearInterval(timerInterval);
+  gameStarted = false;
+  gameOver = true;
+  isReviewing = false;
+  reviewIndex = positionHistory.length - 1;
+
+  if (gameOverModal) gameOverModal.style.display = "grid";
+  if (gameOverTitle) gameOverTitle.textContent = title;
+  if (gameOverMessage) gameOverMessage.textContent = message;
+
+  updateReviewControls();
+  updateClocks();
 }
 
 function selectSquare(squareName) {
@@ -290,6 +346,131 @@ function updateInfo() {
     .join("");
 }
 
+function updateClocks() {
+  whiteClock.textContent = formatTime(whiteTime);
+  blackClock.textContent = formatTime(blackTime);
+
+  const whiteClockBox = whiteClock.closest(".cm-clock");
+  const blackClockBox = blackClock.closest(".cm-clock");
+
+  whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && gameStarted);
+  blackClockBox.classList.toggle("cm-active", game.turn() === "b" && gameStarted);
+
+  whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10 && selectedMode);
+  blackClockBox.classList.toggle("cm-low-time", blackTime <= 10 && selectedMode);
+}
+
+function startTimer() {
+  gameStarted = true;
+  clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    if (gameOver || game.in_checkmate() || game.in_draw()) {
+      clearInterval(timerInterval);
+      checkGameOver();
+      updateClocks();
+      return;
+    }
+
+    if (game.turn() === "w") {
+      whiteTime -= 1;
+    } else {
+      blackTime -= 1;
+    }
+
+    if (whiteTime <= 0 || blackTime <= 0) {
+      if (whiteTime <= 0) whiteTime = 0;
+      if (blackTime <= 0) blackTime = 0;
+
+      finishGame(
+        "Time Out",
+        whiteTime <= 0 ? "Black wins on time." : "White wins on time."
+      );
+    }
+
+    updateClocks();
+  }, 1000);
+}
+
+function resetGamePosition() {
+  game.reset();
+
+  selectedSquare = null;
+  legalMoves = [];
+  lastMove = null;
+  draggedSquare = null;
+  gameOver = false;
+
+  positionHistory = [game.fen()];
+  reviewIndex = 0;
+  isReviewing = false;
+
+  if (gameOverModal) gameOverModal.style.display = "none";
+
+  updateInfo();
+  updateReviewControls();
+  createBoard();
+}
+
+function resetToTimeSelection() {
+  clearInterval(timerInterval);
+
+  selectedMode = null;
+  selectedMinutes = 0;
+  incrementSeconds = 0;
+  whiteTime = 0;
+  blackTime = 0;
+  gameStarted = false;
+
+  resetGamePosition();
+
+  if (startGameBtn) {
+    startGameBtn.disabled = false;
+    startGameBtn.textContent = "Start Game";
+  }
+
+  updateClocks();
+
+  timeControlScreen.style.display = "block";
+  playerSetupScreen.style.display = "none";
+  gameArea.style.display = "none";
+}
+
+function resetToReadyGame() {
+  clearInterval(timerInterval);
+
+  gameStarted = false;
+  gameOver = false;
+
+  whiteTime = selectedMinutes * 60;
+  blackTime = selectedMinutes * 60;
+
+  resetGamePosition();
+
+  if (startGameBtn) {
+    startGameBtn.disabled = false;
+    startGameBtn.textContent = "Start Game";
+  }
+
+  updateClocks();
+}
+
+function updateReviewControls() {
+  if (!prevMoveBtn || !nextMoveBtn || !reviewStatus) return;
+
+  prevMoveBtn.disabled = reviewIndex <= 0;
+  nextMoveBtn.disabled = reviewIndex >= positionHistory.length - 1;
+
+  if (positionHistory.length === 1) {
+    reviewStatus.textContent = "Live";
+    return;
+  }
+
+  reviewStatus.textContent = isReviewing
+    ? `Move ${reviewIndex}/${positionHistory.length - 1}`
+    : "Live";
+}
+
 function isKingInCheck(piece) {
   if (!piece) return false;
   if (piece.type !== "k") return false;
@@ -303,19 +484,6 @@ function getSquareName(row, col) {
   const rank = 8 - row;
   return `${files[col]}${rank}`;
 }
-function updateClocks() {
-  whiteClock.textContent = formatTime(whiteTime);
-  blackClock.textContent = formatTime(blackTime);
-
-  const whiteClockBox = whiteClock.closest(".cm-clock");
-  const blackClockBox = blackClock.closest(".cm-clock");
-
-  whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && gameStarted);
-  blackClockBox.classList.toggle("cm-active", game.turn() === "b" && gameStarted);
-
-  whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10);
-  blackClockBox.classList.toggle("cm-low-time", blackTime <= 10);
-}
 
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
@@ -324,43 +492,7 @@ function formatTime(seconds) {
 
   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
-function startTimer() {
-  gameStarted = true;
 
-  clearInterval(timerInterval);
-
-  timerInterval = setInterval(() => {
-    if (game.in_checkmate() || game.in_draw()) {
-      clearInterval(timerInterval);
-      gameStarted = false;
-      updateClocks();
-      return;
-    }
-
-    if (game.turn() === "w") {
-      whiteTime -= 1;
-    } else {
-      blackTime -= 1;
-    }
-
-    if (whiteTime <= 0 || blackTime <= 0) {
-      clearInterval(timerInterval);
-      gameStarted = false;
-
-      if (whiteTime <= 0) {
-        gameStatus.textContent = "Black wins on time";
-        gameStatus.className = "font-bold text-red-400";
-      }
-
-      if (blackTime <= 0) {
-        gameStatus.textContent = "White wins on time";
-        gameStatus.className = "font-bold text-red-400";
-      }
-    }
-
-    updateClocks();
-  }, 1000);
-}
 function applyIncrement(moveColor) {
   if (incrementSeconds <= 0) return;
 
@@ -370,18 +502,136 @@ function applyIncrement(moveColor) {
     blackTime += incrementSeconds;
   }
 }
+
+function getWinner() {
+  if (game.in_draw()) return "draw";
+
+  if (game.in_checkmate()) {
+    return game.turn() === "w" ? "black" : "white";
+  }
+
+  if (whiteTime <= 0 && selectedMode) return "black";
+  if (blackTime <= 0 && selectedMode) return "white";
+
+  return "draw";
+}
+
+document.querySelectorAll("[data-mode]").forEach((button) => {
+  button.addEventListener("click", () => {
+    clearInterval(timerInterval);
+
+    selectedMode = button.dataset.mode;
+    incrementSeconds = Number(button.dataset.increment);
+    selectedMinutes = Number(button.dataset.minutes);
+
+    whiteTime = selectedMinutes * 60;
+    blackTime = selectedMinutes * 60;
+    gameStarted = false;
+    gameOver = false;
+
+    resetGamePosition();
+    updateClocks();
+
+    timeControlScreen.style.display = "none";
+    playerSetupScreen.style.display = "block";
+    gameArea.style.display = "none";
+  });
+});
+
+confirmPlayersBtn.addEventListener("click", () => {
+  const whiteName = whitePlayerInput.value.trim();
+  const blackName = blackPlayerInput.value.trim();
+
+  if (!whiteName || !blackName) {
+    alert("Please enter both player names.");
+    return;
+  }
+
+  playerSetupScreen.style.display = "none";
+  gameArea.style.display = "grid";
+
+  if (startGameBtn) {
+    startGameBtn.disabled = false;
+    startGameBtn.textContent = "Start Game";
+  }
+
+  updateInfo();
+  updateClocks();
+  updateReviewControls();
+  createBoard();
+});
+
+startGameBtn.addEventListener("click", () => {
+  if (!selectedMode) {
+    alert("Please select a time control first.");
+    return;
+  }
+
+  gameStarted = true;
+  gameOver = false;
+  startGameBtn.disabled = true;
+  startGameBtn.textContent = "Game Started";
+
+  updateClocks();
+  startTimer();
+});
+
+restartBtn.addEventListener("click", () => {
+  if (!selectedMode) {
+    resetToTimeSelection();
+    return;
+  }
+
+  resetToReadyGame();
+});
+
+changeTimeBtn.addEventListener("click", () => {
+  resetToTimeSelection();
+});
+
+newGameBtn.addEventListener("click", () => {
+  resetToTimeSelection();
+});
+
+gameOverSaveBtn.addEventListener("click", () => {
+  saveGameBtn.click();
+});
+
+prevMoveBtn.onclick = () => {
+  if (reviewIndex <= 0) return;
+
+  reviewIndex = Math.max(0, reviewIndex - 1);
+  isReviewing = reviewIndex !== positionHistory.length - 1;
+
+  selectedSquare = null;
+  legalMoves = [];
+
+  updateReviewControls();
+  createBoard();
+};
+
+nextMoveBtn.onclick = () => {
+  if (reviewIndex >= positionHistory.length - 1) return;
+
+  reviewIndex = Math.min(positionHistory.length - 1, reviewIndex + 1);
+  isReviewing = reviewIndex !== positionHistory.length - 1;
+
+  selectedSquare = null;
+  legalMoves = [];
+
+  updateReviewControls();
+  createBoard();
+};
+
 saveGameBtn.addEventListener("click", async () => {
   const whitePlayer = whitePlayerInput.value.trim() || "White Player";
   const blackPlayer = blackPlayerInput.value.trim() || "Black Player";
-
   const history = game.history();
 
   if (history.length === 0) {
     alert("Please play at least one move before saving.");
     return;
   }
-
-  const winner = getWinner();
 
   try {
     const response = await fetch("/api/games", {
@@ -390,15 +640,15 @@ saveGameBtn.addEventListener("click", async () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-  whitePlayer,
-  blackPlayer,
-  winner,
-  timeMode: selectedMode,
-  timeControl: `${selectedMinutes}+${incrementSeconds}`,
-  increment: incrementSeconds,
-  totalMoves: history.length,
-  moves: history
-})
+        whitePlayer,
+        blackPlayer,
+        winner: getWinner(),
+        timeMode: selectedMode,
+        timeControl: `${selectedMinutes}+${incrementSeconds}`,
+        increment: incrementSeconds,
+        totalMoves: history.length,
+        moves: history
+      })
     });
 
     const data = await response.json();
@@ -414,95 +664,7 @@ saveGameBtn.addEventListener("click", async () => {
   }
 });
 
-function getWinner() {
-  if (game.in_draw()) {
-    return "draw";
-  }
-
-  if (game.in_checkmate()) {
-    return game.turn() === "w" ? "black" : "white";
-  }
-
-  return "draw";
-}
-restartBtn.addEventListener("click", () => {
-  game.reset();
-
-  selectedSquare = null;
-  legalMoves = [];
-  lastMove = null;
-
-  clearInterval(timerInterval);
-  gameStarted = false;
-
-  if (selectedMode) {
-    const selectedButton = document.querySelector(
-      `[data-mode="${selectedMode}"][data-increment="${incrementSeconds}"]`
-    );
-
-    if (selectedButton) {
-      const minutes = Number(selectedButton.dataset.minutes);
-      whiteTime = minutes * 60;
-      blackTime = minutes * 60;
-    }
-  }
-
-  updateInfo();
-  updateClocks();
-  createBoard();
-});
-document.querySelectorAll("[data-mode]").forEach((button) => {
-  button.addEventListener("click", () => {
-    selectedMode = button.dataset.mode;
-    incrementSeconds = Number(button.dataset.increment);
-
-    const minutes = Number(button.dataset.minutes);
-    selectedMinutes = minutes;
-    whiteTime = minutes * 60;
-    blackTime = minutes * 60;
-
-    timeControlScreen.style.display = "none";
-    gameArea.style.display = "grid";
-
-    gameStarted = false;
-    startGameBtn.disabled = false;
-    startGameBtn.textContent = "Start Game";
-
-updateClocks();
-  });
-});
-changeTimeBtn.addEventListener("click", () => {
-  clearInterval(timerInterval);
-
-  game.reset();
-  selectedSquare = null;
-  legalMoves = [];
-  lastMove = null;
-  selectedMode = null;
-  incrementSeconds = 0;
-  whiteTime = 0;
-  blackTime = 0;
-  gameStarted = false;
-
-  updateInfo();
-  updateClocks();
-  createBoard();
-
-  gameArea.style.display = "none";
-  timeControlScreen.style.display = "block";
-});
-startGameBtn.addEventListener("click", () => {
-  if (!selectedMode) {
-    alert("Please select a time control first.");
-    return;
-  }
-
-  gameStarted = true;
-  startGameBtn.disabled = true;
-  startGameBtn.textContent = "Game Started";
-
-  updateClocks();
-  startTimer();
-});
 createBoard();
 updateInfo();
+updateClocks();
+updateReviewControls();
