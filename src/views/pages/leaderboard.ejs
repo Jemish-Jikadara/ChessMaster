@@ -79,6 +79,7 @@
                                     <th>Winner</th>
                                     <th>Moves</th>
                                     <th>Date</th>
+                                    <th>Replay</th>
                                 </tr>
                             </thead>
 
@@ -104,6 +105,13 @@
                                     <td><%= new
                                         Date(game.createdAt).toLocaleDateString()
                                         %></td>
+                                    <td>
+                                        <a href="/game/<%= game._id %>"
+                                            class="cm-btn cm-btn-secondary"
+                                            style="padding:4px 12px;font-size:13px;">
+                                            ▶ Watch
+                                        </a>
+                                    </td>
                                 </tr>
                                 <% }) %>
                             </tbody>

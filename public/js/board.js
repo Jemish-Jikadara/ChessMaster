@@ -300,8 +300,34 @@ function finishGame(title, message) {
 
   updateReviewControls();
   updateClocks();
+  autoSaveGame();
 }
+async function autoSaveGame() {
+  const history = game.history();
 
+  // Koi move nahi kheli toh save mat karo
+  if (history.length === 0) return;
+
+  try {
+    await fetch("/api/games", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gameId,
+        whitePlayer: whitePlayerInput.value.trim() || "White Player",
+        blackPlayer: blackPlayerInput.value.trim() || "Black Player",
+        winner: getWinner(),
+        timeMode: selectedMode,
+        timeControl: `${selectedMinutes}+${incrementSeconds}`,
+        increment: incrementSeconds,
+        totalMoves: history.length,
+        moves: history
+      })
+    });
+  } catch (error) {
+    console.error("Auto save failed:", error);
+  }
+}
 function selectSquare(squareName) {
   selectedSquare = squareName;
 
