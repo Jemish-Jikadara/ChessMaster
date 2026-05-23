@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const gameSchema = new mongoose.Schema(
   {
+    gameId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
     whiteUser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -27,7 +32,7 @@ const gameSchema = new mongoose.Schema(
       enum: ["rapid", "blitz", "bullet"],
       required: true
     },
-      timeControl: {
+    timeControl: {
       type: String,
       required: true
     },

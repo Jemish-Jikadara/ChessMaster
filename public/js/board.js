@@ -38,6 +38,7 @@ let whiteTime = 0;
 let blackTime = 0;
 let timerInterval = null;
 let gameStarted = false;
+let gameId = null;
 let gameOver = false;
 
 let positionHistory = [game.fen()];
@@ -63,8 +64,15 @@ function createBoard() {
   if (!chessBoard) return;
 
   chessBoard.innerHTML = "";
+  let displayGame = game;
 
-  const displayGame = isReviewing ? new Chess(positionHistory[reviewIndex]) : game;
+  if (isReviewing) {
+    displayGame = new Chess();
+    // BUG 3 FIX: chess.js v0.10.3 load() returns undefined, not true/false.
+    // Simply call load() without checking the return value.
+    displayGame.load(positionHistory[reviewIndex]);
+  }
+
   const board = displayGame.board();
 
   for (let row = 0; row < 8; row++) {
@@ -528,6 +536,7 @@ document.querySelectorAll("[data-mode]").forEach((button) => {
     blackTime = selectedMinutes * 60;
     gameStarted = false;
     gameOver = false;
+    gameId = crypto.randomUUID();
 
     resetGamePosition();
     updateClocks();
@@ -576,25 +585,66 @@ startGameBtn.addEventListener("click", () => {
   startTimer();
 });
 
-restartBtn.addEventListener("click", () => {
-  if (!selectedMode) {
-    resetToTimeSelection();
-    return;
-  }
-
-  resetToReadyGame();
-});
+// BUG 2 FIX: restartBtn doesn't exist in the HTML, so guard with a null check.
+if (restartBtn) {
+  restartBtn.addEventListener("click", () => {
+    if (!selectedMode) {
+      resetToTimeSelection();
+      return;
+    }
+    resetToReadyGame();
+  });
+}
 
 changeTimeBtn.addEventListener("click", () => {
-  resetToTimeSelection();
+  clearInterval(timerInterval);
+
+  gameStarted = false;
+  gameOver = false;
+
+  timeControlScreen.style.display = "block";
+  playerSetupScreen.style.display = "none";
+  gameArea.style.display = "none";
 });
 
 newGameBtn.addEventListener("click", () => {
-  resetToTimeSelection();
+  clearInterval(timerInterval);
+
+  whiteTime = selectedMinutes * 60;
+  blackTime = selectedMinutes * 60;
+
+  game.reset();
+
+  selectedSquare = null;
+  legalMoves = [];
+  lastMove = null;
+  draggedSquare = null;
+
+  gameStarted = false;
+  gameOver = false;
+
+  positionHistory = [game.fen()];
+  reviewIndex = 0;
+  isReviewing = false;
+
+  if (gameOverModal) {
+    gameOverModal.style.display = "none";
+  }
+
+  updateInfo();
+  updateClocks();
+  updateReviewControls();
+  createBoard();
+
+  startGameBtn.disabled = false;
+  startGameBtn.textContent = "Start Game";
 });
 
+// BUG 1 FIX: Removed nested addEventListener. The original code added a NEW
+// listener inside every click, so it never fired on first click and saved
+// multiple times on subsequent clicks. Now it's a single, flat listener.
 gameOverSaveBtn.addEventListener("click", () => {
-  saveGameBtn.click();
+  saveGameBtn.dispatchEvent(new Event("click"));
 });
 
 prevMoveBtn.onclick = () => {
@@ -640,6 +690,7 @@ saveGameBtn.addEventListener("click", async () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        gameId,
         whitePlayer,
         blackPlayer,
         winner: getWinner(),
