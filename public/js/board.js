@@ -171,6 +171,8 @@ function createBoard() {
 
 function handleSquareClick(squareName) {
   if (!gameStarted || isReviewing || gameOver) return;
+  // Block human move when bot is thinking
+  if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === "b") return;
 
   const piece = game.get(squareName);
 
@@ -205,6 +207,11 @@ function handleSquareClick(squareName) {
 
 function handleDragStart(event, squareName, piece) {
   if (!gameStarted || isReviewing || gameOver) {
+    event.preventDefault();
+    return;
+  }
+  // Block drag when bot is thinking
+  if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === "b") {
     event.preventDefault();
     return;
   }
@@ -273,6 +280,11 @@ function afterSuccessfulMove(move) {
   updateClocks();
   updateReviewControls();
   createBoard();
+
+  // Bot hook — if bot mode active and game not over, trigger bot move
+  if (typeof window._botHook === "function") {
+    window._botHook();
+  }
 }
 
 function checkGameOver() {
@@ -304,10 +316,7 @@ function finishGame(title, message) {
 }
 async function autoSaveGame() {
   const history = game.history();
-
-  // Koi move nahi kheli toh save mat karo
   if (history.length === 0) return;
-
   try {
     await fetch("/api/games", {
       method: "POST",
@@ -328,6 +337,7 @@ async function autoSaveGame() {
     console.error("Auto save failed:", error);
   }
 }
+
 function selectSquare(squareName) {
   selectedSquare = squareName;
 
@@ -387,11 +397,12 @@ function updateClocks() {
   const whiteClockBox = whiteClock.closest(".cm-clock");
   const blackClockBox = blackClock.closest(".cm-clock");
 
-  whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && gameStarted);
-  blackClockBox.classList.toggle("cm-active", game.turn() === "b" && gameStarted);
-
-  whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10 && selectedMode);
-  blackClockBox.classList.toggle("cm-low-time", blackTime <= 10 && selectedMode);
+  if (whiteClockBox && blackClockBox) {
+    whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && gameStarted);
+    blackClockBox.classList.toggle("cm-active", game.turn() === "b" && gameStarted);
+    whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10 && selectedMode);
+    blackClockBox.classList.toggle("cm-low-time", blackTime <= 10 && selectedMode);
+  }
 }
 
 function startTimer() {
@@ -566,7 +577,11 @@ document.querySelectorAll("[data-mode]").forEach((button) => {
 
     resetGamePosition();
     updateClocks();
-
+  // ── HIDE ALL SCREENS ──
+    const gms = document.getElementById("gameModeScreen");
+    const bss = document.getElementById("botSelectScreen");
+    if (gms) gms.style.display = "none";   // ← ADD
+    if (bss) bss.style.display = "none";   // ← ADD
     timeControlScreen.style.display = "none";
     playerSetupScreen.style.display = "block";
     gameArea.style.display = "none";
