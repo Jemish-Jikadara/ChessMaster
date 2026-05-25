@@ -10,6 +10,7 @@ const connectDB = require("./src/config/db");
 const authRoutes = require("./src/routes/authRoutes");
 const gameRoutes = require("./src/routes/gameRoutes");
 const pageRoutes = require("./src/routes/pageRoutes");
+const settingsRoutes = require("./src/routes/settingsRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,6 +51,7 @@ app.use((req, res, next) => {
 app.use("/", authRoutes);
 app.use("/", gameRoutes);
 app.use("/", pageRoutes);
+app.use("/", settingsRoutes);
 
 app.use((req, res) => {
   res.status(404).render("error");

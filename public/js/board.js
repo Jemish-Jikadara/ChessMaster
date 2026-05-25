@@ -59,6 +59,15 @@ const pieceImages = {
   bq: "black-queen",
   bk: "black-king"
 };
+const BOARD_THEMES = {
+  classic:  { light: "#f0d9b5", dark: "#b58863" },
+  midnight: { light: "#6b7fa3", dark: "#2c3e6b" },
+  forest:   { light: "#ffffdd", dark: "#6faa3f"  },
+  ocean:    { light: "#d6eaf8", dark: "#2e86c1"  },
+  ruby:     { light: "#f5cba7", dark: "#b91c1c"  },
+  walnut:   { light: "#e8d5b0", dark: "#6b4226"  }
+};
+const currentTheme = BOARD_THEMES[window.BOARD_THEME] || BOARD_THEMES.classic;
 
 function createBoard() {
   if (!chessBoard) return;
@@ -93,11 +102,20 @@ function createBoard() {
 
       square.className = `
         aspect-square relative flex items-center justify-center
-        ${isLightSquare ? "bg-stone-200" : "bg-red-700"}
+
         ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""}
         hover:brightness-110 transition
       `;
 
+      square.className = `
+        aspect-square relative flex items-center justify-center
+
+        ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""}
+        hover:brightness-110 transition
+      `;
+        if (!isCheckedKing && !isLastMoveSquare) {
+  square.style.backgroundColor = isLightSquare ? currentTheme.light : currentTheme.dark;
+}
       if (isCheckedKing) {
         square.style.backgroundColor = "#dc2626";
         square.style.boxShadow = "inset 0 0 0 4px rgba(254, 202, 202, 0.9)";

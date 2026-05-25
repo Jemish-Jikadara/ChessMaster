@@ -40,6 +40,7 @@ async function registerUser(req, res) {
     req.flash("success", "Account created successfully. Please login.");
     return res.redirect("/login");
   } catch (error) {
+    console.error("Error registering user:", error);
     req.flash("error", "Something went wrong while creating account.");
     return res.redirect("/register");
   }

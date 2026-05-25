@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Settings</title>
+        <link rel="stylesheet" href="/css/style.css">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap"
+            rel="stylesheet">
+        <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --gold-dim: rgba(201,168,76,0.15);
+            --gold-border: rgba(201,168,76,0.3);
+            --surface: #0f0f0f;
+            --surface-2: #161616;
+            --surface-3: #1e1e1e;
+            --text: #f0ece4;
+            --text-muted: #7a7570;
+            --text-dim: #4a4642;
+        }
+        .settings-wrap { min-height: 100vh; background: var(--surface); font-family: 'Inter', sans-serif; color: var(--text); }
+        .settings-container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; }
+        .settings-kicker { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: block; }
+        .settings-title { font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; color: var(--text); margin: 0 0 8px; }
+        .settings-sub { color: var(--text-muted); font-size: 14px; margin: 0 0 48px; }
+        .settings-section { background: var(--surface-2); border: 1px solid #222; border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+        .section-label { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; display: block; }
+        .section-title { font-family: 'Cinzel', serif; font-size: 18px; color: var(--text); margin: 0 0 6px; }
+        .section-desc { font-size: 13px; color: var(--text-muted); margin: 0 0 24px; line-height: 1.6; }
+        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .theme-card { border: 2px solid #2a2a2a; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.15s; position: relative; }
+        .theme-card:hover { border-color: var(--gold-border); transform: translateY(-2px); }
+        .theme-card.active { border-color: var(--gold); }
+        .theme-card.active::after { content: '✓'; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; background: var(--gold); border-radius: 50%; font-size: 12px; color: #0f0f0f; font-weight: 700; line-height: 22px; text-align: center; }
+        .theme-preview { display: grid; grid-template-columns: repeat(4, 1fr); aspect-ratio: 1; width: 100%; }
+        .theme-preview-sq { aspect-ratio: 1; }
+        .theme-name { padding: 10px 12px; font-family: 'Cinzel', serif; font-size: 13px; color: var(--text); background: var(--surface-3); text-align: center; }
+        .theme-classic .light   { background: #f0d9b5; }
+        .theme-classic .dark    { background: #b58863; }
+        .theme-midnight .light  { background: #6b7fa3; }
+        .theme-midnight .dark   { background: #2c3e6b; }
+        .theme-forest .light    { background: #ffffdd; }
+        .theme-forest .dark     { background: #6faa3f; }
+        .theme-ocean .light     { background: #d6eaf8; }
+        .theme-ocean .dark      { background: #2e86c1; }
+        .theme-ruby .light      { background: #f5cba7; }
+        .theme-ruby .dark       { background: #b91c1c; }
+        .theme-walnut .light    { background: #e8d5b0; }
+        .theme-walnut .dark     { background: #6b4226; }
+        #saveStatus { margin-top: 16px; font-size: 13px; color: #4ade80; display: none; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+        .back-link:hover { color: var(--text); }
+    </style>
+    </head>
+
+    <body class="cm-body settings-wrap">
+
+        <%- include("../partials/navbar") %>
+
+        <main>
+            <div class="settings-container">
+
+                <a href="/profile" class="back-link">← Back to Profile</a>
+
+                <span class="settings-kicker">Account</span>
+                <h1 class="settings-title">Settings</h1>
+                <p class="settings-sub">Customize your ChessMaster
+                    experience.</p>
+
+                <div class="settings-section">
+                    <span class="section-label">Appearance</span>
+                    <h2 class="section-title">Board Theme</h2>
+                    <p class="section-desc">Choose how your chess board looks.
+                        Your preference is saved to your account.</p>
+
+                    <div class="theme-grid">
+
+                        <% const themes = [
+                        { id: "classic", name: "Classic" },
+                        { id: "midnight", name: "Midnight" },
+                        { id: "forest", name: "Forest" },
+                        { id: "ocean", name: "Ocean" },
+                        { id: "ruby", name: "Ruby" },
+                        { id: "walnut", name: "Walnut" }
+                        ]; %>
+
+                        <% themes.forEach(theme => { %>
+                        <div
+                            class="theme-card theme-<%= theme.id %> <%= user.boardTheme === theme.id ? 'active' : '' %>"
+                            data-theme="<%= theme.id %>">
+
+                            <div class="theme-preview">
+                                <% for(let i = 0; i < 16; i++) { %>
+                                <div
+                                    class="theme-preview-sq <%= (Math.floor(i/4) + i) % 2 === 0 ? 'light' : 'dark' %>"></div>
+                                <% } %>
+                            </div>
+
+                            <div class="theme-name"><%= theme.name %></div>
+                        </div>
+                        <% }) %>
+
+                    </div>
+
+                    <div id="saveStatus">✓ Theme saved!</div>
+                </div>
+
+            </div>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+        <script>
+        const themeCards = document.querySelectorAll(".theme-card");
+        const saveStatus = document.getElementById("saveStatus");
+
+        themeCards.forEach(card => {
+            card.addEventListener("click", async () => {
+                const theme = card.dataset.theme;
+
+                themeCards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+
+                try {
+                    const res = await fetch("/api/settings/theme", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ boardTheme: theme })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        saveStatus.style.display = "block";
+                        setTimeout(() => saveStatus.style.display = "none", 2000);
+                    }
+                } catch (err) {
+                    console.error("Theme save failed:", err);
+                }
+            });
+        });
+    </script>
+
+    </body>
+</html>
