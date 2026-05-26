@@ -3,240 +3,202 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ChessMaster | Game Replay</title>
+        <title>ChessMaster | Replay</title>
         <link rel="stylesheet" href="/css/style.css">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+            rel="stylesheet">
+        <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#080810; color:#f0ece4; }
+        .page-wrap { max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+        .page-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+        .kicker { font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#a78bfa; margin-bottom:8px; display:block; }
+        .page-title { font-family:'Syne',sans-serif; font-size:clamp(1.5rem,4vw,2.4rem); font-weight:800; color:#f0ece4; margin:0 0 6px; letter-spacing:-0.02em; }
+        .page-meta { font-size:13px; color:#6b7280; }
+        .btn-back { padding:10px 20px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#9ca3af; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-back:hover { border-color:rgba(255,255,255,0.2); color:#f0ece4; }
+        .game-layout { display:grid; grid-template-columns:1fr 300px; gap:20px; }
+        @media (max-width:900px) { .game-layout { grid-template-columns:1fr; } }
+        .board-shell { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px; display:flex; flex-direction:column; gap:14px; }
+        .player-strip { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.07); }
+        .ps-left { display:flex; align-items:center; gap:10px; }
+        .ps-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; }
+        .white-av { background:#e8e0d4; color:#1a1a1a; }
+        .black-av { background:#1a1a1a; border:1px solid #333; color:#f0ece4; }
+        .ps-name { font-size:14px; font-weight:500; color:#f0ece4; }
+        .board-status { display:flex; align-items:center; justify-content:space-between; font-size:13px; }
+        .status-label { color:#6b7280; }
+        .result-badge { padding:4px 14px; border-radius:20px; font-size:12px; font-family:'Syne',sans-serif; font-weight:700; }
+        .rb-white { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#f0ece4; }
+        .rb-black { background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); color:#9ca3af; }
+        .rb-draw { background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; }
+        .board-scroll { width:100%; aspect-ratio:1; }
+        #replayBoard { display:grid; grid-template-columns:repeat(8,1fr); width:100%; aspect-ratio:1; border-radius:8px; overflow:hidden; border:2px solid rgba(255,255,255,0.08); }
+        .history-panel { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px; display:flex; flex-direction:column; gap:14px; max-height:700px; }
+        .history-head { display:flex; align-items:flex-start; justify-content:space-between; }
+        .hh-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:2px; font-family:'Syne',sans-serif; }
+        .history-head h2 { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:#f0ece4; margin:0; }
+        .move-count { background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3); color:#a78bfa; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; padding:4px 10px; border-radius:20px; }
+        .review-controls { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.03); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.06); }
+        .review-controls button { background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#6b7280; padding:5px 10px; cursor:pointer; font-size:13px; transition:all 0.2s; }
+        .review-controls button:hover:not(:disabled) { border-color:rgba(124,58,237,0.5); color:#a78bfa; }
+        .review-controls button:disabled { opacity:0.25; cursor:not-allowed; }
+        .review-controls span { flex:1; text-align:center; font-size:12px; color:#6b7280; font-family:'Syne',sans-serif; }
+        .move-list { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; scrollbar-width:thin; scrollbar-color:#1f1f1f transparent; }
+        .move-list p { color:#6b7280; font-size:13px; }
+        .replay-move-item { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px 14px; font-size:13px; cursor:pointer; transition:all 0.15s; }
+        .replay-move-item:hover { border-color:rgba(124,58,237,0.4); background:rgba(124,58,237,0.07); }
+        .replay-move-item.active { border-color:rgba(124,58,237,0.6); background:rgba(124,58,237,0.12); }
+        .move-num { color:#a78bfa; font-weight:700; margin-right:4px; }
+        .move-san { color:#f0ece4; }
+        .move-sq { color:#374151; font-size:11px; margin-left:6px; }
+    </style>
     </head>
     <body class="cm-body">
-
         <%- include("../partials/navbar") %>
-
         <main>
-            <section class="cm-play-page">
-                <div class="cm-container">
-
-                    <div class="cm-play-head">
-                        <div>
-                            <span class="cm-kicker">Game Replay</span>
-                            <h1><%= game.whitePlayer %> vs <%= game.blackPlayer
-                                %></h1>
-                            <p>
-                                <%= game.timeControl %> &bull;
-                                <%= game.timeMode %> &bull;
-                                <%= new
-                                Date(game.createdAt).toLocaleDateString() %>
-                            </p>
-                        </div>
-                        <a href="javascript:history.back()"
-                            class="cm-btn cm-btn-secondary">← Back</a>
+            <div class="page-wrap">
+                <div class="page-head">
+                    <div>
+                        <span class="kicker">Game Replay</span>
+                        <h1 class="page-title"><%= game.whitePlayer %> vs <%=
+                            game.blackPlayer %></h1>
+                        <p class="page-meta"><%= game.timeControl %> &bull; <%=
+                            game.timeMode %> &bull; <%= new
+                            Date(game.createdAt).toLocaleDateString() %></p>
                     </div>
-
-                    <div class="cm-play-layout">
-
-                        <section class="cm-board-shell">
-
-                            <div class="cm-board-top">
-                                <div>
-                                    <span>Result</span>
-                                    <strong>
-                                        <% if (game.winner === "white") { %>
-                                        White Won
-                                        <% } else if (game.winner === "black") {
-                                        %>
-                                        Black Won
-                                        <% } else { %>
-                                        Draw
-                                        <% } %>
-                                    </strong>
-                                </div>
-                                <div>
-                                    <span>Total Moves</span>
-                                    <strong><%= game.totalMoves %></strong>
-                                </div>
-                            </div>
-
-                            <div class="cm-clock-row">
-                                <div class="cm-clock">
-                                    <span>White</span>
-                                    <strong><%= game.whitePlayer %></strong>
-                                </div>
-                                <div class="cm-clock">
-                                    <span>Black</span>
-                                    <strong><%= game.blackPlayer %></strong>
-                                </div>
-                            </div>
-
-                            <div class="cm-board-scroll">
-                                <div id="replayBoard"
-                                    class="cm-game-board"></div>
-                            </div>
-
-                        </section>
-
-                        <aside class="cm-history-panel">
-
-                            <div class="cm-history-head">
-                                <div>
-                                    <span>Match Log</span>
-                                    <h2>Move History</h2>
-                                </div>
-                                <strong><%= game.totalMoves %></strong>
-                            </div>
-
-                            <div class="cm-review-controls">
-                                <button id="replayFirst" type="button"
-                                    title="First move">⟪</button>
-                                <button id="replayPrev" type="button"
-                                    title="Previous move">⟵</button>
-                                <span id="replayStatus">Move 0 / <%=
-                                    game.totalMoves %></span>
-                                <button id="replayNext" type="button"
-                                    title="Next move">⟶</button>
-                                <button id="replayLast" type="button"
-                                    title="Last move">⟫</button>
-                            </div>
-
-                            <div id="replayMoveList"
-                                class="cm-move-history"></div>
-
-                        </aside>
-
-                    </div>
-
+                    <a href="javascript:history.back()" class="btn-back">←
+                        Back</a>
                 </div>
-            </section>
-        </main>
 
+                <div class="game-layout">
+                    <section class="board-shell">
+                        <div class="player-strip">
+                            <div class="ps-left">
+                                <div class="ps-avatar black-av">♚</div>
+                                <div class="ps-name"><%= game.blackPlayer
+                                    %></div>
+                            </div>
+                        </div>
+                        <div class="board-status">
+                            <span class="status-label">Result</span>
+                            <% if (game.winner === "white") { %><span
+                                class="result-badge rb-white">⬜ White Won</span>
+                            <% } else if (game.winner === "black") { %><span
+                                class="result-badge rb-black">⬛ Black Won</span>
+                            <% } else { %><span
+                                class="result-badge rb-draw">Draw</span><% } %>
+                        </div>
+                        <div class="board-scroll">
+                            <div id="replayBoard"></div>
+                        </div>
+                        <div class="player-strip">
+                            <div class="ps-left">
+                                <div class="ps-avatar white-av">♔</div>
+                                <div class="ps-name"><%= game.whitePlayer
+                                    %></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <aside class="history-panel">
+                        <div class="history-head">
+                            <div>
+                                <div class="hh-label">Match Log</div>
+                                <h2>Move History</h2>
+                            </div>
+                            <span class="move-count"><%= game.totalMoves
+                                %></span>
+                        </div>
+                        <div class="review-controls">
+                            <button id="replayFirst" title="First">⟪</button>
+                            <button id="replayPrev" title="Previous">⟵</button>
+                            <span id="replayStatus">Move 0 / <%= game.totalMoves
+                                %></span>
+                            <button id="replayNext" title="Next">⟶</button>
+                            <button id="replayLast" title="Last">⟫</button>
+                        </div>
+                        <div id="replayMoveList" class="move-list"></div>
+                    </aside>
+                </div>
+            </div>
+        </main>
         <%- include("../partials/footer") %>
 
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-
         <script>
-            const MOVES = <%- JSON.stringify(game.moves) %>;
+        const MOVES = <%- JSON.stringify(game.moves) %>;
+        const pieceImages = { wp:"white-pawn",wr:"white-rook",wn:"white-knight",wb:"white-bishop",wq:"white-queen",wk:"white-king",bp:"black-pawn",br:"black-rook",bn:"black-knight",bb:"black-bishop",bq:"black-queen",bk:"black-king" };
+        const chess = new Chess();
+        const positionHistory = [chess.fen()];
+        const verboseMoves = [];
+        MOVES.forEach(san => { const m = chess.move(san); if (m) { verboseMoves.push(m); positionHistory.push(chess.fen()); } });
+        let currentIndex = 0;
+        const replayBoard = document.getElementById("replayBoard");
+        const replayStatus = document.getElementById("replayStatus");
+        const replayMoveList = document.getElementById("replayMoveList");
+        const btnFirst = document.getElementById("replayFirst");
+        const btnPrev = document.getElementById("replayPrev");
+        const btnNext = document.getElementById("replayNext");
+        const btnLast = document.getElementById("replayLast");
 
-            const pieceImages = {
-                wp:"white-pawn",  wr:"white-rook",   wn:"white-knight",
-                wb:"white-bishop",wq:"white-queen",  wk:"white-king",
-                bp:"black-pawn",  br:"black-rook",   bn:"black-knight",
-                bb:"black-bishop",bq:"black-queen",  bk:"black-king"
-            };
+        function getSquareName(row, col) { return ["a","b","c","d","e","f","g","h"][col] + (8-row); }
 
-            const chess = new Chess();
-            const positionHistory = [chess.fen()];
-            const verboseMoves = [];
-
-            MOVES.forEach(san => {
-                const m = chess.move(san);
-                if (m) {
-                    verboseMoves.push(m);
-                    positionHistory.push(chess.fen());
+        function renderBoard() {
+            replayBoard.innerHTML = "";
+            replayBoard.style.display = "grid";
+            replayBoard.style.gridTemplateColumns = "repeat(8,1fr)";
+            replayBoard.style.width = "100%";
+            replayBoard.style.aspectRatio = "1";
+            replayBoard.style.borderRadius = "8px";
+            replayBoard.style.overflow = "hidden";
+            replayBoard.style.border = "2px solid rgba(255,255,255,0.08)";
+            const display = new Chess(); display.load(positionHistory[currentIndex]);
+            const board = display.board();
+            const lastMove = currentIndex > 0 ? verboseMoves[currentIndex-1] : null;
+            for (let row=0;row<8;row++) for (let col=0;col<8;col++) {
+                const sq = getSquareName(row,col);
+                const cell = document.createElement("div");
+                const light = (row+col)%2===0;
+                const isLast = lastMove && (lastMove.from===sq || lastMove.to===sq);
+                cell.style.position = "relative";
+                cell.style.display = "flex";
+                cell.style.alignItems = "center";
+                cell.style.justifyContent = "center";
+                cell.style.aspectRatio = "1";
+                cell.style.backgroundColor = isLast ? (light?"#fef08a":"#ca8a04") : (light?"#f0d9b5":"#b58863");
+                const piece = board[row][col];
+                if (piece) {
+                    const img = document.createElement("img");
+                    img.src = `/images/pieces/${pieceImages[piece.color+piece.type]}.png`;
+                    img.style.width = "78%"; img.style.height = "78%"; img.style.objectFit = "contain"; img.draggable = false;
+                    cell.appendChild(img);
                 }
+                replayBoard.appendChild(cell);
+            }
+            const total = positionHistory.length-1;
+            replayStatus.textContent = `Move ${currentIndex} / ${total}`;
+            btnFirst.disabled = currentIndex<=0; btnPrev.disabled = currentIndex<=0;
+            btnNext.disabled = currentIndex>=total; btnLast.disabled = currentIndex>=total;
+            document.querySelectorAll(".replay-move-item").forEach((el,i) => el.classList.toggle("active", i===currentIndex-1));
+        }
+
+        function buildMoveList() {
+            if (!verboseMoves.length) { replayMoveList.innerHTML = '<p>No moves.</p>'; return; }
+            replayMoveList.innerHTML = verboseMoves.map((m,i) => `<div class="replay-move-item" data-index="${i+1}"><span class="move-num">${i+1}.</span><span class="move-san">${m.san}</span><span class="move-sq">(${m.from}→${m.to})</span></div>`).join("");
+            replayMoveList.querySelectorAll(".replay-move-item").forEach(el => {
+                el.addEventListener("click", () => { currentIndex=Number(el.dataset.index); renderBoard(); el.scrollIntoView({block:"nearest"}); });
             });
+        }
 
-            let currentIndex = 0;
-
-            const replayBoard    = document.getElementById("replayBoard");
-            const replayStatus   = document.getElementById("replayStatus");
-            const replayMoveList = document.getElementById("replayMoveList");
-            const btnFirst = document.getElementById("replayFirst");
-            const btnPrev  = document.getElementById("replayPrev");
-            const btnNext  = document.getElementById("replayNext");
-            const btnLast  = document.getElementById("replayLast");
-
-            function getSquareName(row, col) {
-                const files = ["a","b","c","d","e","f","g","h"];
-                return `${files[col]}${8 - row}`;
-            }
-
-            function renderBoard() {
-                replayBoard.innerHTML = "";
-
-                const display = new Chess();
-                display.load(positionHistory[currentIndex]);
-                const board = display.board();
-                const lastMove = currentIndex > 0 ? verboseMoves[currentIndex - 1] : null;
-
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
-                        const sq   = getSquareName(row, col);
-                        const cell = document.createElement("div");
-                        const light = (row + col) % 2 === 0;
-                        const isLast = lastMove && (lastMove.from === sq || lastMove.to === sq);
-
-                        cell.className = `aspect-square relative flex items-center justify-center ${light ? "bg-stone-200" : "bg-red-700"}`;
-
-                        if (isLast) {
-                            cell.style.backgroundColor = light ? "#fef08a" : "#ca8a04";
-                        }
-
-                        const piece = board[row][col];
-                        if (piece) {
-                            const img = document.createElement("img");
-                            img.src = `/images/pieces/${pieceImages[piece.color + piece.type]}.png`;
-                            img.alt = pieceImages[piece.color + piece.type];
-                            img.className = "relative z-30 w-[78%] h-[78%] object-contain select-none";
-                            img.draggable = false;
-                            cell.appendChild(img);
-                        }
-
-                        replayBoard.appendChild(cell);
-                    }
-                }
-
-                const total = positionHistory.length - 1;
-                replayStatus.textContent = `Move ${currentIndex} / ${total}`;
-
-                btnFirst.disabled = currentIndex <= 0;
-                btnPrev.disabled  = currentIndex <= 0;
-                btnNext.disabled  = currentIndex >= total;
-                btnLast.disabled  = currentIndex >= total;
-
-                document.querySelectorAll(".replay-move-item").forEach((el, i) => {
-                    el.classList.toggle("bg-yellow-400/20", i === currentIndex - 1);
-                    el.classList.toggle("border-yellow-400/40", i === currentIndex - 1);
-                });
-            }
-
-            function buildMoveList() {
-                if (verboseMoves.length === 0) {
-                    replayMoveList.innerHTML = `<p class="text-gray-500">No moves.</p>`;
-                    return;
-                }
-
-                replayMoveList.innerHTML = verboseMoves.map((m, i) => `
-                    <div class="replay-move-item bg-gray-950/70 border border-white/10 rounded-xl px-4 py-3 cursor-pointer hover:bg-yellow-400/10 transition" data-index="${i + 1}">
-                        <p class="text-sm">
-                            <span class="text-yellow-400 font-bold">${i + 1}.</span>
-                            ${m.san}
-                            <span class="text-gray-500">(${m.from} → ${m.to})</span>
-                        </p>
-                    </div>
-                `).join("");
-
-                replayMoveList.querySelectorAll(".replay-move-item").forEach(el => {
-                    el.addEventListener("click", () => {
-                        currentIndex = Number(el.dataset.index);
-                        renderBoard();
-                        el.scrollIntoView({ block: "nearest" });
-                    });
-                });
-            }
-
-            btnFirst.addEventListener("click", () => { currentIndex = 0; renderBoard(); });
-            btnPrev.addEventListener("click",  () => { if (currentIndex > 0) { currentIndex--; renderBoard(); } });
-            btnNext.addEventListener("click",  () => { if (currentIndex < positionHistory.length - 1) { currentIndex++; renderBoard(); } });
-            btnLast.addEventListener("click",  () => { currentIndex = positionHistory.length - 1; renderBoard(); });
-
-            document.addEventListener("keydown", e => {
-                if (e.key === "ArrowLeft")  btnPrev.click();
-                if (e.key === "ArrowRight") btnNext.click();
-                if (e.key === "ArrowUp")    btnFirst.click();
-                if (e.key === "ArrowDown")  btnLast.click();
-            });
-
-            buildMoveList();
-            renderBoard();
-        </script>
-
+        btnFirst.addEventListener("click", () => { currentIndex=0; renderBoard(); });
+        btnPrev.addEventListener("click", () => { if(currentIndex>0){currentIndex--;renderBoard();} });
+        btnNext.addEventListener("click", () => { if(currentIndex<positionHistory.length-1){currentIndex++;renderBoard();} });
+        btnLast.addEventListener("click", () => { currentIndex=positionHistory.length-1; renderBoard(); });
+        document.addEventListener("keydown", e => { if(e.key==="ArrowLeft")btnPrev.click(); if(e.key==="ArrowRight")btnNext.click(); if(e.key==="ArrowUp")btnFirst.click(); if(e.key==="ArrowDown")btnLast.click(); });
+        buildMoveList(); renderBoard();
+    </script>
     </body>
 </html>

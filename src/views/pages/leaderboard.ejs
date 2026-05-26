@@ -5,125 +5,172 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ChessMaster | Leaderboard</title>
         <link rel="stylesheet" href="/css/style.css">
-    </head>
-    <body class="cm-body">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+            rel="stylesheet">
+        <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
+        .page-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
+        .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 56px; flex-wrap: wrap; gap: 20px; }
+        .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #a78bfa; margin-bottom: 10px; display: block; font-family: 'Syne', sans-serif; }
+        .page-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: #f0ece4; margin: 0 0 8px; letter-spacing: -0.02em; line-height: 1.1; }
+        .page-sub { color: #6b7280; font-size: 14px; line-height: 1.6; max-width: 400px; }
+        .btn-primary { padding: 12px 24px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); white-space: nowrap; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
+        .btn-watch { padding: 6px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #f0ece4; font-size: 12px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.2s, border-color 0.2s; white-space: nowrap; }
+        .btn-watch:hover { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
 
+        /* Empty state */
+        .empty-state { text-align: center; padding: 80px 24px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; }
+        .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+        .empty-state h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: #f0ece4; margin-bottom: 8px; }
+        .empty-state p { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+
+        /* Mobile cards */
+        .mobile-cards { display: none; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        @media (max-width: 768px) { .mobile-cards { display: flex; } .table-wrap { display: none; } }
+
+        .game-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, background 0.2s; }
+        .game-card:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.05); }
+        .card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+        .card-head .match-num { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+        .card-head h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece4; }
+        .card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .meta-item { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; }
+        .meta-item span { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+        .meta-item strong { font-size: 13px; color: #f0ece4; }
+
+        /* Winner badges */
+        .badge-white { padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; font-size: 11px; font-weight: 600; color: #f0ece4; white-space: nowrap; }
+        .badge-black { padding: 4px 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-size: 11px; font-weight: 600; color: #9ca3af; white-space: nowrap; }
+        .badge-draw  { padding: 4px 10px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 100px; font-size: 11px; font-weight: 600; color: #60a5fa; white-space: nowrap; }
+
+        /* Table */
+        .table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.07); }
+        th { padding: 14px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; text-align: left; font-family: 'Syne', sans-serif; }
+        td { padding: 14px 20px; font-size: 13px; color: #d1d5db; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .td-num { color: #6b7280; font-size: 12px; }
+        .td-player { color: #f0ece4; font-weight: 500; }
+    </style>
+    </head>
+
+    <body class="cm-body">
         <%- include("../partials/navbar") %>
 
         <main>
-            <section class="cm-page">
-                <div class="cm-container">
-                    <div class="cm-page-head">
-                        <div>
-                            <span class="cm-kicker">Saved Matches</span>
-                            <h1>Leaderboard</h1>
-                            <p>View recently saved chess matches, winners, total
-                                moves, and player names.</p>
-                        </div>
+            <div class="page-wrap">
 
-                        <a href="/play" class="cm-btn cm-btn-primary">Play New
-                            Match</a>
+                <div class="page-head">
+                    <div>
+                        <span class="kicker">♟ Saved Matches</span>
+                        <h1 class="page-title">Leaderboard</h1>
+                        <p class="page-sub">View recently saved chess matches,
+                            winners, total moves, and player names.</p>
                     </div>
-
-                    <% if (!games || games.length === 0) { %>
-                    <section class="cm-empty">
-                        <div>♟</div>
-                        <h2>No saved games yet</h2>
-                        <p>Play a match and save the result to see it here.</p>
-                        <a href="/play" class="cm-btn cm-btn-primary">Start
-                            Playing</a>
-                    </section>
-                    <% } else { %>
-
-                    <section class="cm-mobile-games">
-                        <% games.forEach((game, index) => { %>
-                        <article class="cm-game-card">
-                            <div class="cm-game-card-head">
-                                <div>
-                                    <span>Match #<%= index + 1 %></span>
-                                    <h2><%= game.whitePlayer %> vs <%=
-                                        game.blackPlayer %></h2>
-                                </div>
-
-                                <% if (game.winner === "white") { %>
-                                <strong class="cm-badge-white">White</strong>
-                                <% } else if (game.winner === "black") { %>
-                                <strong class="cm-badge-black">Black</strong>
-                                <% } else { %>
-                                <strong class="cm-badge-draw">Draw</strong>
-                                <% } %>
-                            </div>
-
-                            <div class="cm-game-meta">
-                                <div><span>White</span><strong><%=
-                                        game.whitePlayer %></strong></div>
-                                <div><span>Black</span><strong><%=
-                                        game.blackPlayer %></strong></div>
-                                <div><span>Moves</span><strong><%=
-                                        game.totalMoves %></strong></div>
-                                <div><span>Date</span><strong><%= new
-                                        Date(game.createdAt).toLocaleDateString()
-                                        %></strong></div>
-                            </div>
-                        </article>
-                        <% }) %>
-                    </section>
-
-                    <section class="cm-table-wrap">
-                        <table class="cm-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>White Player</th>
-                                    <th>Black Player</th>
-                                    <th>Winner</th>
-                                    <th>Moves</th>
-                                    <th>Date</th>
-                                    <th>Replay</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <% games.forEach((game, index) => { %>
-                                <tr>
-                                    <td><%= index + 1 %></td>
-                                    <td><%= game.whitePlayer %></td>
-                                    <td><%= game.blackPlayer %></td>
-                                    <td>
-                                        <% if (game.winner === "white") { %>
-                                        <span
-                                            class="cm-badge-white">White</span>
-                                        <% } else if (game.winner === "black") {
-                                        %>
-                                        <span
-                                            class="cm-badge-black">Black</span>
-                                        <% } else { %>
-                                        <span class="cm-badge-draw">Draw</span>
-                                        <% } %>
-                                    </td>
-                                    <td><%= game.totalMoves %></td>
-                                    <td><%= new
-                                        Date(game.createdAt).toLocaleDateString()
-                                        %></td>
-                                    <td>
-                                        <a href="/game/<%= game._id %>"
-                                            class="cm-btn cm-btn-secondary"
-                                            style="padding:4px 12px;font-size:13px;">
-                                            ▶ Watch
-                                        </a>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </section>
-
-                    <% } %>
+                    <a href="/play" class="btn-primary">♟ Play New Match</a>
                 </div>
-            </section>
+
+                <% if (!games || games.length === 0) { %>
+
+                <div class="empty-state">
+                    <div class="empty-icon">♟</div>
+                    <h2>No saved games yet</h2>
+                    <p>Play a match and save the result to see it here.</p>
+                    <a href="/play" class="btn-primary">Start Playing</a>
+                </div>
+
+                <% } else { %>
+
+                <!-- MOBILE CARDS -->
+                <div class="mobile-cards">
+                    <% games.forEach((game, index) => { %>
+                    <a href="/game/<%= game._id %>" class="game-card">
+                        <div class="card-head">
+                            <div>
+                                <div class="match-num">Match #<%= index + 1
+                                    %></div>
+                                <h3><%= game.whitePlayer %> vs <%=
+                                    game.blackPlayer %></h3>
+                            </div>
+                            <% if (game.winner === "white") { %>
+                            <span class="badge-white">⬜ White</span>
+                            <% } else if (game.winner === "black") { %>
+                            <span class="badge-black">⬛ Black</span>
+                            <% } else { %>
+                            <span class="badge-draw">Draw</span>
+                            <% } %>
+                        </div>
+                        <div class="card-meta">
+                            <div class="meta-item"><span>Moves</span><strong><%=
+                                    game.totalMoves %></strong></div>
+                            <div class="meta-item"><span>Date</span><strong><%=
+                                    new
+                                    Date(game.createdAt).toLocaleDateString()
+                                    %></strong></div>
+                            <div class="meta-item"><span>Mode</span><strong><%=
+                                    game.timeMode || 'Classic' %></strong></div>
+                            <div class="meta-item"><span>Time</span><strong><%=
+                                    game.timeControl || '-' %></strong></div>
+                        </div>
+                    </a>
+                    <% }) %>
+                </div>
+
+                <!-- DESKTOP TABLE -->
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>White Player</th>
+                                <th>Black Player</th>
+                                <th>Winner</th>
+                                <th>Moves</th>
+                                <th>Date</th>
+                                <th>Replay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% games.forEach((game, index) => { %>
+                            <tr>
+                                <td class="td-num"><%= index + 1 %></td>
+                                <td class="td-player"><%= game.whitePlayer
+                                    %></td>
+                                <td class="td-player"><%= game.blackPlayer
+                                    %></td>
+                                <td>
+                                    <% if (game.winner === "white") { %>
+                                    <span class="badge-white">⬜ White</span>
+                                    <% } else if (game.winner === "black") { %>
+                                    <span class="badge-black">⬛ Black</span>
+                                    <% } else { %>
+                                    <span class="badge-draw">Draw</span>
+                                    <% } %>
+                                </td>
+                                <td><%= game.totalMoves %></td>
+                                <td><%= new
+                                    Date(game.createdAt).toLocaleDateString()
+                                    %></td>
+                                <td>
+                                    <a href="/game/<%= game._id %>"
+                                        class="btn-watch">▶ Watch</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <% } %>
+
+            </div>
         </main>
 
         <%- include("../partials/footer") %>
-
     </body>
 </html>

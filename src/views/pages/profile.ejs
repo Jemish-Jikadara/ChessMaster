@@ -5,75 +5,116 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ChessMaster | Profile</title>
         <link rel="stylesheet" href="/css/style.css">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+            rel="stylesheet">
+        <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#080810; color:#f0ece4; }
+        .page-wrap { max-width:1100px; margin:0 auto; padding:60px 24px 80px; }
+        .page-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px; }
+        .kicker { font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#a78bfa; margin-bottom:8px; display:block; }
+        .page-title { font-family:'Syne',sans-serif; font-size:clamp(2rem,5vw,3rem); font-weight:800; color:#f0ece4; margin:0 0 6px; letter-spacing:-0.02em; }
+        .page-sub { font-size:14px; color:#6b7280; }
+        .head-actions { display:flex; gap:10px; flex-wrap:wrap; }
+        .btn-secondary { padding:10px 20px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#9ca3af; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-secondary:hover { border-color:rgba(255,255,255,0.2); color:#f0ece4; }
+        .btn-danger { padding:10px 20px; background:transparent; border:1px solid rgba(239,68,68,0.25); border-radius:10px; color:#f87171; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+        .btn-danger:hover { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.4); }
+
+        /* Stats grid */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:32px; }
+        .stat-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:20px 16px; }
+        .stat-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; font-family:'Syne',sans-serif; }
+        .stat-value { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#f0ece4; }
+        .stat-value.purple { background:linear-gradient(135deg,#a78bfa,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .stat-value.blue { background:linear-gradient(135deg,#3b82f6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .stat-value.green { color:#4ade80; }
+        .stat-value.red { color:#f87171; }
+        .stat-value.yellow { color:#fbbf24; }
+
+        /* Table */
+        .section-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#f0ece4; margin-bottom:16px; }
+        .table-wrap { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        thead { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.07); }
+        th { padding:12px 18px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#6b7280; text-align:left; font-family:'Syne',sans-serif; }
+        td { padding:12px 18px; font-size:13px; color:#d1d5db; border-bottom:1px solid rgba(255,255,255,0.04); }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:rgba(255,255,255,0.02); }
+        .td-player { color:#f0ece4; font-weight:500; }
+        .badge-white { padding:3px 10px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:100px; font-size:11px; font-weight:600; color:#f0ece4; }
+        .badge-black { padding:3px 10px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:100px; font-size:11px; font-weight:600; color:#9ca3af; }
+        .badge-draw { padding:3px 10px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:100px; font-size:11px; font-weight:600; color:#60a5fa; }
+        .btn-watch { padding:5px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:7px; color:#9ca3af; font-size:12px; text-decoration:none; transition:all 0.2s; }
+        .btn-watch:hover { background:rgba(124,58,237,0.12); border-color:rgba(124,58,237,0.4); color:#a78bfa; }
+        .empty-row { text-align:center; color:#4b5563; padding:32px !important; }
+    </style>
     </head>
     <body class="cm-body">
-
         <%- include("../partials/navbar") %>
+        <main>
+            <div class="page-wrap">
 
-        <main class="cm-page">
-            <div class="cm-container">
-                <div class="cm-page-head">
+                <div class="page-head">
                     <div>
-                        <span class="cm-kicker">Player Profile</span>
-                        <h1><%= user.username %></h1>
-                        <p>Your account, rating, and future match
-                            statistics.</p>
+                        <span class="kicker">Player Profile</span>
+                        <h1 class="page-title"><%= user.username %></h1>
+                        <p class="page-sub"><%= user.email %></p>
                     </div>
-
-                    <form action="/logout" method="POST">
-                        <button type="submit"
-                            class="cm-btn cm-btn-secondary">Logout</button>
-                        <a href="/settings" class="cm-btn cm-btn-secondary">⚙
-                            Settings</a>
-                    </form>
+                    <div class="head-actions">
+                        <a href="/settings" class="btn-secondary">⚙ Settings</a>
+                        <form action="/logout" method="POST" style="margin:0;">
+                            <button type="submit"
+                                class="btn-danger">Logout</button>
+                        </form>
+                    </div>
                 </div>
 
-                <section class="cm-profile-grid">
-                    <article>
-                        <span>Email</span>
-                        <strong><%= user.email %></strong>
-                    </article>
-                    <article>
-                        <span>Rapid Rating</span>
-                        <strong><%= user.rapidRating || 1200%></strong>
-                    </article>
+                <!-- STATS -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Rapid Rating</div>
+                        <div class="stat-value purple"><%= user.rapidRating ||
+                            1200 %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Blitz Rating</div>
+                        <div class="stat-value blue"><%= user.blitzRating ||
+                            1200 %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Bullet Rating</div>
+                        <div class="stat-value yellow"><%= user.bulletRating ||
+                            1200 %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Games Played</div>
+                        <div class="stat-value"><%= user.gamesPlayed %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Wins</div>
+                        <div class="stat-value green"><%= user.wins %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Losses</div>
+                        <div class="stat-value red"><%= user.losses %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Draws</div>
+                        <div class="stat-value"><%= user.draws %></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Role</div>
+                        <div class="stat-value" style="font-size:16px;"><%=
+                            user.role %></div>
+                    </div>
+                </div>
 
-                    <article>
-                        <span>Blitz Rating</span>
-                        <strong><%= user.blitzRating || 1200 %></strong>
-                    </article>
-
-                    <article>
-                        <span>Bullet Rating</span>
-                        <strong><%= user.bulletRating || 1200 %></strong>
-                    </article>
-                    <article>
-                        <span>Role</span>
-                        <strong><%= user.role %></strong>
-                    </article>
-                    <article>
-                        <span>Games Played</span>
-                        <strong><%= user.gamesPlayed %></strong>
-                    </article>
-
-                    <article>
-                        <span>Wins</span>
-                        <strong><%= user.wins %></strong>
-                    </article>
-
-                    <article>
-                        <span>Losses</span>
-                        <strong><%= user.losses %></strong>
-                    </article>
-
-                    <article>
-                        <span>Draws</span>
-                        <strong><%= user.draws %></strong>
-                    </article>
-                </section>
-
-                <section class="cm-table-wrap" style="margin-top: 28px;">
-                    <table class="cm-table">
+                <!-- GAME HISTORY -->
+                <div class="section-title">Recent Games</div>
+                <div class="table-wrap">
+                    <table>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -85,40 +126,41 @@
                                 <th>Replay</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <% if (!games || games.length === 0) { %>
-                            <tr>
-                                <td colspan="6">No saved games yet.</td>
-                            </tr>
+                            <tr><td colspan="7" class="empty-row">No saved games
+                                    yet — go play!</td></tr>
                             <% } else { %>
                             <% games.forEach((game, index) => { %>
                             <tr>
-                                <td><%= index + 1 %></td>
-                                <td><%= game.whitePlayer %></td>
-                                <td><%= game.blackPlayer %></td>
-                                <td><%= game.winner %></td>
+                                <td style="color:#4b5563;"><%= index + 1 %></td>
+                                <td class="td-player"><%= game.whitePlayer
+                                    %></td>
+                                <td class="td-player"><%= game.blackPlayer
+                                    %></td>
+                                <td>
+                                    <% if (game.winner === "white") { %><span
+                                        class="badge-white">⬜ White</span>
+                                    <% } else if (game.winner === "black") {
+                                    %><span class="badge-black">⬛ Black</span>
+                                    <% } else { %><span
+                                        class="badge-draw">Draw</span><% } %>
+                                </td>
                                 <td><%= game.totalMoves %></td>
                                 <td><%= new
                                     Date(game.createdAt).toLocaleDateString()
                                     %></td>
+                                <td><a href="/game/<%= game._id %>"
+                                        class="btn-watch">▶ Watch</a></td>
                             </tr>
-                            <td>
-                                <a href="/game/<%= game._id %>"
-                                    class="cm-btn cm-btn-secondary"
-                                    style="padding:4px 12px;font-size:13px;">
-                                    ▶ Watch
-                                </a>
-                            </td>
                             <% }) %>
                             <% } %>
                         </tbody>
                     </table>
-                </section>
+                </div>
+
             </div>
         </main>
-
         <%- include("../partials/footer") %>
-
     </body>
 </html>

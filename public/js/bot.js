@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────
-//  ChessMaster — Bot Manager (bot.js)
-// ─────────────────────────────────────────────
-
 const BOTS = Array.from({ length: 32 }, (_, i) => {
   const rating    = Math.round(100 + (i * (3200 - 100)) / 31);
   const skill     = Math.round((i / 31) * 20);
@@ -15,11 +11,10 @@ let isBotMode   = false;
 let selectedBot = null;
 let stockfish   = null;
 
-// ── Expose so board.js checks work ───────────
 window.isBotMode   = () => isBotMode;
 window.selectedBot = () => selectedBot;
+window.PLAYER_COLOR = "w";
 
-// ── Bot grid builder ──────────────────────────
 function buildBotGrid() {
   const botGrid = document.getElementById("botGrid");
   if (!botGrid) return;
@@ -46,7 +41,6 @@ function buildBotGrid() {
   });
 }
 
-// ── Stockfish ─────────────────────────────────
 function initStockfish() {
   if (stockfish) return;
   stockfish = new Worker("/js/stockfish.js");
@@ -83,33 +77,10 @@ function applyBotMove(uciMove) {
   if (move) afterSuccessfulMove(move);
 }
 
-// ── Bot hook called from board.js ─────────────
 window._botHook = function() {
   if (!isBotMode || !selectedBot || !gameStarted || gameOver) return;
-  if (game.turn() === "b") setTimeout(askBotMove, 100);
-};
-
-// ── PATCH board.js confirmPlayersBtn ─────────
-// board.js already has a listener on confirmPlayersBtn that shows gameArea.
-// We intercept BEFORE it runs (capture phase) to fill bot name.
-confirmPlayersBtn.addEventListener("click", () => {
-  if (isBotMode && selectedBot) {
-    blackPlayerInput.value = `${selectedBot.name} (${selectedBot.rating})`;
-    initStockfish();
+  const botColor = window.PLAYER_COLOR === "b" ? "w" : "b";
+  if (game.turn() === botColor) {
+    setTimeout(askBotMove, 100);
   }
-}, true); // true = capture phase, runs before board.js listener
-
-// ── PATCH board.js changeTimeBtn ──────────────
-// board.js changeTimeBtn shows timeControlScreen directly.
-// We override it to go back to gameModeScreen instead.
-changeTimeBtn.addEventListener("click", () => {
-  // board.js listener already ran (it hides gameArea, shows timeControlScreen)
-  // We just additionally show gameModeScreen and hide timeControlScreen
-  setTimeout(() => {
-    timeControlScreen.style.display = "none";
-    document.getElementById("gameModeScreen").style.display = "block";
-    isBotMode   = false;
-    selectedBot = null;
-  }, 0);
-});
-
+};

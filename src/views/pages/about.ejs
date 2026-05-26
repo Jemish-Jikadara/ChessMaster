@@ -5,70 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChessMaster | About</title>
     <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body class="cm-body">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
 
+        /* ── HERO ── */
+        .about-hero { position: relative; overflow: hidden; padding: 120px 24px 80px; }
+        .about-hero::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
+        .about-hero::after { content: ''; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%); bottom: 0; left: 5%; pointer-events: none; }
+
+        .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+        @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
+
+        .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #a78bfa; margin-bottom: 12px; display: block; font-family: 'Syne', sans-serif; }
+
+        .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+
+        .grad { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .hero-desc { font-size: 15px; color: #9ca3af; line-height: 1.7; margin-bottom: 32px; }
+
+        /* Tech stack pills */
+        .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill { padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+        .pill-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; }
+        .pill-blue   { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.3);  color: #60a5fa; }
+        .pill-green  { background: rgba(16,185,129,0.15);  border: 1px solid rgba(16,185,129,0.3);  color: #34d399; }
+        .pill-pink   { background: rgba(236,72,153,0.15);  border: 1px solid rgba(236,72,153,0.3);  color: #f472b6; }
+        .pill-yellow { background: rgba(245,158,11,0.15);  border: 1px solid rgba(245,158,11,0.3);  color: #fbbf24; }
+        .pill-cyan   { background: rgba(6,182,212,0.15);   border: 1px solid rgba(6,182,212,0.3);   color: #22d3ee; }
+
+        /* Right panel */
+        .hero-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; }
+        .panel-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0ece4; margin-bottom: 20px; }
+
+        .feature-list { display: flex; flex-direction: column; gap: 12px; }
+        .feature-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; transition: border-color 0.2s, background 0.2s; }
+        .feature-item:hover { border-color: rgba(124,58,237,0.3); background: rgba(124,58,237,0.05); }
+        .fi-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .fi-1 { background: rgba(124,58,237,0.15); }
+        .fi-2 { background: rgba(59,130,246,0.15); }
+        .fi-3 { background: rgba(16,185,129,0.15); }
+        .fi-4 { background: rgba(245,158,11,0.15); }
+        .fi-5 { background: rgba(236,72,153,0.15); }
+        .fi-6 { background: rgba(6,182,212,0.15); }
+        .fi-content h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #f0ece4; margin-bottom: 3px; }
+        .fi-content p { font-size: 12px; color: #9ca3af; line-height: 1.5; }
+
+        /* ── STATS SECTION ── */
+        .stats-wrap { border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
+        .stats-inner { max-width: 1100px; margin: 0 auto; padding: 60px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        @media (max-width: 768px) { .stats-inner { grid-template-columns: repeat(2, 1fr); } }
+
+        .stat-card { text-align: center; padding: 24px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; }
+        .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; }
+        .stat-label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; }
+        .sn-1 { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .sn-2 { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .sn-3 { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .sn-4 { background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* ── TECH STACK ── */
+        .tech-section { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
+        .section-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+        .badge-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; }
+        .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: #f0ece4; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .section-sub { font-size: 14px; color: #9ca3af; margin-bottom: 40px; line-height: 1.6; }
+
+        .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        @media (max-width: 768px) { .tech-grid { grid-template-columns: 1fr; } }
+
+        .tech-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px; transition: border-color 0.2s, transform 0.2s; }
+        .tech-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-3px); }
+        .tc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .tc-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .tc-label { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+        .tc-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece4; }
+        .tc-desc { font-size: 12px; color: #9ca3af; line-height: 1.6; }
+
+        /* ── CTA ── */
+        .cta-wrap { padding: 80px 24px; text-align: center; position: relative; overflow: hidden; }
+        .cta-wrap::before { content: ''; position: absolute; width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .cta-inner { position: relative; z-index: 1; max-width: 500px; margin: 0 auto; }
+        .cta-inner h2 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .cta-inner p { font-size: 15px; color: #9ca3af; margin-bottom: 28px; line-height: 1.6; }
+        .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary { padding: 13px 26px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
+        .btn-secondary { padding: 13px 26px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #f0ece4; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+    </style>
+  </head>
+
+  <body class="cm-body">
     <%- include("../partials/navbar") %>
 
     <main>
-      <section class="cm-page-hero">
-        <div class="cm-container cm-about-grid">
-          <div>
-            <span class="cm-kicker">About Project</span>
-            <h1>A full-stack chess platform built for serious players.</h1>
-            <p>
-              ChessMaster is a browser-based chess project built without React.
-              It uses EJS pages, JavaScript board logic, Express routes, and
-              MongoDB
-              for storing match results.
-            </p>
 
-            <div class="cm-tech-grid">
-              <div>
-                <strong>Frontend</strong>
-                <span>HTML, EJS, CSS, JavaScript</span>
-              </div>
-              <div>
-                <strong>Backend</strong>
-                <span>Node.js, Express.js, MongoDB</span>
-              </div>
+      <!-- HERO -->
+      <section class="about-hero">
+        <div class="hero-inner">
+          <div>
+            <span class="kicker">About ChessMaster</span>
+            <h1 class="hero-title">
+              A full-stack chess platform<br>
+              <span class="grad">built for real players.</span>
+            </h1>
+            <p class="hero-desc">
+              ChessMaster is a browser-based chess platform built without React
+              — pure EJS, vanilla JavaScript, Express routes, and MongoDB. Real
+              chess logic, real AI, real games.
+            </p>
+            <div class="tech-pills">
+              <span class="pill pill-purple">Node.js</span>
+              <span class="pill pill-blue">Express.js</span>
+              <span class="pill pill-green">MongoDB</span>
+              <span class="pill pill-pink">EJS</span>
+              <span class="pill pill-yellow">JavaScript</span>
+              <span class="pill pill-cyan">Stockfish</span>
             </div>
           </div>
 
-          <div class="cm-panel">
-            <h2>Project Features</h2>
-
-            <div class="cm-feature-list">
-              <article>
-                <h3>Interactive Chess Board</h3>
-                <p>Custom 8x8 board with clickable pieces, legal move dots, and
-                  check highlight.</p>
-              </article>
-
-              <article>
-                <h3>Legal Move Validation</h3>
-                <p>Chess rules are handled with chess.js for moves, turns,
-                  check, checkmate, and draw.</p>
-              </article>
-
-              <article>
-                <h3>MongoDB Leaderboard</h3>
-                <p>Saved games are stored in MongoDB and shown on the
-                  leaderboard page.</p>
-              </article>
-
-              <article>
-                <h3>Future Platform Features</h3>
-                <p>Authentication, online multiplayer, Elo ratings, reviews, and
-                  player preferences.</p>
-              </article>
+          <div class="hero-panel">
+            <div class="panel-title">What's inside</div>
+            <div class="feature-list">
+              <div class="feature-item">
+                <div class="fi-icon fi-1">♟</div>
+                <div class="fi-content">
+                  <h4>Interactive Chess Board</h4>
+                  <p>Click or drag pieces, legal move hints, check highlights,
+                    drag & drop support.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon fi-2">🤖</div>
+                <div class="fi-content">
+                  <h4>32 AI Bots (Stockfish)</h4>
+                  <p>Bots from 100 to 3200 rating powered by Stockfish — the
+                    world's best chess engine.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon fi-3">▶</div>
+                <div class="fi-content">
+                  <h4>Game Replay</h4>
+                  <p>Every game is auto-saved and replayable — step through
+                    moves anytime.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon fi-4">⏱</div>
+                <div class="fi-content">
+                  <h4>Time Controls</h4>
+                  <p>Rapid, Blitz, Bullet — full clock support with
+                    increment.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon fi-5">🎨</div>
+                <div class="fi-content">
+                  <h4>Board Themes</h4>
+                  <p>6 board themes saved per user — Classic, Midnight, Forest,
+                    Ocean, Ruby, Walnut.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon fi-6">🏆</div>
+                <div class="fi-content">
+                  <h4>Leaderboard & Profile</h4>
+                  <p>All games saved to MongoDB — track wins, losses, draws, and
+                    ratings.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      <div class="divider"></div>
+
+      <!-- STATS -->
+      <div class="stats-wrap">
+        <div class="stats-inner">
+          <div class="stat-card">
+            <div class="stat-num sn-1">32</div>
+            <div class="stat-label">AI Bots</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num sn-2">6</div>
+            <div class="stat-label">Board Themes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num sn-3">3</div>
+            <div class="stat-label">Time Modes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num sn-4">100%</div>
+            <div class="stat-label">Free</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- TECH STACK -->
+      <div class="tech-section">
+        <div class="section-badge badge-purple">⚙ Tech Stack</div>
+        <h2 class="section-title">Built with modern web tech</h2>
+        <p class="section-sub">No React, no Next.js — just clean server-side
+          rendering with real chess logic.</p>
+
+        <div class="tech-grid">
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(124,58,237,0.15);">🟢</div>
+              <div>
+                <div class="tc-label">Runtime</div>
+                <div class="tc-name">Node.js</div>
+              </div>
+            </div>
+            <p class="tc-desc">Server-side JavaScript runtime powering the
+              entire backend.</p>
+          </div>
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(59,130,246,0.15);">⚡</div>
+              <div>
+                <div class="tc-label">Framework</div>
+                <div class="tc-name">Express.js</div>
+              </div>
+            </div>
+            <p class="tc-desc">Handles routing, middleware, sessions, and API
+              endpoints.</p>
+          </div>
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(16,185,129,0.15);">🍃</div>
+              <div>
+                <div class="tc-label">Database</div>
+                <div class="tc-name">MongoDB</div>
+              </div>
+            </div>
+            <p class="tc-desc">Stores users, games, ratings, and settings with
+              Mongoose ODM.</p>
+          </div>
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(245,158,11,0.15);">📄</div>
+              <div>
+                <div class="tc-label">Templating</div>
+                <div class="tc-name">EJS</div>
+              </div>
+            </div>
+            <p class="tc-desc">Server-side HTML rendering with dynamic data
+              injection.</p>
+          </div>
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(236,72,153,0.15);">♟</div>
+              <div>
+                <div class="tc-label">Chess Logic</div>
+                <div class="tc-name">Chess.js</div>
+              </div>
+            </div>
+            <p class="tc-desc">Legal move validation, check, checkmate, draw
+              detection.</p>
+          </div>
+          <div class="tech-card">
+            <div class="tc-head">
+              <div class="tc-icon"
+                style="background:rgba(6,182,212,0.15);">🤖</div>
+              <div>
+                <div class="tc-label">AI Engine</div>
+                <div class="tc-name">Stockfish</div>
+              </div>
+            </div>
+            <p class="tc-desc">World's strongest chess engine running in the
+              browser via WebAssembly Worker.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-wrap">
+        <div class="cta-inner">
+          <div class="section-badge badge-purple" style="margin: 0 auto 20px;">♟
+            Try it</div>
+          <h2>
+            Ready to play?<br>
+            <span class="grad">Make your move.</span>
+          </h2>
+          <p>Jump in and start playing — free forever.</p>
+          <div class="cta-btns">
+            <a href="/play" class="btn-primary">♟ Play Now</a>
+            <a href="/leaderboard" class="btn-secondary">View Leaderboard →</a>
+          </div>
+        </div>
+      </div>
+
     </main>
 
     <%- include("../partials/footer") %>
-
   </body>
 </html>

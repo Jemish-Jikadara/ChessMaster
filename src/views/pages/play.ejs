@@ -6,154 +6,180 @@
         <title>ChessMaster | Play</title>
         <link rel="stylesheet" href="/css/style.css">
         <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
             rel="stylesheet">
         <style>
-        :root {
-            --gold: #c9a84c;
-            --gold-light: #e8c97a;
-            --gold-dim: rgba(201,168,76,0.15);
-            --gold-border: rgba(201,168,76,0.3);
-            --surface: #0f0f0f;
-            --surface-2: #161616;
-            --surface-3: #1e1e1e;
-            --surface-4: #262626;
-            --text: #f0ece4;
-            --text-muted: #7a7570;
-            --text-dim: #4a4642;
-            --red: #b91c1c;
-            --red-light: #ef4444;
-        }
-        .play-wrap { min-height: 100vh; background: var(--surface); font-family: 'Inter', sans-serif; color: var(--text); }
-        .play-screen { max-width: 900px; margin: 0 auto; padding: 60px 24px 80px; animation: fadeUp 0.45s ease both; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
-        .play-kicker { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: block; }
-        .play-title { font-family: 'Cinzel', serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; color: var(--text); margin: 0 0 10px; line-height: 1.1; }
-        .play-sub { color: var(--text-muted); font-size: 15px; font-weight: 300; margin: 0 0 48px; }
-        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
+
+        /* ── SCREEN BASE ── */
+        .play-screen { max-width: 860px; margin: 0 auto; padding: 80px 24px; animation: fadeUp 0.4s ease both; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .kicker { font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #a78bfa; margin-bottom: 10px; display: block; }
+        .screen-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: #f0ece4; margin: 0 0 10px; letter-spacing: -0.02em; line-height: 1.1; }
+        .screen-sub { color: #6b7280; font-size: 15px; margin: 0 0 44px; line-height: 1.6; }
+
+        /* ── MODE CARDS ── */
+        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         @media (max-width: 560px) { .mode-grid { grid-template-columns: 1fr; } }
-        .mode-card { background: var(--surface-2); border: 1px solid #2a2a2a; border-radius: 16px; padding: 36px 28px; cursor: pointer; transition: border-color 0.25s, background 0.25s, transform 0.2s; position: relative; overflow: hidden; }
-        .mode-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top left, var(--gold-dim), transparent 70%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-        .mode-card:hover { border-color: var(--gold-border); background: var(--surface-3); transform: translateY(-3px); }
+
+        .mode-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 36px 28px; cursor: pointer; transition: border-color 0.25s, background 0.25s, transform 0.2s; position: relative; overflow: hidden; }
+        .mode-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .mode-card.friend::before { background: radial-gradient(ellipse at top left, rgba(124,58,237,0.12), transparent 70%); }
+        .mode-card.bot::before { background: radial-gradient(ellipse at top left, rgba(236,72,153,0.12), transparent 70%); }
+        .mode-card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); transform: translateY(-3px); }
         .mode-card:hover::before { opacity: 1; }
-        .mode-icon { font-size: 2.4rem; margin-bottom: 16px; display: block; }
-        .mode-card h3 { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600; color: var(--text); margin: 0 0 8px; }
-        .mode-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0 0 24px; }
-        .mode-btn { width: 100%; padding: 12px; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 8px; color: var(--gold-light); font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s; }
-        .mode-btn:hover { background: var(--gold); border-color: var(--gold); color: #0f0f0f; }
+
+        .mode-icon { font-size: 2.6rem; margin-bottom: 16px; display: block; }
+        .mode-card h3 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: #f0ece4; margin: 0 0 8px; }
+        .mode-card p { font-size: 13px; color: #9ca3af; line-height: 1.6; margin: 0 0 24px; }
+
+        .mode-btn-friend { width: 100%; padding: 13px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.35); border-radius: 10px; color: #a78bfa; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
+        .mode-btn-friend:hover { background: linear-gradient(135deg, #7c3aed, #6d28d9); border-color: #7c3aed; color: #fff; }
+
+        .mode-btn-bot { width: 100%; padding: 13px; background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); border-radius: 10px; color: #f472b6; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
+        .mode-btn-bot:hover { background: linear-gradient(135deg, #ec4899, #db2777); border-color: #ec4899; color: #fff; }
+
+        /* ── BOT GRID ── */
         .bot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 32px; }
-        .bot-card { background: var(--surface-2); border: 1px solid #222; border-radius: 12px; padding: 16px 10px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; }
-        .bot-card:hover { border-color: var(--gold-border); background: var(--surface-3); transform: translateY(-2px); }
-        .bot-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+        .bot-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px 10px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+        .bot-card:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.07); transform: translateY(-2px); }
+        .bot-card.selected { border-color: #7c3aed; background: rgba(124,58,237,0.12); }
         .bot-card .bot-icon { font-size: 1.5rem; margin-bottom: 6px; }
-        .bot-card .bot-name { font-size: 12px; font-weight: 600; color: var(--text); }
-        .bot-card .bot-rating { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); font-weight: 600; margin: 2px 0; }
-        .bot-card .bot-title { font-size: 10px; color: var(--text-muted); }
+        .bot-card .bot-name { font-size: 12px; font-weight: 600; color: #f0ece4; }
+        .bot-card .bot-rating { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin: 2px 0; }
+        .bot-card .bot-title { font-size: 10px; color: #6b7280; }
         .bot-card[data-level="beginner"] .bot-rating { color: #6ee7b7; }
         .bot-card[data-level="novice"] .bot-rating { color: #93c5fd; }
         .bot-card[data-level="intermediate"] .bot-rating { color: #c4b5fd; }
-        .bot-card[data-level="club"] .bot-rating { color: var(--gold); }
+        .bot-card[data-level="club"] .bot-rating { color: #fbbf24; }
         .bot-card[data-level="advanced"] .bot-rating { color: #fb923c; }
         .bot-card[data-level="expert"] .bot-rating { color: #f87171; }
         .bot-card[data-level="master"] .bot-rating { color: #e879f9; }
         .bot-card[data-level="gm"] .bot-rating { color: #fff; }
-        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+
+        /* ── TIME CONTROL ── */
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 32px; }
         @media (max-width: 600px) { .time-grid { grid-template-columns: 1fr; } }
-        .time-card { background: var(--surface-2); border: 1px solid #222; border-radius: 14px; padding: 28px 20px; }
-        .time-card h3 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--text); margin: 0 0 6px; }
-        .time-card p { font-size: 12px; color: var(--text-muted); margin: 0 0 18px; line-height: 1.5; }
+
+        .time-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px 18px; transition: border-color 0.2s; }
+        .time-card:hover { border-color: rgba(255,255,255,0.14); }
+        .time-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece4; margin: 0 0 6px; }
+        .time-card p { font-size: 12px; color: #6b7280; margin: 0 0 16px; line-height: 1.5; }
         .time-btns { display: flex; flex-direction: column; gap: 8px; }
-        .time-btns button { padding: 10px; background: transparent; border: 1px solid #2e2e2e; border-radius: 8px; color: var(--text-muted); font-family: 'Cinzel', serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-        .time-btns button:hover { border-color: var(--gold-border); color: var(--gold-light); background: var(--gold-dim); }
+        .time-btns button { padding: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #9ca3af; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .time-btns button:hover { border-color: rgba(124,58,237,0.5); color: #a78bfa; background: rgba(124,58,237,0.08); }
+
+        /* ── PLAYER SETUP ── */
         .player-form { max-width: 440px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 16px; }
-        .player-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; }
-        .player-form input { padding: 14px 16px; background: var(--surface-2); border: 1px solid #2a2a2a; border-radius: 10px; color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
-        .player-form input:focus { border-color: var(--gold-border); }
-        .player-form input::placeholder { color: var(--text-dim); }
-        .back-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 28px; padding: 10px 20px; background: transparent; border: 1px solid #2a2a2a; border-radius: 8px; color: var(--text-muted); font-size: 13px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
-        .back-btn:hover { border-color: #444; color: var(--text); }
-        .continue-btn { padding: 14px; background: var(--gold); border: none; border-radius: 10px; color: #0f0f0f; font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.08em; cursor: pointer; font-weight: 600; transition: background 0.2s, transform 0.15s; margin-top: 8px; }
-        .continue-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
-        .game-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; animation: fadeUp 0.4s ease both; }
+        .player-form label { display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-family: 'Syne', sans-serif; letter-spacing: 0.12em; color: #6b7280; text-transform: uppercase; }
+        .player-form input { padding: 14px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #f0ece4; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+        .player-form input:focus { border-color: rgba(124,58,237,0.5); }
+        .player-form input::placeholder { color: #374151; }
+
+        .continue-btn { padding: 14px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); margin-top: 8px; }
+        .continue-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #6b7280; font-size: 13px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+        .back-btn:hover { border-color: rgba(255,255,255,0.2); color: #f0ece4; }
+
+        /* ── GAME LAYOUT ── */
+        .game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; animation: fadeUp 0.4s ease both; }
         @media (max-width: 900px) { .game-layout { grid-template-columns: 1fr; } }
-        .board-shell { background: var(--surface-2); border: 1px solid #222; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-        .player-strip { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--surface-3); border-radius: 10px; border: 1px solid #252525; }
-        .player-strip .ps-left { display: flex; align-items: center; gap: 12px; }
-        .ps-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .ps-avatar.white-av { background: #e8e0d4; }
-        .ps-avatar.black-av { background: #2a2a2a; border: 1px solid #3a3a3a; }
-        .ps-name { font-size: 14px; font-weight: 500; color: var(--text); }
-        .ps-thinking { font-size: 11px; color: var(--gold); display: none; animation: pulse 1.2s ease-in-out infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .ps-clock { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; color: var(--text); min-width: 70px; text-align: right; }
-        .player-strip.active-turn { border-color: var(--gold-border); background: rgba(201,168,76,0.06); }
-        .player-strip.active-turn .ps-clock { color: var(--gold-light); }
-        .player-strip.low-time .ps-clock { color: var(--red-light); }
+
+        /* Board shell */
+        .board-shell { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+        /* Player strips */
+        .player-strip { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.07); transition: border-color 0.2s, background 0.2s; }
+        .player-strip .ps-left { display: flex; align-items: center; gap: 10px; }
+        .ps-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+        .ps-avatar.white-av { background: #e8e0d4; color: #1a1a1a; }
+        .ps-avatar.black-av { background: #1a1a1a; border: 1px solid #333; color: #f0ece4; }
+        .ps-name { font-size: 14px; font-weight: 500; color: #f0ece4; }
+        .ps-thinking { font-size: 11px; color: #a78bfa; display: none; animation: pulse 1.2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .ps-clock { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #f0ece4; min-width: 70px; text-align: right; }
+        .player-strip.active-turn { border-color: rgba(124,58,237,0.5); background: rgba(124,58,237,0.06); }
+        .player-strip.active-turn .ps-clock { color: #a78bfa; }
+        .player-strip.low-time .ps-clock { color: #ef4444; }
+
+        /* Status bar */
         .board-status { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
-        .status-turn { color: var(--text-muted); }
-        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
+        .status-turn { color: #6b7280; }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-family: 'Syne', sans-serif; font-weight: 600; }
         .status-badge.active { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
         .status-badge.check { background: rgba(250,204,21,0.1); color: #facc15; border: 1px solid rgba(250,204,21,0.2); }
         .status-badge.over { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+
+        /* Board */
         .board-scroll { width: 100%; aspect-ratio: 1; }
-        #chessBoard { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #2a2a2a; }
+        .cm-game-board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid rgba(255,255,255,0.08); }
+
+        /* Action buttons */
         .board-actions { display: flex; gap: 10px; }
-        .action-btn { flex: 1; padding: 11px; border-radius: 9px; font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
-        .action-btn.primary { background: var(--gold); border: none; color: #0f0f0f; font-weight: 600; }
-        .action-btn.primary:hover { background: var(--gold-light); }
-        .action-btn.primary:disabled { background: #2a2a2a; color: var(--text-dim); cursor: not-allowed; }
-        .action-btn.secondary { background: transparent; border: 1px solid #2e2e2e; color: var(--text-muted); }
-        .action-btn.secondary:hover { border-color: #444; color: var(--text); }
-        .game-over-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.75); border-radius: 20px; display: none; place-items: center; backdrop-filter: blur(4px); z-index: 50; }
-        .game-over-card { background: var(--surface-3); border: 1px solid var(--gold-border); border-radius: 16px; padding: 40px 36px; text-align: center; max-width: 320px; width: 90%; }
-        .game-over-card .go-kicker { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
-        .game-over-card h2 { font-family: 'Cinzel', serif; font-size: 26px; color: var(--text); margin: 0 0 8px; }
-        .game-over-card p { color: var(--text-muted); font-size: 14px; margin: 0 0 28px; }
+        .action-btn { flex: 1; padding: 11px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Syne', sans-serif; }
+        .action-btn.primary { background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; color: #fff; box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
+        .action-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.45); }
+        .action-btn.primary:disabled { background: rgba(255,255,255,0.07); color: #374151; cursor: not-allowed; box-shadow: none; }
+        .action-btn.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #6b7280; }
+        .action-btn.secondary:hover { border-color: rgba(255,255,255,0.2); color: #f0ece4; }
+
+        /* Game over overlay */
+        .game-over-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); border-radius: 20px; display: none; place-items: center; backdrop-filter: blur(6px); z-index: 50; }
+        .game-over-card { background: #0f0f1a; border: 1px solid rgba(124,58,237,0.4); border-radius: 18px; padding: 40px 36px; text-align: center; max-width: 320px; width: 90%; box-shadow: 0 0 60px rgba(124,58,237,0.2); }
+        .go-kicker { font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.2em; color: #a78bfa; text-transform: uppercase; margin-bottom: 10px; }
+        .game-over-card h2 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #f0ece4; margin: 0 0 8px; }
+        .game-over-card p { color: #6b7280; font-size: 14px; margin: 0 0 28px; }
         .go-actions { display: flex; gap: 10px; }
-        .history-panel { background: var(--surface-2); border: 1px solid #222; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; max-height: 700px; }
+
+        /* History panel */
+        .history-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px; max-height: 700px; }
         .history-head { display: flex; align-items: flex-start; justify-content: space-between; }
-        .history-head .hh-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 2px; font-family: 'Cinzel', serif; }
-        .history-head h2 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--text); margin: 0; }
-        .move-count-badge { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); font-family: 'Cinzel', serif; font-size: 13px; padding: 4px 10px; border-radius: 20px; }
-        .review-controls { display: flex; align-items: center; gap: 8px; background: var(--surface-3); border-radius: 10px; padding: 10px 12px; }
-        .review-controls button { background: transparent; border: 1px solid #2e2e2e; border-radius: 6px; color: var(--text-muted); padding: 5px 12px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-        .review-controls button:hover:not(:disabled) { border-color: var(--gold-border); color: var(--gold); }
-        .review-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
-        .review-controls span { flex: 1; text-align: center; font-size: 12px; color: var(--text-muted); font-family: 'Cinzel', serif; }
-        .move-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; scrollbar-width: thin; scrollbar-color: #2a2a2a transparent; }
-        .move-history p { color: var(--text-muted); font-size: 13px; }
-        .move-item { background: var(--surface-3); border: 1px solid #252525; border-radius: 8px; padding: 10px 14px; font-size: 13px; }
-        .move-num { color: var(--gold); font-weight: 600; margin-right: 4px; }
-        .move-san { color: var(--text); }
-        .move-sq { color: var(--text-dim); font-size: 11px; margin-left: 6px; }
+        .hh-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 2px; font-family: 'Syne', sans-serif; }
+        .history-head h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #f0ece4; margin: 0; }
+        .move-count-badge { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+        .review-controls { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.06); }
+        .review-controls button { background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #6b7280; padding: 5px 12px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .review-controls button:hover:not(:disabled) { border-color: rgba(124,58,237,0.5); color: #a78bfa; }
+        .review-controls button:disabled { opacity: 0.25; cursor: not-allowed; }
+        .review-controls span { flex: 1; text-align: center; font-size: 12px; color: #6b7280; font-family: 'Syne', sans-serif; }
+        .move-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; scrollbar-width: thin; scrollbar-color: #1f1f1f transparent; }
+        .move-history p { color: #6b7280; font-size: 13px; }
+        .move-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
+        .move-num { color: #a78bfa; font-weight: 700; margin-right: 4px; }
+        .move-san { color: #f0ece4; }
+        .move-sq { color: #374151; font-size: 11px; margin-left: 6px; }
+        
     </style>
     </head>
 
-    <body class="cm-body play-wrap">
+    <body class="cm-body">
         <%- include("../partials/navbar") %>
         <main>
 
             <!-- GAME MODE -->
             <section id="gameModeScreen" class="play-screen">
-                <span class="play-kicker">ChessMaster</span>
-                <h1 class="play-title">Play Chess</h1>
-                <p class="play-sub">Choose your game mode, then select a time
+                <span class="kicker">ChessMaster</span>
+                <h1 class="screen-title">Play Chess</h1>
+                <p class="screen-sub">Choose your game mode, then select a time
                     control.</p>
                 <div class="mode-grid">
-                    <article class="mode-card">
+                    <article class="mode-card friend">
                         <span class="mode-icon">👥</span>
                         <h3>2 Players</h3>
                         <p>Play locally with a friend on the same device.</p>
                         <button type="button" id="selectHumanBtn"
-                            class="mode-btn">Play vs Friend</button>
+                            class="mode-btn-friend">Play vs Friend</button>
                     </article>
-                    <article class="mode-card">
+                    <article class="mode-card bot">
                         <span class="mode-icon">🤖</span>
                         <h3>vs Computer</h3>
                         <p>Challenge one of 32 AI bots from 100 to 3200
                             rating.</p>
                         <button type="button" id="selectBotBtn"
-                            class="mode-btn">Play vs Bot</button>
+                            class="mode-btn-bot">Play vs Bot</button>
                     </article>
                 </div>
             </section>
@@ -161,9 +187,9 @@
             <!-- BOT SELECT -->
             <section id="botSelectScreen" class="play-screen"
                 style="display:none;">
-                <span class="play-kicker">Choose Opponent</span>
-                <h1 class="play-title">Select a Bot</h1>
-                <p class="play-sub">From complete beginner to Super
+                <span class="kicker">Choose Opponent</span>
+                <h1 class="screen-title">Select a Bot</h1>
+                <p class="screen-sub">From complete beginner to Super
                     Grandmaster.</p>
                 <div id="botGrid" class="bot-grid"></div>
                 <div><button type="button" id="backToModeBtn" class="back-btn">←
@@ -173,9 +199,9 @@
             <!-- TIME CONTROL -->
             <section id="timeControlScreen" class="play-screen"
                 style="display:none;">
-                <span class="play-kicker">Time Control</span>
-                <h1 class="play-title">How long to play?</h1>
-                <p class="play-sub">Pick Rapid, Blitz, or Bullet before
+                <span class="kicker">Time Control</span>
+                <h1 class="screen-title">How long to play?</h1>
+                <p class="screen-sub">Pick Rapid, Blitz, or Bullet before
                     starting.</p>
                 <div class="time-grid">
                     <div class="time-card">
@@ -231,9 +257,9 @@
             <!-- PLAYER SETUP -->
             <section id="playerSetupScreen" class="play-screen"
                 style="display:none;">
-                <span class="play-kicker">Players</span>
-                <h1 class="play-title">Who's playing?</h1>
-                <p class="play-sub">Enter player names before starting the
+                <span class="kicker">Players</span>
+                <h1 class="screen-title">Who's playing?</h1>
+                <p class="screen-sub">Enter player names before starting the
                     game.</p>
                 <div class="player-form">
                     <label>♔ White Player
@@ -255,7 +281,6 @@
 
                 <section class="board-shell" style="position:relative;">
 
-                    <!-- BLACK STRIP (top) -->
                     <div class="player-strip" id="blackStrip">
                         <div class="ps-left">
                             <div class="ps-avatar black-av">♚</div>
@@ -279,7 +304,6 @@
                         <div id="chessBoard" class="cm-game-board"></div>
                     </div>
 
-                    <!-- WHITE STRIP (bottom) -->
                     <div class="player-strip" id="whiteStrip">
                         <div class="ps-left">
                             <div class="ps-avatar white-av">♔</div>
@@ -343,24 +367,60 @@
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
         <script>
-  window.BOARD_THEME = "<%= currentUser ? currentUser.boardTheme || 'classic' : 'classic' %>";
-</script>
+        window.BOARD_THEME = "<%= currentUser ? currentUser.boardTheme || 'classic' : 'classic' %>";
+    </script>
         <script src="/js/board.js"></script>
         <script src="/js/bot.js"></script>
 
         <script>
-    // ── Player name sync ──────────────────────────
+    window.PLAYER_COLOR = "w";
+
     function syncPlayerNames() {
         const wn = document.getElementById("whiteName");
         const bn = document.getElementById("blackName");
         if (wn) wn.textContent = whitePlayerInput.value.trim() || "White";
         if (bn) bn.textContent = blackPlayerInput.value.trim() || "Black";
     }
-    confirmPlayersBtn.addEventListener("click", () => {
-        setTimeout(syncPlayerNames, 50);
-    });
 
-    // ── Active turn strips ────────────────────────
+    confirmPlayersBtn.addEventListener("click", () => {
+    if (isBotMode && selectedBot) {
+        const playerName = whitePlayerInput.value.trim() || "Player";
+        const botName = `${selectedBot.name} (${selectedBot.rating})`;
+        const playerIsWhite = Math.random() >= 0.5;
+
+        if (playerIsWhite) {
+            whitePlayerInput.value = playerName;
+            blackPlayerInput.value = botName;
+            window.PLAYER_COLOR = "w";
+        } else {
+            whitePlayerInput.value = botName;
+            blackPlayerInput.value = playerName;
+            window.PLAYER_COLOR = "b";
+        }
+
+        // Stockfish init yahan
+        initStockfish();
+
+        console.log("PLAYER_COLOR:", window.PLAYER_COLOR);
+        console.log("White:", whitePlayerInput.value);
+        console.log("Black:", blackPlayerInput.value);
+    }
+    const wn = document.getElementById("whiteName");
+const bn = document.getElementById("blackName");
+const whiteStrip = document.getElementById("whiteStrip");
+const blackStrip = document.getElementById("blackStrip");
+
+if (window.PLAYER_COLOR === "b") {
+    // Player Black hai — player strip neeche (whiteStrip pe), bot upar (blackStrip pe)
+    if (wn) wn.textContent = blackPlayerInput.value.trim();  // bot upar
+    if (bn) bn.textContent = whitePlayerInput.value.trim();  // player neeche
+} else {
+    // Player White hai — normal
+    if (wn) wn.textContent = whitePlayerInput.value.trim();
+    if (bn) bn.textContent = blackPlayerInput.value.trim();
+}
+});
+
     const whiteStrip = document.getElementById("whiteStrip");
     const blackStrip = document.getElementById("blackStrip");
 
@@ -384,15 +444,14 @@
         });
     };
 
-    // ── Navigation — Play vs Friend ───────────────
     document.getElementById("selectHumanBtn").addEventListener("click", () => {
         isBotMode = false;
         selectedBot = null;
+        window.PLAYER_COLOR = "w";
         document.getElementById("gameModeScreen").style.display = "none";
         timeControlScreen.style.display = "block";
     });
 
-    // ── Navigation — Play vs Bot ──────────────────
     document.getElementById("selectBotBtn").addEventListener("click", () => {
         isBotMode = true;
         document.getElementById("gameModeScreen").style.display = "none";
@@ -400,7 +459,6 @@
         buildBotGrid();
     });
 
-    // ── Back buttons ──────────────────────────────
     document.getElementById("backToModeBtn").addEventListener("click", () => {
         document.getElementById("botSelectScreen").style.display = "none";
         document.getElementById("gameModeScreen").style.display = "block";
@@ -415,5 +473,6 @@
         }
     });
 </script>
+
     </body>
 </html>

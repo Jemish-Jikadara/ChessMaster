@@ -86,12 +86,14 @@ function createBoard() {
 
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
-      const squareName = getSquareName(row, col);
+       const actualRow = window.PLAYER_COLOR === "b" ? 7 - row : row;
+      const actualCol = window.PLAYER_COLOR === "b" ? 7 - col : col;
+      const squareName = getSquareName(actualRow, actualCol);
       const square = document.createElement("div");
       const isLightSquare = (row + col) % 2 === 0;
       const isSelected = selectedSquare === squareName;
       const legalMove = legalMoves.find((move) => move.to === squareName);
-      const piece = board[row][col];
+      const piece = board[actualRow][actualCol];
 
       const isLastMoveSquare =
         !isReviewing &&
@@ -189,8 +191,8 @@ function createBoard() {
 
 function handleSquareClick(squareName) {
   if (!gameStarted || isReviewing || gameOver) return;
-  // Block human move when bot is thinking
-  if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === "b") return;
+  const botColor = (window.PLAYER_COLOR === "b") ? "w" : "b";
+if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === botColor) return;
 
   const piece = game.get(squareName);
 
@@ -229,10 +231,11 @@ function handleDragStart(event, squareName, piece) {
     return;
   }
   // Block drag when bot is thinking
-  if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === "b") {
+ const botColor = (window.PLAYER_COLOR === "b") ? "w" : "b";
+if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === botColor) {
     event.preventDefault();
     return;
-  }
+}
 
   if (!piece || piece.color !== game.turn()) {
     event.preventDefault();
@@ -600,9 +603,16 @@ document.querySelectorAll("[data-mode]").forEach((button) => {
     const bss = document.getElementById("botSelectScreen");
     if (gms) gms.style.display = "none";   // ← ADD
     if (bss) bss.style.display = "none";   // ← ADD
+    if (typeof isBotMode !== "undefined" && isBotMode) {
+    timeControlScreen.style.display = "none";
+    playerSetupScreen.style.display = "none";
+    gameArea.style.display = "grid";
+} else {
+
     timeControlScreen.style.display = "none";
     playerSetupScreen.style.display = "block";
     gameArea.style.display = "none";
+}
   });
 });
 
@@ -630,18 +640,52 @@ confirmPlayersBtn.addEventListener("click", () => {
 });
 
 startGameBtn.addEventListener("click", () => {
-  if (!selectedMode) {
-    alert("Please select a time control first.");
-    return;
-  }
 
-  gameStarted = true;
-  gameOver = false;
-  startGameBtn.disabled = true;
-  startGameBtn.textContent = "Game Started";
+    if (!selectedMode) {
+        alert("Please select a time control first.");
+        return;
+    }
 
-  updateClocks();
-  startTimer();
+    // Bot mode mein random color assign karo yahan
+    if (isBotMode && selectedBot) {
+        const playerName = whitePlayerInput.value.trim() || "Player";
+        const botName = `${selectedBot.name} (${selectedBot.rating})`;
+        const playerIsWhite = Math.random() >= 0.5;
+
+        if (playerIsWhite) {
+            whitePlayerInput.value = playerName;
+            blackPlayerInput.value = botName;
+            window.PLAYER_COLOR = "w";
+        } else {
+            whitePlayerInput.value = botName;
+            blackPlayerInput.value = playerName;
+            window.PLAYER_COLOR = "b";
+        }
+
+        // Player strips update karo
+        const wn = document.getElementById("whiteName");
+        const bn = document.getElementById("blackName");
+        if (window.PLAYER_COLOR === "b") {
+   
+    if (wn) wn.textContent = blackPlayerInput.value.trim();  
+    if (bn) bn.textContent = whitePlayerInput.value.trim();  
+} else {
+    if (wn) wn.textContent = whitePlayerInput.value.trim();
+    if (bn) bn.textContent = blackPlayerInput.value.trim();
+}    
+        initStockfish();
+    }
+
+    gameStarted = true;
+    gameOver = false;
+    startGameBtn.disabled = true;
+    startGameBtn.textContent = "Game Started";
+    updateClocks();
+    startTimer();
+
+    if (typeof window._botHook === "function") {
+        setTimeout(() => window._botHook(), 300);
+    }
 });
 
 // BUG 2 FIX: restartBtn doesn't exist in the HTML, so guard with a null check.

@@ -1,39 +1,55 @@
-<nav class="cm-nav">
-  <div class="cm-nav-inner">
-    <a href="/" class="cm-brand">
-      <span class="cm-brand-icon">♞</span>
-      <span>ChessMaster</span>
+<nav
+  style="background:#0a0a12; border-bottom:1px solid rgba(255,255,255,0.07); position:sticky; top:0; z-index:100; backdrop-filter:blur(10px);">
+  <div
+    style="max-width:1200px; margin:0 auto; padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between;">
+    <a href="/"
+      style="display:flex; align-items:center; gap:8px; text-decoration:none; font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:#f0ece4;">
+      <span style="font-size:22px;">♞</span>
+      ChessMaster
     </a>
 
-    <button class="cm-menu-btn" id="menuBtn" type="button">☰</button>
+    <button id="menuBtn" type="button"
+      style="display:none; background:transparent; border:1px solid rgba(255,255,255,0.1); color:#f0ece4; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:18px;">☰</button>
 
-    <div class="cm-nav-links" id="navLinks">
-      <a href="/">Home</a>
-      <a href="/play">Play</a>
-      <a href="/leaderboard">Leaderboard</a>
-      <a href="/about">About</a>
+    <div id="navLinks" style="display:flex; align-items:center; gap:8px;">
+      <a href="/"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Home</a>
+      <a href="/play"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Play</a>
+      <a href="/leaderboard"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Leaderboard</a>
+      <a href="/about"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">About</a>
 
       <% if (currentUser) { %>
-      <a href="/profile">Profile</a>
-
-      <form action="/logout" method="POST" class="cm-nav-form">
-        <button type="submit">Logout</button>
+      <a href="/profile"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Profile</a>
+      <form action="/logout" method="POST" style="margin:0;">
+        <button type="submit"
+          style="padding:7px 14px; background:transparent; border:1px solid rgba(255,255,255,0.1); color:#9ca3af; font-size:14px; border-radius:8px; cursor:pointer; transition:all 0.2s;">Logout</button>
       </form>
       <% } else { %>
-      <a href="/login">Login</a>
-      <a href="/register" class="cm-nav-cta">Register</a>
+      <a href="/login"
+        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px;">Login</a>
+      <a href="/register"
+        style="padding:8px 18px; background:linear-gradient(135deg,#7c3aed,#ec4899); color:#fff; text-decoration:none; font-size:14px; font-weight:600; border-radius:8px; box-shadow:0 4px 14px rgba(124,58,237,0.3);">Register</a>
       <% } %>
     </div>
   </div>
 </nav>
 
+<style>
+@media (max-width: 768px) {
+  #menuBtn { display:block !important; }
+  #navLinks { display:none !important; flex-direction:column; position:absolute; top:60px; left:0; right:0; background:#0a0a12; border-bottom:1px solid rgba(255,255,255,0.07); padding:16px 24px; gap:4px !important; }
+  #navLinks.cm-open { display:flex !important; }
+}
+</style>
+
 <script>
   const menuBtn = document.getElementById("menuBtn");
   const navLinks = document.getElementById("navLinks");
-
   if (menuBtn && navLinks) {
-    menuBtn.addEventListener("click", () => {
-      navLinks.classList.toggle("cm-open");
-    });
+    menuBtn.addEventListener("click", () => navLinks.classList.toggle("cm-open"));
   }
 </script>
