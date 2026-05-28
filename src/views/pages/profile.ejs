@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ChessMaster | Profile</title>
+        <title>ChessMaster | <%= user.username %></title>
         <link rel="stylesheet" href="/css/style.css">
         <link
             href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
@@ -11,156 +11,340 @@
         <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:#080810; color:#f0ece4; }
-        .page-wrap { max-width:1100px; margin:0 auto; padding:60px 24px 80px; }
-        .page-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px; }
-        .kicker { font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#a78bfa; margin-bottom:8px; display:block; }
-        .page-title { font-family:'Syne',sans-serif; font-size:clamp(2rem,5vw,3rem); font-weight:800; color:#f0ece4; margin:0 0 6px; letter-spacing:-0.02em; }
-        .page-sub { font-size:14px; color:#6b7280; }
-        .head-actions { display:flex; gap:10px; flex-wrap:wrap; }
-        .btn-secondary { padding:10px 20px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#9ca3af; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
-        .btn-secondary:hover { border-color:rgba(255,255,255,0.2); color:#f0ece4; }
-        .btn-danger { padding:10px 20px; background:transparent; border:1px solid rgba(239,68,68,0.25); border-radius:10px; color:#f87171; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; }
-        .btn-danger:hover { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.4); }
 
-        /* Stats grid */
-        .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:32px; }
-        .stat-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:20px 16px; }
-        .stat-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; font-family:'Syne',sans-serif; }
-        .stat-value { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#f0ece4; }
-        .stat-value.purple { background:linear-gradient(135deg,#a78bfa,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .stat-value.blue { background:linear-gradient(135deg,#3b82f6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .stat-value.green { color:#4ade80; }
-        .stat-value.red { color:#f87171; }
-        .stat-value.yellow { color:#fbbf24; }
+        /* ── PROFILE HEADER ── */
+        .profile-header { background: linear-gradient(180deg, rgba(124,58,237,0.08) 0%, transparent 100%); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 60px 24px 40px; }
+        .profile-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 28px; flex-wrap: wrap; }
 
-        /* Table */
-        .section-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:#f0ece4; margin-bottom:16px; }
-        .table-wrap { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden; }
-        table { width:100%; border-collapse:collapse; }
-        thead { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.07); }
-        th { padding:12px 18px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#6b7280; text-align:left; font-family:'Syne',sans-serif; }
-        td { padding:12px 18px; font-size:13px; color:#d1d5db; border-bottom:1px solid rgba(255,255,255,0.04); }
-        tr:last-child td { border-bottom:none; }
-        tr:hover td { background:rgba(255,255,255,0.02); }
-        .td-player { color:#f0ece4; font-weight:500; }
-        .badge-white { padding:3px 10px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:100px; font-size:11px; font-weight:600; color:#f0ece4; }
-        .badge-black { padding:3px 10px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:100px; font-size:11px; font-weight:600; color:#9ca3af; }
-        .badge-draw { padding:3px 10px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:100px; font-size:11px; font-weight:600; color:#60a5fa; }
-        .btn-watch { padding:5px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:7px; color:#9ca3af; font-size:12px; text-decoration:none; transition:all 0.2s; }
-        .btn-watch:hover { background:rgba(124,58,237,0.12); border-color:rgba(124,58,237,0.4); color:#a78bfa; }
-        .empty-row { text-align:center; color:#4b5563; padding:32px !important; }
+        /* Avatar */
+        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #ec4899); display: flex; align-items: center; justify-content: center; font-size: 36px; font-family: 'Syne', sans-serif; font-weight: 800; color: #fff; flex-shrink: 0; border: 3px solid rgba(124,58,237,0.4); box-shadow: 0 0 30px rgba(124,58,237,0.2); }
+
+        /* Info */
+        .profile-info { flex: 1; min-width: 200px; }
+        .profile-username { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: #f0ece4; margin: 0 0 6px; letter-spacing: -0.02em; }
+        .profile-fullname { font-size: 15px; color: #9ca3af; margin-bottom: 8px; }
+        .profile-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+        .meta-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #6b7280; }
+        .profile-bio { font-size: 14px; color: #9ca3af; line-height: 1.6; max-width: 500px; margin-top: 8px; }
+
+        /* Actions */
+        .profile-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+        .btn-primary { padding: 10px 20px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(124,58,237,0.3); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+        .btn-secondary { padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #9ca3af; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: #f0ece4; }
+        .btn-danger { padding: 10px 20px; background: transparent; border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; color: #f87171; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .btn-danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4); }
+
+        /* ── MAIN CONTENT ── */
+        .profile-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+        @media (max-width: 900px) { .profile-body { grid-template-columns: 1fr; } }
+
+        /* ── LEFT COLUMN ── */
+        .section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #f0ece4; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+        .section-title a { font-size: 12px; color: #a78bfa; text-decoration: none; font-weight: 500; }
+        .section-title a:hover { color: #c4b5fd; }
+
+        /* Ratings section */
+        .ratings-section { margin-bottom: 28px; }
+        .ratings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        @media (max-width: 600px) { .ratings-grid { grid-template-columns: 1fr; } }
+
+        .rating-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px 16px; transition: border-color 0.2s, transform 0.2s; }
+        .rating-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
+        .rc-mode { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Syne', sans-serif; margin-bottom: 6px; }
+        .rc-rating { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .rc-rating.purple { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .rc-rating.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .rc-rating.yellow { color: #fbbf24; }
+        .rc-games { font-size: 12px; color: #6b7280; }
+
+        /* Stats row */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+        .stat-mini { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px; text-align: center; }
+        .sm-value { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
+        .sm-value.green { color: #4ade80; }
+        .sm-value.red { color: #f87171; }
+        .sm-value.gray { color: #9ca3af; }
+        .sm-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; font-family: 'Syne', sans-serif; }
+
+        /* Games table */
+        .games-section { }
+        .table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.07); }
+        th { padding: 11px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; text-align: left; font-family: 'Syne', sans-serif; }
+        td { padding: 11px 16px; font-size: 13px; color: #d1d5db; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .td-player { color: #f0ece4; font-weight: 500; }
+        .badge-white { padding: 3px 9px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; font-size: 11px; font-weight: 600; color: #f0ece4; }
+        .badge-black { padding: 3px 9px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-size: 11px; font-weight: 600; color: #9ca3af; }
+        .badge-draw { padding: 3px 9px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 100px; font-size: 11px; font-weight: 600; color: #60a5fa; }
+        .btn-watch { padding: 4px 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; color: #9ca3af; font-size: 12px; text-decoration: none; transition: all 0.2s; }
+        .btn-watch:hover { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+        .empty-row { text-align: center; color: #4b5563; padding: 32px !important; }
+
+        /* Show more */
+        .show-more { text-align: center; padding: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .show-more-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #6b7280; font-size: 13px; padding: 8px 20px; cursor: pointer; transition: all 0.2s; }
+        .show-more-btn:hover { border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+
+        /* ── RIGHT COLUMN ── */
+        .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+        /* Account info card */
+        .info-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; }
+        .info-card-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #f0ece4; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.1em; }
+        .info-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .info-row:last-child { border-bottom: none; }
+        .info-row-label { font-size: 12px; color: #6b7280; }
+        .info-row-value { font-size: 13px; color: #f0ece4; font-weight: 500; }
+
+        /* Theme preview card */
+        .theme-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; }
+        .mini-board { display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 8px; overflow: hidden; margin: 12px 0; }
+        .mb-sq { aspect-ratio: 1; }
     </style>
     </head>
     <body class="cm-body">
         <%- include("../partials/navbar") %>
+
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <div class="profile-header-inner">
+
+                <!-- Avatar — first letter of username -->
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+
+                <!-- Info -->
+                <div class="profile-info">
+                    <h1 class="profile-username"><%= user.username %></h1>
+                    <% if (user.fullName) { %>
+                    <div class="profile-fullname"><%= user.fullName %></div>
+                    <% } %>
+                    <div class="profile-meta">
+                        <% if (user.country) { %>
+                        <span class="meta-pill">🌍 <%= user.country %></span>
+                        <% } %>
+                        <span class="meta-pill">♟ <%= user.gamesPlayed %> games
+                            played</span>
+                        <span class="meta-pill">📅 Joined <%= new
+                            Date(user.createdAt).toLocaleDateString('en-US',
+                            {month:'long', year:'numeric'}) %></span>
+                    </div>
+                    <% if (user.bio) { %>
+                    <p class="profile-bio"><%= user.bio %></p>
+                    <% } %>
+                </div>
+
+                <!-- Actions -->
+                <div class="profile-actions">
+                    <a href="/play" class="btn-primary">♟ Play Now</a>
+                    <a href="/settings" class="btn-secondary">⚙ Settings</a>
+                    <form action="/logout" method="POST" style="margin:0;">
+                        <button type="submit" class="btn-danger">Logout</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAIN BODY -->
         <main>
-            <div class="page-wrap">
+            <div class="profile-body">
 
-                <div class="page-head">
-                    <div>
-                        <span class="kicker">Player Profile</span>
-                        <h1 class="page-title"><%= user.username %></h1>
-                        <p class="page-sub"><%= user.email %></p>
-                    </div>
-                    <div class="head-actions">
-                        <a href="/settings" class="btn-secondary">⚙ Settings</a>
-                        <form action="/logout" method="POST" style="margin:0;">
-                            <button type="submit"
-                                class="btn-danger">Logout</button>
-                        </form>
-                    </div>
-                </div>
+                <!-- LEFT COLUMN -->
+                <div class="left-col">
 
-                <!-- STATS -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Rapid Rating</div>
-                        <div class="stat-value purple"><%= user.rapidRating ||
-                            1200 %></div>
+                    <!-- RATINGS -->
+                    <div class="ratings-section">
+                        <div class="section-title">Ratings</div>
+                        <div class="ratings-grid">
+                            <div class="rating-card">
+                                <div class="rc-mode">⏱ Rapid</div>
+                                <div class="rc-rating purple"><%=
+                                    user.rapidRating || 1200 %></div>
+                                <div class="rc-games">Rating</div>
+                            </div>
+                            <div class="rating-card">
+                                <div class="rc-mode">⚡ Blitz</div>
+                                <div class="rc-rating blue"><%= user.blitzRating
+                                    || 1200 %></div>
+                                <div class="rc-games">Rating</div>
+                            </div>
+                            <div class="rating-card">
+                                <div class="rc-mode">🔥 Bullet</div>
+                                <div class="rc-rating yellow"><%=
+                                    user.bulletRating || 1200 %></div>
+                                <div class="rc-games">Rating</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Blitz Rating</div>
-                        <div class="stat-value blue"><%= user.blitzRating ||
-                            1200 %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Bullet Rating</div>
-                        <div class="stat-value yellow"><%= user.bulletRating ||
-                            1200 %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Games Played</div>
-                        <div class="stat-value"><%= user.gamesPlayed %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Wins</div>
-                        <div class="stat-value green"><%= user.wins %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Losses</div>
-                        <div class="stat-value red"><%= user.losses %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Draws</div>
-                        <div class="stat-value"><%= user.draws %></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Role</div>
-                        <div class="stat-value" style="font-size:16px;"><%=
-                            user.role %></div>
-                    </div>
-                </div>
 
-                <!-- GAME HISTORY -->
-                <div class="section-title">Recent Games</div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>White</th>
-                                <th>Black</th>
-                                <th>Winner</th>
-                                <th>Moves</th>
-                                <th>Date</th>
-                                <th>Replay</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (!games || games.length === 0) { %>
-                            <tr><td colspan="7" class="empty-row">No saved games
-                                    yet — go play!</td></tr>
-                            <% } else { %>
-                            <% games.forEach((game, index) => { %>
-                            <tr>
-                                <td style="color:#4b5563;"><%= index + 1 %></td>
-                                <td class="td-player"><%= game.whitePlayer
-                                    %></td>
-                                <td class="td-player"><%= game.blackPlayer
-                                    %></td>
-                                <td>
-                                    <% if (game.winner === "white") { %><span
-                                        class="badge-white">⬜ White</span>
-                                    <% } else if (game.winner === "black") {
-                                    %><span class="badge-black">⬛ Black</span>
-                                    <% } else { %><span
-                                        class="badge-draw">Draw</span><% } %>
-                                </td>
-                                <td><%= game.totalMoves %></td>
-                                <td><%= new
-                                    Date(game.createdAt).toLocaleDateString()
-                                    %></td>
-                                <td><a href="/game/<%= game._id %>"
-                                        class="btn-watch">▶ Watch</a></td>
-                            </tr>
-                            <% }) %>
+                    <!-- WIN/LOSS/DRAW -->
+                    <div class="stats-row">
+                        <div class="stat-mini">
+                            <div class="sm-value green"><%= user.wins %></div>
+                            <div class="sm-label">Wins</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="sm-value red"><%= user.losses %></div>
+                            <div class="sm-label">Losses</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="sm-value gray"><%= user.draws %></div>
+                            <div class="sm-label">Draws</div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT GAMES -->
+                    <div class="games-section">
+                        <div class="section-title">
+                            Recent Games
+                            <% if (games && games.length >= 10) { %>
+                            <a href="/games/<%= user._id %>">Show all →</a>
                             <% } %>
-                        </tbody>
-                    </table>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>White</th>
+                                        <th>Black</th>
+                                        <th>Winner</th>
+                                        <th>Moves</th>
+                                        <th>Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (!games || games.length === 0) { %>
+                                    <tr><td colspan="7" class="empty-row">No
+                                            games yet — go play! ♟</td></tr>
+                                    <% } else { %>
+                                    <% games.forEach((game, index) => { %>
+                                    <tr>
+                                        <td style="color:#4b5563;"><%= index + 1
+                                            %></td>
+                                        <td class="td-player"><%=
+                                            game.whitePlayer %></td>
+                                        <td class="td-player"><%=
+                                            game.blackPlayer %></td>
+                                        <td>
+                                            <% if (game.winner === "white") {
+                                            %><span class="badge-white">⬜
+                                                White</span>
+                                            <% } else if (game.winner ===
+                                            "black") { %><span
+                                                class="badge-black">⬛
+                                                Black</span>
+                                            <% } else { %><span
+                                                class="badge-draw">Draw</span><%
+                                            } %>
+                                        </td>
+                                        <td><%= game.totalMoves %></td>
+                                        <td><%= new
+                                            Date(game.createdAt).toLocaleDateString()
+                                            %></td>
+                                        <td><a href="/game/<%= game._id %>"
+                                                class="btn-watch">▶</a></td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <% if (games && games.length >= 10) { %>
+                            <div class="show-more">
+                                <button class="show-more-btn"
+                                    onclick="window.location='/games/<%= user._id %>'">Show
+                                    all games →</button>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="right-col">
+
+                    <!-- ACCOUNT INFO -->
+                    <div class="info-card">
+                        <div class="info-card-title">Account</div>
+                        <div class="info-row">
+                            <span class="info-row-label">Email</span>
+                            <span class="info-row-value"
+                                style="font-size:12px;color:#6b7280;"><%=
+                                user.email %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-label">Role</span>
+                            <span class="info-row-value"><%= user.role %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-label">Games Played</span>
+                            <span class="info-row-value"><%= user.gamesPlayed
+                                %></span>
+                        </div>
+                        <% if (user.dateOfBirth) { %>
+                        <div class="info-row">
+                            <span class="info-row-label">Birthday</span>
+                            <span class="info-row-value"><%= new
+                                Date(user.dateOfBirth).toLocaleDateString('en-US',
+                                {month:'long', day:'numeric'}) %></span>
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <!-- BOARD THEME -->
+                    <div class="theme-card">
+                        <div class="info-card-title">Board Theme</div>
+                        <% const themes = { classic:['#f0d9b5','#b58863'],
+                        midnight:['#6b7fa3','#2c3e6b'],
+                        forest:['#ffffdd','#6faa3f'],
+                        ocean:['#d6eaf8','#2e86c1'], ruby:['#f5cba7','#b91c1c'],
+                        walnut:['#e8d5b0','#6b4226'] }; %>
+                        <% const t = themes[user.boardTheme] || themes.classic;
+                        %>
+                        <div class="mini-board">
+                            <% for(let i=0;i<16;i++) { %>
+                            <div class="mb-sq"
+                                style="background:<%= (Math.floor(i/4)+i)%2===0 ? t[0] : t[1] %>;"></div>
+                            <% } %>
+                        </div>
+                        <div
+                            style="font-size:13px;color:#9ca3af;text-align:center;text-transform:capitalize;"><%=
+                            user.boardTheme || 'classic' %></div>
+                        <a href="/settings"
+                            style="display:block;text-align:center;margin-top:12px;font-size:12px;color:#a78bfa;text-decoration:none;">Change
+                            theme →</a>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="info-card">
+                        <div class="info-card-title">Quick Actions</div>
+                        <div
+                            style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+                            <a href="/play" class="btn-primary"
+                                style="justify-content:center;">♟ Play Now</a>
+                            <a href="/settings" class="btn-secondary"
+                                style="justify-content:center;">⚙ Settings</a>
+                            <a href="/leaderboard" class="btn-secondary"
+                                style="justify-content:center;">🏆
+                                Leaderboard</a>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
         </main>
+
         <%- include("../partials/footer") %>
     </body>
 </html>

@@ -8,6 +8,7 @@ async function saveGame(req, res) {
       whitePlayer,
       blackPlayer,
       winner,
+      playerColor,  
       timeMode,
       timeControl,
       increment,
@@ -35,16 +36,20 @@ async function saveGame(req, res) {
       totalMoves,
       moves
     });
-
     const statsUpdate = { $inc: { gamesPlayed: 1 } };
 
-    if (winner === "white") {
-      statsUpdate.$inc.wins = 1;
-    } else if (winner === "black") {
-      statsUpdate.$inc.losses = 1;
-    } else {
-      statsUpdate.$inc.draws = 1;
-    }
+const isPlayerWhite = playerColor === "w";
+
+if (winner === "draw") {
+  statsUpdate.$inc.draws = 1;
+} else if (
+  (winner === "white" && isPlayerWhite) ||
+  (winner === "black" && !isPlayerWhite)
+) {
+  statsUpdate.$inc.wins = 1;
+} else {
+  statsUpdate.$inc.losses = 1;
+}
 
     const updatedUser = await User.findByIdAndUpdate(
       req.session.user.id,
