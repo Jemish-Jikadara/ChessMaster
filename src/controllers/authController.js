@@ -184,7 +184,10 @@ async function loginUser(req, res) {
 
 // ── PROFILE ───────────────────────────────────
 async function showProfile(req, res) {
-  const user = await User.findById(req.session.user.id).lean();
+  const user = await User.findById(req.session.user.id)
+    .populate("friends", "username fullName country")
+    .lean();
+
   const games = await Game.find({
     $or: [
       { whiteUser: req.session.user.id },

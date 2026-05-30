@@ -12,203 +12,281 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:#080810; color:#f0ece4; }
 
-        /* ── PROFILE HEADER ── */
-        .profile-header { background: linear-gradient(180deg, rgba(124,58,237,0.08) 0%, transparent 100%); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 60px 24px 40px; }
-        .profile-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 28px; flex-wrap: wrap; }
+        /* ── HERO BANNER ── */
+        .profile-banner {
+            background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(236,72,153,0.08) 50%, transparent 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 48px 24px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-banner::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%);
+            top: -200px; right: -100px;
+            pointer-events: none;
+        }
+        .banner-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* Avatar */
-        .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #ec4899); display: flex; align-items: center; justify-content: center; font-size: 36px; font-family: 'Syne', sans-serif; font-weight: 800; color: #fff; flex-shrink: 0; border: 3px solid rgba(124,58,237,0.4); box-shadow: 0 0 30px rgba(124,58,237,0.2); }
+        /* Avatar row */
+        .avatar-row { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
+        .profile-avatar {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-family: 'Syne', sans-serif; font-weight: 800; color: #fff;
+            border: 4px solid #080810;
+            box-shadow: 0 0 0 2px rgba(124,58,237,0.4), 0 8px 32px rgba(124,58,237,0.3);
+            flex-shrink: 0;
+        }
+        .avatar-info { flex: 1; padding-bottom: 4px; }
+        .profile-username { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:800; color:#f0ece4; margin:0 0 4px; letter-spacing:-0.02em; }
+        .profile-fullname { font-size:14px; color:#9ca3af; margin-bottom:10px; }
+        .profile-meta { display:flex; flex-wrap:wrap; gap:10px; }
+        .meta-pill { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#6b7280; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); padding:4px 10px; border-radius:100px; }
+        .profile-bio { font-size:14px; color:#9ca3af; line-height:1.6; margin-top:12px; max-width:560px; padding-bottom:20px; }
 
-        /* Info */
-        .profile-info { flex: 1; min-width: 200px; }
-        .profile-username { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: #f0ece4; margin: 0 0 6px; letter-spacing: -0.02em; }
-        .profile-fullname { font-size: 15px; color: #9ca3af; margin-bottom: 8px; }
-        .profile-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-        .meta-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #6b7280; }
-        .profile-bio { font-size: 14px; color: #9ca3af; line-height: 1.6; max-width: 500px; margin-top: 8px; }
+        /* Profile actions */
+        .profile-actions { display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; align-self:flex-start; padding-top:8px; }
 
-        /* Actions */
-        .profile-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
-        .btn-primary { padding: 10px 20px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(124,58,237,0.3); }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
-        .btn-secondary { padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #9ca3af; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: #f0ece4; }
-        .btn-danger { padding: 10px 20px; background: transparent; border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; color: #f87171; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-        .btn-danger:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.4); }
+        /* Tabs */
+        .profile-tabs { display:flex; gap:0; border-top:1px solid rgba(255,255,255,0.06); margin-top:4px; }
+        .tab { padding:14px 20px; font-size:13px; font-weight:600; color:#6b7280; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; font-family:'Syne',sans-serif; text-decoration:none; }
+        .tab.active { color:#f0ece4; border-bottom-color:#a78bfa; }
+        .tab:hover { color:#f0ece4; }
 
-        /* ── MAIN CONTENT ── */
-        .profile-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
-        @media (max-width: 900px) { .profile-body { grid-template-columns: 1fr; } }
+        /* Buttons */
+        .btn-primary { padding:9px 18px; background:linear-gradient(135deg,#7c3aed,#ec4899); border:none; border-radius:9px; color:#fff; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 14px rgba(124,58,237,0.3); }
+        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,58,237,0.4); }
+        .btn-secondary { padding:9px 18px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:9px; color:#9ca3af; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-secondary:hover { border-color:rgba(255,255,255,0.2); color:#f0ece4; }
+        .btn-danger { padding:9px 18px; background:transparent; border:1px solid rgba(239,68,68,0.25); border-radius:9px; color:#f87171; font-size:13px; cursor:pointer; transition:all 0.2s; }
+        .btn-danger:hover { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.4); }
 
-        /* ── LEFT COLUMN ── */
-        .section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #f0ece4; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
-        .section-title a { font-size: 12px; color: #a78bfa; text-decoration: none; font-weight: 500; }
-        .section-title a:hover { color: #c4b5fd; }
+        /* ── MAIN LAYOUT ── */
+        .profile-body { max-width:1100px; margin:0 auto; padding:28px 24px 80px; display:grid; grid-template-columns:1fr 290px; gap:24px; }
+        @media (max-width:900px) { .profile-body { grid-template-columns:1fr; } }
 
-        /* Ratings section */
-        .ratings-section { margin-bottom: 28px; }
-        .ratings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        @media (max-width: 600px) { .ratings-grid { grid-template-columns: 1fr; } }
+        /* Section titles */
+        .sec-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#f0ece4; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
+        .sec-title a { font-size:12px; color:#a78bfa; text-decoration:none; font-weight:500; }
+        .sec-title a:hover { color:#c4b5fd; }
 
-        .rating-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px 16px; transition: border-color 0.2s, transform 0.2s; }
-        .rating-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
-        .rc-mode { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; font-family: 'Syne', sans-serif; margin-bottom: 6px; }
-        .rc-rating { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-        .rc-rating.purple { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .rc-rating.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .rc-rating.yellow { color: #fbbf24; }
-        .rc-games { font-size: 12px; color: #6b7280; }
+        /* ── RATINGS ── */
+        .ratings-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+        @media (max-width:560px) { .ratings-grid { grid-template-columns:1fr; } }
+        .rating-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:20px 16px; transition:border-color 0.2s,transform 0.2s; position:relative; overflow:hidden; }
+        .rating-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; opacity:0; transition:opacity 0.2s; }
+        .rating-card:hover { border-color:rgba(124,58,237,0.25); transform:translateY(-2px); }
+        .rating-card:hover::before { opacity:1; }
+        .rc-1::before { background:linear-gradient(90deg,#a78bfa,#ec4899); }
+        .rc-2::before { background:linear-gradient(90deg,#3b82f6,#06b6d4); }
+        .rc-3::before { background:linear-gradient(90deg,#f59e0b,#ef4444); }
+        .rc-icon { font-size:18px; margin-bottom:10px; }
+        .rc-mode { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.1em; font-family:'Syne',sans-serif; margin-bottom:4px; }
+        .rc-val { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; margin-bottom:2px; }
+        .rc-val.purple { background:linear-gradient(135deg,#a78bfa,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .rc-val.blue { background:linear-gradient(135deg,#3b82f6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .rc-val.yellow { color:#fbbf24; }
+        .rc-sub { font-size:11px; color:#4b5563; }
 
-        /* Stats row */
-        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
-        .stat-mini { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px; text-align: center; }
-        .sm-value { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
-        .sm-value.green { color: #4ade80; }
-        .sm-value.red { color: #f87171; }
-        .sm-value.gray { color: #9ca3af; }
-        .sm-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; font-family: 'Syne', sans-serif; }
+        /* ── STATS ── */
+        .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
+        .stat-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:16px; text-align:center; }
+        .sb-val { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; }
+        .sb-val.green { color:#4ade80; }
+        .sb-val.red { color:#f87171; }
+        .sb-val.gray { color:#9ca3af; }
+        .sb-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; font-family:'Syne',sans-serif; }
 
-        /* Games table */
-        .games-section { }
-        .table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        thead { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.07); }
-        th { padding: 11px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; text-align: left; font-family: 'Syne', sans-serif; }
-        td { padding: 11px 16px; font-size: 13px; color: #d1d5db; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .td-player { color: #f0ece4; font-weight: 500; }
-        .badge-white { padding: 3px 9px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; font-size: 11px; font-weight: 600; color: #f0ece4; }
-        .badge-black { padding: 3px 9px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-size: 11px; font-weight: 600; color: #9ca3af; }
-        .badge-draw { padding: 3px 9px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 100px; font-size: 11px; font-weight: 600; color: #60a5fa; }
-        .btn-watch { padding: 4px 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; color: #9ca3af; font-size: 12px; text-decoration: none; transition: all 0.2s; }
-        .btn-watch:hover { background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
-        .empty-row { text-align: center; color: #4b5563; padding: 32px !important; }
+        /* ── GAMES TABLE ── */
+        .table-wrap { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:14px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        thead { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.07); }
+        th { padding:11px 14px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#6b7280; text-align:left; font-family:'Syne',sans-serif; }
+        td { padding:11px 14px; font-size:13px; color:#d1d5db; border-bottom:1px solid rgba(255,255,255,0.04); }
+        tr:last-child td { border-bottom:none; }
+        tr:hover td { background:rgba(255,255,255,0.02); }
+        .td-p { color:#f0ece4; font-weight:500; }
+        .bw { padding:2px 8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:100px; font-size:11px; font-weight:600; color:#f0ece4; }
+        .bb { padding:2px 8px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:100px; font-size:11px; font-weight:600; color:#9ca3af; }
+        .bd { padding:2px 8px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:100px; font-size:11px; font-weight:600; color:#60a5fa; }
+        .btn-watch { padding:3px 10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#9ca3af; font-size:12px; text-decoration:none; transition:all 0.2s; }
+        .btn-watch:hover { background:rgba(124,58,237,0.12); border-color:rgba(124,58,237,0.4); color:#a78bfa; }
+        .empty-row { text-align:center; color:#4b5563; padding:32px !important; }
+        .show-more { text-align:center; padding:14px; border-top:1px solid rgba(255,255,255,0.05); }
+        .show-more-btn { background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#6b7280; font-size:13px; padding:8px 20px; cursor:pointer; transition:all 0.2s; }
+        .show-more-btn:hover { border-color:rgba(124,58,237,0.4); color:#a78bfa; }
 
-        /* Show more */
-        .show-more { text-align: center; padding: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .show-more-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #6b7280; font-size: 13px; padding: 8px 20px; cursor: pointer; transition: all 0.2s; }
-        .show-more-btn:hover { border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+        /* ── RIGHT SIDEBAR ── */
+        .right-col { display:flex; flex-direction:column; gap:16px; }
+        .side-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:20px; }
+        .side-card-title { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; color:#f0ece4; margin-bottom:14px; text-transform:uppercase; letter-spacing:0.12em; }
+        .info-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .info-row:last-child { border-bottom:none; }
+        .ir-label { font-size:12px; color:#6b7280; }
+        .ir-value { font-size:12px; color:#f0ece4; font-weight:500; }
 
-        /* ── RIGHT COLUMN ── */
-        .right-col { display: flex; flex-direction: column; gap: 20px; }
+        /* Mini board */
+        .mini-board { display:grid; grid-template-columns:repeat(4,1fr); border-radius:8px; overflow:hidden; margin:10px 0; }
+        .mb-sq { aspect-ratio:1; }
 
-        /* Account info card */
-        .info-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; }
-        .info-card-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #f0ece4; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.1em; }
-        .info-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .info-row:last-child { border-bottom: none; }
-        .info-row-label { font-size: 12px; color: #6b7280; }
-        .info-row-value { font-size: 13px; color: #f0ece4; font-weight: 500; }
+        /* Friends */
+        .friend-item { display:flex; align-items:center; justify-content:space-between; padding:8px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:6px; }
+        .friend-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#ec4899); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0; }
+        .friend-name { font-size:13px; color:#f0ece4; font-weight:500; margin-left:8px; }
+        .friend-remove { background:transparent; border:none; color:#4b5563; font-size:11px; cursor:pointer; padding:3px 7px; border-radius:5px; transition:color 0.2s; }
+        .friend-remove:hover { color:#f87171; }
 
-        /* Theme preview card */
-        .theme-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 20px; }
-        .mini-board { display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 8px; overflow: hidden; margin: 12px 0; }
-        .mb-sq { aspect-ratio: 1; }
+        /* Search */
+        .search-input { width:100%; padding:9px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#f0ece4; font-size:13px; outline:none; transition:border-color 0.2s; margin-bottom:8px; }
+        .search-input:focus { border-color:rgba(124,58,237,0.4); }
+        .search-result-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:5px; }
+        .add-btn { padding:3px 10px; background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3); border-radius:6px; color:#a78bfa; font-size:11px; cursor:pointer; transition:all 0.2s; }
+        .add-btn:hover { background:rgba(124,58,237,0.25); }
+
+        /* Request item */
+        .req-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(124,58,237,0.05); border:1px solid rgba(124,58,237,0.18); border-radius:8px; margin-bottom:5px; }
+        .req-btns { display:flex; gap:5px; }
+        .req-accept { padding:3px 8px; background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.3); border-radius:5px; color:#4ade80; font-size:11px; cursor:pointer; }
+        .req-decline { padding:3px 8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); border-radius:5px; color:#f87171; font-size:11px; cursor:pointer; }
+        @media (max-width: 768px) {
+  .avatar-row { flex-direction: column; align-items: flex-start; }
+  .profile-actions { margin-left: 0; width: 100%; }
+  .profile-actions .btn-primary,
+  .profile-actions .btn-secondary,
+  .profile-actions .btn-danger { flex: 1; justify-content: center; }
+  .profile-tabs { overflow-x: auto; }
+  .tab { white-space: nowrap; padding: 12px 14px; font-size: 12px; }
+  .ratings-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); }
+  table { font-size: 12px; }
+  th, td { padding: 8px 10px; }
+  /* Hide some columns on mobile */
+  table th:nth-child(5),
+  table td:nth-child(5),
+  table th:nth-child(6),
+  table td:nth-child(6) { display: none; }
+}
+@media (max-width: 480px) {
+  .ratings-grid { grid-template-columns: 1fr !important; }
+  .profile-avatar { width: 70px; height: 70px; font-size: 28px; }
+  .profile-username { font-size: 1.6rem; }
+}
     </style>
     </head>
     <body class="cm-body">
         <%- include("../partials/navbar") %>
 
-        <!-- PROFILE HEADER -->
-        <div class="profile-header">
-            <div class="profile-header-inner">
-
-                <!-- Avatar — first letter of username -->
-                <div class="profile-avatar">
-                    <%= user.username.charAt(0).toUpperCase() %>
-                </div>
-
-                <!-- Info -->
-                <div class="profile-info">
-                    <h1 class="profile-username"><%= user.username %></h1>
-                    <% if (user.fullName) { %>
-                    <div class="profile-fullname"><%= user.fullName %></div>
-                    <% } %>
-                    <div class="profile-meta">
-                        <% if (user.country) { %>
-                        <span class="meta-pill">🌍 <%= user.country %></span>
-                        <% } %>
-                        <span class="meta-pill">♟ <%= user.gamesPlayed %> games
-                            played</span>
-                        <span class="meta-pill">📅 Joined <%= new
-                            Date(user.createdAt).toLocaleDateString('en-US',
-                            {month:'long', year:'numeric'}) %></span>
+        <!-- PROFILE BANNER -->
+        <div class="profile-banner">
+            <div class="banner-inner">
+                <div class="avatar-row">
+                    <div class="profile-avatar">
+                        <%= user.username.charAt(0).toUpperCase() %>
                     </div>
-                    <% if (user.bio) { %>
-                    <p class="profile-bio"><%= user.bio %></p>
-                    <% } %>
+                    <div class="avatar-info">
+                        <h1 class="profile-username"><%= user.username %></h1>
+                        <% if (user.fullName) { %>
+                        <div class="profile-fullname"><%= user.fullName %></div>
+                        <% } %>
+                        <div class="profile-meta">
+                            <% if (user.country) { %>
+                            <span class="meta-pill">🌍 <%= user.country
+                                %></span>
+                            <% } %>
+                            <span class="meta-pill">♟ <%= user.gamesPlayed %>
+                                games</span>
+                            <span class="meta-pill">📅 Joined <%= new
+                                Date(user.createdAt).toLocaleDateString('en-US',{month:'short',year:'numeric'})
+                                %></span>
+                            <span class="meta-pill">👥 <%= user.friends ?
+                                user.friends.length : 0 %> friends</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <a href="/play" class="btn-primary">♟ Play</a>
+                        <a href="/settings" class="btn-secondary">⚙ Settings</a>
+                        <form action="/logout" method="POST" style="margin:0;">
+                            <button type="submit"
+                                class="btn-danger">Logout</button>
+                        </form>
+                    </div>
                 </div>
+                <% if (user.bio) { %>
+                <p class="profile-bio"><%= user.bio %></p>
+                <% } %>
 
-                <!-- Actions -->
-                <div class="profile-actions">
-                    <a href="/play" class="btn-primary">♟ Play Now</a>
-                    <a href="/settings" class="btn-secondary">⚙ Settings</a>
-                    <form action="/logout" method="POST" style="margin:0;">
-                        <button type="submit" class="btn-danger">Logout</button>
-                    </form>
+                <!-- TABS -->
+                <div class="profile-tabs">
+                    <a class="tab active" href="#overview">Overview</a>
+                    <a class="tab" href="#games">Games</a>
+                    <a class="tab" href="#friends">Friends</a>
                 </div>
-
             </div>
         </div>
 
-        <!-- MAIN BODY -->
+        <!-- MAIN -->
         <main>
             <div class="profile-body">
 
-                <!-- LEFT COLUMN -->
-                <div class="left-col">
+                <!-- LEFT -->
+                <div>
 
                     <!-- RATINGS -->
-                    <div class="ratings-section">
-                        <div class="section-title">Ratings</div>
-                        <div class="ratings-grid">
-                            <div class="rating-card">
-                                <div class="rc-mode">⏱ Rapid</div>
-                                <div class="rc-rating purple"><%=
-                                    user.rapidRating || 1200 %></div>
-                                <div class="rc-games">Rating</div>
-                            </div>
-                            <div class="rating-card">
-                                <div class="rc-mode">⚡ Blitz</div>
-                                <div class="rc-rating blue"><%= user.blitzRating
-                                    || 1200 %></div>
-                                <div class="rc-games">Rating</div>
-                            </div>
-                            <div class="rating-card">
-                                <div class="rc-mode">🔥 Bullet</div>
-                                <div class="rc-rating yellow"><%=
-                                    user.bulletRating || 1200 %></div>
-                                <div class="rc-games">Rating</div>
-                            </div>
+                    <div class="sec-title"
+                        style="margin-bottom:14px;">Ratings</div>
+                    <div class="ratings-grid">
+                        <div class="rating-card rc-1">
+                            <div class="rc-icon">⏱</div>
+                            <div class="rc-mode">Rapid</div>
+                            <div class="rc-val purple"><%= user.rapidRating ||
+                                1200 %></div>
+                            <div class="rc-sub">Rating</div>
+                        </div>
+                        <div class="rating-card rc-2">
+                            <div class="rc-icon">⚡</div>
+                            <div class="rc-mode">Blitz</div>
+                            <div class="rc-val blue"><%= user.blitzRating ||
+                                1200 %></div>
+                            <div class="rc-sub">Rating</div>
+                        </div>
+                        <div class="rating-card rc-3">
+                            <div class="rc-icon">🔥</div>
+                            <div class="rc-mode">Bullet</div>
+                            <div class="rc-val yellow"><%= user.bulletRating ||
+                                1200 %></div>
+                            <div class="rc-sub">Rating</div>
                         </div>
                     </div>
 
-                    <!-- WIN/LOSS/DRAW -->
+                    <!-- STATS -->
                     <div class="stats-row">
-                        <div class="stat-mini">
-                            <div class="sm-value green"><%= user.wins %></div>
-                            <div class="sm-label">Wins</div>
+                        <div class="stat-box">
+                            <div class="sb-val green"><%= user.wins %></div>
+                            <div class="sb-label">Wins</div>
                         </div>
-                        <div class="stat-mini">
-                            <div class="sm-value red"><%= user.losses %></div>
-                            <div class="sm-label">Losses</div>
+                        <div class="stat-box">
+                            <div class="sb-val red"><%= user.losses %></div>
+                            <div class="sb-label">Losses</div>
                         </div>
-                        <div class="stat-mini">
-                            <div class="sm-value gray"><%= user.draws %></div>
-                            <div class="sm-label">Draws</div>
+                        <div class="stat-box">
+                            <div class="sb-val gray"><%= user.draws %></div>
+                            <div class="sb-label">Draws</div>
                         </div>
                     </div>
 
                     <!-- RECENT GAMES -->
-                    <div class="games-section">
-                        <div class="section-title">
+                    <div id="games">
+                        <div class="sec-title">
                             Recent Games
                             <% if (games && games.length >= 10) { %>
                             <a href="/games/<%= user._id %>">Show all →</a>
                             <% } %>
                         </div>
-
                         <div class="table-wrap">
                             <table>
                                 <thead>
@@ -231,21 +309,18 @@
                                     <tr>
                                         <td style="color:#4b5563;"><%= index + 1
                                             %></td>
-                                        <td class="td-player"><%=
-                                            game.whitePlayer %></td>
-                                        <td class="td-player"><%=
-                                            game.blackPlayer %></td>
+                                        <td class="td-p"><%= game.whitePlayer
+                                            %></td>
+                                        <td class="td-p"><%= game.blackPlayer
+                                            %></td>
                                         <td>
                                             <% if (game.winner === "white") {
-                                            %><span class="badge-white">⬜
-                                                White</span>
+                                            %><span class="bw">⬜ White</span>
                                             <% } else if (game.winner ===
-                                            "black") { %><span
-                                                class="badge-black">⬛
+                                            "black") { %><span class="bb">⬛
                                                 Black</span>
                                             <% } else { %><span
-                                                class="badge-draw">Draw</span><%
-                                            } %>
+                                                class="bd">Draw</span><% } %>
                                         </td>
                                         <td><%= game.totalMoves %></td>
                                         <td><%= new
@@ -270,40 +345,40 @@
 
                 </div>
 
-                <!-- RIGHT COLUMN -->
+                <!-- RIGHT SIDEBAR -->
                 <div class="right-col">
 
                     <!-- ACCOUNT INFO -->
-                    <div class="info-card">
-                        <div class="info-card-title">Account</div>
+                    <div class="side-card">
+                        <div class="side-card-title">Account</div>
                         <div class="info-row">
-                            <span class="info-row-label">Email</span>
-                            <span class="info-row-value"
-                                style="font-size:12px;color:#6b7280;"><%=
+                            <span class="ir-label">Email</span>
+                            <span class="ir-value"
+                                style="color:#6b7280;font-size:11px;"><%=
                                 user.email %></span>
                         </div>
                         <div class="info-row">
-                            <span class="info-row-label">Role</span>
-                            <span class="info-row-value"><%= user.role %></span>
+                            <span class="ir-label">Role</span>
+                            <span class="ir-value"><%= user.role %></span>
                         </div>
                         <div class="info-row">
-                            <span class="info-row-label">Games Played</span>
-                            <span class="info-row-value"><%= user.gamesPlayed
+                            <span class="ir-label">Total Games</span>
+                            <span class="ir-value"><%= user.gamesPlayed
                                 %></span>
                         </div>
                         <% if (user.dateOfBirth) { %>
                         <div class="info-row">
-                            <span class="info-row-label">Birthday</span>
-                            <span class="info-row-value"><%= new
-                                Date(user.dateOfBirth).toLocaleDateString('en-US',
-                                {month:'long', day:'numeric'}) %></span>
+                            <span class="ir-label">Birthday</span>
+                            <span class="ir-value"><%= new
+                                Date(user.dateOfBirth).toLocaleDateString('en-US',{month:'short',day:'numeric'})
+                                %></span>
                         </div>
                         <% } %>
                     </div>
 
                     <!-- BOARD THEME -->
-                    <div class="theme-card">
-                        <div class="info-card-title">Board Theme</div>
+                    <div class="side-card">
+                        <div class="side-card-title">Board Theme</div>
                         <% const themes = { classic:['#f0d9b5','#b58863'],
                         midnight:['#6b7fa3','#2c3e6b'],
                         forest:['#ffffdd','#6faa3f'],
@@ -318,22 +393,70 @@
                             <% } %>
                         </div>
                         <div
-                            style="font-size:13px;color:#9ca3af;text-align:center;text-transform:capitalize;"><%=
+                            style="font-size:12px;color:#9ca3af;text-align:center;text-transform:capitalize;margin-bottom:10px;"><%=
                             user.boardTheme || 'classic' %></div>
                         <a href="/settings"
-                            style="display:block;text-align:center;margin-top:12px;font-size:12px;color:#a78bfa;text-decoration:none;">Change
+                            style="display:block;text-align:center;font-size:12px;color:#a78bfa;text-decoration:none;">Change
                             theme →</a>
                     </div>
 
-                    <!-- QUICK ACTIONS -->
-                    <div class="info-card">
-                        <div class="info-card-title">Quick Actions</div>
+                    <!-- FRIENDS -->
+                    <div class="side-card" id="friends">
                         <div
-                            style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+                            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                            <div class="side-card-title"
+                                style="margin-bottom:0;">Friends (<%=
+                                user.friends ? user.friends.length : 0 %>)</div>
+                            <button onclick="toggleSearch()"
+                                style="background:transparent;border:1px solid rgba(124,58,237,0.3);border-radius:7px;color:#a78bfa;font-size:11px;padding:4px 10px;cursor:pointer;">+
+                                Add</button>
+                        </div>
+
+                        <!-- Search box -->
+                        <div id="searchBox"
+                            style="display:none;margin-bottom:12px;">
+                            <input type="text" id="friendSearch"
+                                class="search-input"
+                                placeholder="Search by username...">
+                            <div id="searchResults"></div>
+                        </div>
+
+                        <!-- Pending requests -->
+                        <div id="friendRequests"></div>
+
+                        <!-- Friends list -->
+                        <div id="friendsList">
+                            <% if (!user.friends || user.friends.length === 0) {
+                            %>
+                            <p
+                                style="font-size:13px;color:#4b5563;text-align:center;padding:16px 0;">No
+                                friends yet!</p>
+                            <% } else { %>
+                            <% user.friends.forEach(friend => { %>
+                            <div class="friend-item">
+                                <div style="display:flex;align-items:center;">
+                                    <div class="friend-avatar"><%=
+                                        friend.username ?
+                                        friend.username.charAt(0).toUpperCase()
+                                        : '?' %></div>
+                                    <span class="friend-name"><%=
+                                        friend.username %></span>
+                                </div>
+                                <button class="friend-remove"
+                                    onclick="removeFriend('<%= friend._id %>')">Remove</button>
+                            </div>
+                            <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="side-card">
+                        <div class="side-card-title">Quick Actions</div>
+                        <div
+                            style="display:flex;flex-direction:column;gap:8px;">
                             <a href="/play" class="btn-primary"
                                 style="justify-content:center;">♟ Play Now</a>
-                            <a href="/settings" class="btn-secondary"
-                                style="justify-content:center;">⚙ Settings</a>
                             <a href="/leaderboard" class="btn-secondary"
                                 style="justify-content:center;">🏆
                                 Leaderboard</a>
@@ -341,10 +464,108 @@
                     </div>
 
                 </div>
-
             </div>
         </main>
 
         <%- include("../partials/footer") %>
+
+        <script>
+    function toggleSearch() {
+        const box = document.getElementById("searchBox");
+        box.style.display = box.style.display === "none" ? "block" : "none";
+        if (box.style.display === "block") document.getElementById("friendSearch").focus();
+    }
+
+    let searchTimeout;
+    document.getElementById("friendSearch").addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        const q = e.target.value.trim();
+        const results = document.getElementById("searchResults");
+        if (q.length < 2) { results.innerHTML = ""; return; }
+        searchTimeout = setTimeout(async () => {
+            const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (!data.users.length) {
+                results.innerHTML = '<p style="font-size:12px;color:#4b5563;text-align:center;padding:8px;">No users found</p>';
+                return;
+            }
+            results.innerHTML = data.users.map(u => `
+                <div class="search-result-item">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div class="friend-avatar">${u.username.charAt(0).toUpperCase()}</div>
+                        <span style="font-size:13px;color:#f0ece4;">${u.username}</span>
+                    </div>
+                    <button class="add-btn" onclick="sendRequest('${u._id}', this)">+ Add</button>
+                </div>
+            `).join("");
+        }, 400);
+    });
+
+    async function sendRequest(userId, btn) {
+        const res = await fetch("/api/friends/request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        btn.textContent = data.success ? "Sent ✓" : data.message;
+        btn.disabled = true;
+        btn.style.color = data.success ? "#4ade80" : "#f87171";
+    }
+
+    async function loadRequests() {
+        const res = await fetch("/api/friends/requests");
+        const data = await res.json();
+        const container = document.getElementById("friendRequests");
+        if (!data.requests || !data.requests.length) return;
+        container.innerHTML = `
+            <div style="font-size:11px;color:#a78bfa;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;font-family:'Syne',sans-serif;">
+                Requests (${data.requests.length})
+            </div>
+            ${data.requests.map(r => `
+                <div class="req-item">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div class="friend-avatar">${r.username.charAt(0).toUpperCase()}</div>
+                        <span style="font-size:13px;color:#f0ece4;">${r.username}</span>
+                    </div>
+                    <div class="req-btns">
+                        <button class="req-accept" onclick="acceptRequest('${r._id}', this.closest('.req-item'))">✓</button>
+                        <button class="req-decline" onclick="declineRequest('${r._id}', this.closest('.req-item'))">✕</button>
+                    </div>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    async function acceptRequest(userId, el) {
+        const res = await fetch("/api/friends/accept", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (data.success) { el.remove(); location.reload(); }
+    }
+
+    async function declineRequest(userId, el) {
+        const res = await fetch("/api/friends/decline", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (data.success) el.remove();
+    }
+
+    async function removeFriend(userId) {
+        if (!confirm("Remove this friend?")) return;
+        const res = await fetch("/api/friends/remove", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+    }
+
+    loadRequests();
+    </script>
     </body>
 </html>
