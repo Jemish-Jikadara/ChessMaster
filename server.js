@@ -17,6 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 connectDB();
+app.set("trust proxy", 1);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
@@ -34,9 +35,10 @@ app.use(
       mongoUrl: process.env.MONGO_URI
     }),
     cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 din
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production"
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
 }
   })
 );
