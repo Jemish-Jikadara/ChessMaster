@@ -151,6 +151,124 @@
         .move-num { color: #a78bfa; font-weight: 700; margin-right: 4px; }
         .move-san { color: #f0ece4; }
         .move-sq { color: #374151; font-size: 11px; margin-left: 6px; }
+
+        .mode-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.mode-card.coach::before {
+  background: radial-gradient(ellipse at top left, rgba(14,165,233,0.14), transparent 70%);
+}
+
+.mode-btn-coach {
+  width: 100%;
+  padding: 13px;
+  background: rgba(14,165,233,0.15);
+  border: 1px solid rgba(14,165,233,0.35);
+  border-radius: 10px;
+  color: #38bdf8;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn-coach:hover {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  border-color: #0ea5e9;
+  color: #fff;
+}
+
+.coach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.coach-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 18px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.coach-card:hover {
+  border-color: rgba(14,165,233,0.45);
+  background: rgba(14,165,233,0.08);
+  transform: translateY(-2px);
+}
+
+.coach-icon {
+  font-size: 1.7rem;
+  margin-bottom: 8px;
+}
+
+.coach-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0ece4;
+}
+
+.coach-rating {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-top: 2px;
+}
+
+.coach-title {
+  font-size: 10px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+@media (max-width: 780px) {
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Add this in style block */
+
+.coach-panel {
+  background: rgba(14,165,233,0.08);
+  border: 1px solid rgba(14,165,233,0.22);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.coach-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.coach-panel-head span {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
+.coach-panel-head strong {
+  color: #f0ece4;
+  font-size: 13px;
+}
+
+#coachAdviceText {
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.6;
+}
         
     </style>
     </head>
@@ -158,29 +276,46 @@
     <body class="cm-body">
         <%- include("../partials/navbar") %>
         <main>
+            <!-- Replace the existing GAME MODE section with this -->
 
-            <!-- GAME MODE -->
             <section id="gameModeScreen" class="play-screen">
                 <span class="kicker">ChessMaster</span>
                 <h1 class="screen-title">Play Chess</h1>
                 <p class="screen-sub">Choose your game mode, then select a time
                     control.</p>
+
                 <div class="mode-grid">
                     <article class="mode-card friend">
                         <span class="mode-icon">👥</span>
                         <h3>2 Players</h3>
                         <p>Play locally with a friend on the same device.</p>
                         <button type="button" id="selectHumanBtn"
-                            class="mode-btn-friend">Play vs Friend</button>
+                            class="mode-btn-friend">
+                            Play vs Friend
+                        </button>
                     </article>
+
                     <article class="mode-card bot">
                         <span class="mode-icon">🤖</span>
                         <h3>vs Computer</h3>
                         <p>Challenge one of 32 AI bots from 100 to 3200
                             rating.</p>
                         <button type="button" id="selectBotBtn"
-                            class="mode-btn-bot">Play vs Bot</button>
+                            class="mode-btn-bot">
+                            Play vs Bot
+                        </button>
+                    </article><!--
+                    <article class="mode-card coach">
+                        <span class="mode-icon">🎓</span>
+                        <h3>vs Coach</h3>
+                        <p>Play guided games with coaching tips, warnings, and
+                            learning feedback.</p>
+                        <button type="button" id="selectCoachBtn"
+                            class="mode-btn-coach">
+                            Play vs Coach
+                        </button>
                     </article>
+                    -->
                 </div>
             </section>
 
@@ -195,6 +330,141 @@
                 <div><button type="button" id="backToModeBtn" class="back-btn">←
                         Back</button></div>
             </section>
+            <!-- Replace coachSelectScreen with this 
+
+            <section id="coachSelectScreen" class="play-screen"
+                style="display:none;">
+                <span class="kicker">Choose Coach</span>
+                <h1 class="screen-title">Select your coach</h1>
+                <p class="screen-sub">Pick a coach style. Coaching logic will be
+                    connected next.</p>
+
+                <div id="coachGrid" class="coach-grid">
+                    <div class="coach-card" data-coach="david"
+                        data-rating="900">
+                        <div class="coach-icon">♙</div>
+                        <div class="coach-name">David</div>
+                        <div class="coach-rating">900</div>
+                        <div class="coach-title">Beginner Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="mae" data-rating="1000">
+                        <div class="coach-icon">♘</div>
+                        <div class="coach-name">Mae</div>
+                        <div class="coach-rating">1000</div>
+                        <div class="coach-title">Opening Guide</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="dante"
+                        data-rating="1100">
+                        <div class="coach-icon">♗</div>
+                        <div class="coach-name">Dante</div>
+                        <div class="coach-rating">1100</div>
+                        <div class="coach-title">Tactics Helper</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="nadia"
+                        data-rating="1200">
+                        <div class="coach-icon">♖</div>
+                        <div class="coach-name">Nadia</div>
+                        <div class="coach-rating">1200</div>
+                        <div class="coach-title">Strategy Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="levy"
+                        data-rating="1400">
+                        <div class="coach-icon">♕</div>
+                        <div class="coach-name">Levy</div>
+                        <div class="coach-rating">1400</div>
+                        <div class="coach-title">Practical Trainer</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="magnus"
+                        data-rating="3200">
+                        <div class="coach-icon">♔</div>
+                        <div class="coach-name">Magnus</div>
+                        <div class="coach-rating">3200</div>
+                        <div class="coach-title">Endgame Master</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="hikaru"
+                        data-rating="3100">
+                        <div class="coach-icon">⚡</div>
+                        <div class="coach-name">Hikaru</div>
+                        <div class="coach-rating">3100</div>
+                        <div class="coach-title">Speed Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="anna"
+                        data-rating="1600">
+                        <div class="coach-icon">🌟</div>
+                        <div class="coach-name">Anna</div>
+                        <div class="coach-rating">1600</div>
+                        <div class="coach-title">Friendly Mentor</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="judit"
+                        data-rating="2900">
+                        <div class="coach-icon">🔥</div>
+                        <div class="coach-name">Judit</div>
+                        <div class="coach-rating">2900</div>
+                        <div class="coach-title">Attack Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="canty"
+                        data-rating="1800">
+                        <div class="coach-icon">🎯</div>
+                        <div class="coach-name">Canty</div>
+                        <div class="coach-rating">1800</div>
+                        <div class="coach-title">Calculation Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="vishy"
+                        data-rating="3000">
+                        <div class="coach-icon">🏆</div>
+                        <div class="coach-name">Vishy</div>
+                        <div class="coach-rating">3000</div>
+                        <div class="coach-title">Classical Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="tania"
+                        data-rating="1700">
+                        <div class="coach-icon">💡</div>
+                        <div class="coach-name">Tania</div>
+                        <div class="coach-rating">1700</div>
+                        <div class="coach-title">Planning Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="danny"
+                        data-rating="1500">
+                        <div class="coach-icon">📘</div>
+                        <div class="coach-name">Danny</div>
+                        <div class="coach-rating">1500</div>
+                        <div class="coach-title">Learning Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="botez"
+                        data-rating="1300">
+                        <div class="coach-icon">✨</div>
+                        <div class="coach-name">Botez</div>
+                        <div class="coach-rating">1300</div>
+                        <div class="coach-title">Fun Coach</div>
+                    </div>
+
+                    <div class="coach-card" data-coach="ben" data-rating="2000">
+                        <div class="coach-icon">🧠</div>
+                        <div class="coach-name">Ben</div>
+                        <div class="coach-rating">2000</div>
+                        <div class="coach-title">Positional Coach</div>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" id="backFromCoachBtn"
+                        class="back-btn">← Back</button>
+                </div>
+            </section>
+        -->
 
             <!-- TIME CONTROL -->
             <section id="timeControlScreen" class="play-screen"
@@ -342,6 +612,18 @@
                 </section>
 
                 <aside class="history-panel">
+                    <div id="coachPanel" class="coach-panel"
+                        style="display:none;">
+                        <div class="coach-panel-head">
+                            <span>Coach Advice</span>
+                            <strong id="coachNameLabel">Coach</strong>
+                        </div>
+
+                        <p id="coachAdviceText">
+                            Select a coach and start the game. Your coach will
+                            guide you after moves.
+                        </p>
+                    </div>
                     <div class="history-head">
                         <div>
                             <div class="hh-label">Match Log</div>
@@ -377,105 +659,117 @@
         <script src="/js/bot.js"></script>
 
         <script>
+  window.PLAYER_COLOR = "w";
+  window.isCoachMode = false;
+  window.selectedCoach = null;
+
+  function syncPlayerNames() {
+    const wn = document.getElementById("whiteName");
+    const bn = document.getElementById("blackName");
+
+    if (wn) wn.textContent = whitePlayerInput.value.trim() || "White";
+    if (bn) bn.textContent = blackPlayerInput.value.trim() || "Black";
+  }
+
+  confirmPlayersBtn.addEventListener("click", () => {
+    if (isBotMode && selectedBot) {
+      const playerName = whitePlayerInput.value.trim() || "Player";
+      const botName = `${selectedBot.name} (${selectedBot.rating})`;
+      const playerIsWhite = Math.random() >= 0.5;
+
+      if (playerIsWhite) {
+        whitePlayerInput.value = playerName;
+        blackPlayerInput.value = botName;
+        window.PLAYER_COLOR = "w";
+      } else {
+        whitePlayerInput.value = botName;
+        blackPlayerInput.value = playerName;
+        window.PLAYER_COLOR = "b";
+      }
+
+      initStockfish();
+    }
+
+    const wn = document.getElementById("whiteName");
+    const bn = document.getElementById("blackName");
+
+    if (window.PLAYER_COLOR === "b") {
+      if (wn) wn.textContent = blackPlayerInput.value.trim();
+      if (bn) bn.textContent = whitePlayerInput.value.trim();
+    } else {
+      if (wn) wn.textContent = whitePlayerInput.value.trim();
+      if (bn) bn.textContent = blackPlayerInput.value.trim();
+    }
+  });
+
+  const whiteStrip = document.getElementById("whiteStrip");
+  const blackStrip = document.getElementById("blackStrip");
+
+  function patchStrips() {
+    if (!whiteStrip || !blackStrip) return;
+
+    const isWhiteTurn = game.turn() === "w";
+
+    whiteStrip.classList.toggle("active-turn", isWhiteTurn && gameStarted);
+    blackStrip.classList.toggle("active-turn", !isWhiteTurn && gameStarted);
+
+    whiteStrip.classList.toggle("low-time", whiteTime <= 10 && !!selectedMode);
+    blackStrip.classList.toggle("low-time", blackTime <= 10 && !!selectedMode);
+  }
+
+  const __uc = updateClocks;
+  updateClocks = function () {
+    __uc();
+    patchStrips();
+  };
+
+  const __ui = updateInfo;
+  updateInfo = function () {
+    __ui();
+
+    document.querySelectorAll("#moveHistory > div").forEach((el) => {
+      el.className = "move-item";
+    });
+  };
+
+  document.getElementById("selectHumanBtn").addEventListener("click", () => {
+    isBotMode = false;
+    selectedBot = null;
+
+    window.isCoachMode = false;
+    window.selectedCoach = null;
     window.PLAYER_COLOR = "w";
 
-    function syncPlayerNames() {
-        const wn = document.getElementById("whiteName");
-        const bn = document.getElementById("blackName");
-        if (wn) wn.textContent = whitePlayerInput.value.trim() || "White";
-        if (bn) bn.textContent = blackPlayerInput.value.trim() || "Black";
+    document.getElementById("gameModeScreen").style.display = "none";
+    timeControlScreen.style.display = "block";
+  });
+
+  document.getElementById("selectBotBtn").addEventListener("click", () => {
+    isBotMode = true;
+
+    window.isCoachMode = false;
+    window.selectedCoach = null;
+
+    document.getElementById("gameModeScreen").style.display = "none";
+    document.getElementById("botSelectScreen").style.display = "block";
+
+    buildBotGrid();
+  });
+
+  document.getElementById("backToModeBtn").addEventListener("click", () => {
+    document.getElementById("botSelectScreen").style.display = "none";
+    document.getElementById("gameModeScreen").style.display = "block";
+  });
+
+  document.getElementById("backFromTimeBtn").addEventListener("click", () => {
+    timeControlScreen.style.display = "none";
+
+    if (isBotMode) {
+      document.getElementById("botSelectScreen").style.display = "block";
+    } else {
+      document.getElementById("gameModeScreen").style.display = "block";
     }
-
-    confirmPlayersBtn.addEventListener("click", () => {
-    if (isBotMode && selectedBot) {
-        const playerName = whitePlayerInput.value.trim() || "Player";
-        const botName = `${selectedBot.name} (${selectedBot.rating})`;
-        const playerIsWhite = Math.random() >= 0.5;
-
-        if (playerIsWhite) {
-            whitePlayerInput.value = playerName;
-            blackPlayerInput.value = botName;
-            window.PLAYER_COLOR = "w";
-        } else {
-            whitePlayerInput.value = botName;
-            blackPlayerInput.value = playerName;
-            window.PLAYER_COLOR = "b";
-        }
-
-        // Stockfish init yahan
-        initStockfish();
-
-        console.log("PLAYER_COLOR:", window.PLAYER_COLOR);
-        console.log("White:", whitePlayerInput.value);
-        console.log("Black:", blackPlayerInput.value);
-    }
-    const wn = document.getElementById("whiteName");
-const bn = document.getElementById("blackName");
-const whiteStrip = document.getElementById("whiteStrip");
-const blackStrip = document.getElementById("blackStrip");
-
-if (window.PLAYER_COLOR === "b") {
-    // Player Black hai — player strip neeche (whiteStrip pe), bot upar (blackStrip pe)
-    if (wn) wn.textContent = blackPlayerInput.value.trim();  // bot upar
-    if (bn) bn.textContent = whitePlayerInput.value.trim();  // player neeche
-} else {
-    // Player White hai — normal
-    if (wn) wn.textContent = whitePlayerInput.value.trim();
-    if (bn) bn.textContent = blackPlayerInput.value.trim();
-}
-});
-
-    const whiteStrip = document.getElementById("whiteStrip");
-    const blackStrip = document.getElementById("blackStrip");
-
-    function patchStrips() {
-        if (!whiteStrip || !blackStrip) return;
-        const isWhiteTurn = game.turn() === "w";
-        whiteStrip.classList.toggle("active-turn", isWhiteTurn && gameStarted);
-        blackStrip.classList.toggle("active-turn", !isWhiteTurn && gameStarted);
-        whiteStrip.classList.toggle("low-time", whiteTime <= 10 && !!selectedMode);
-        blackStrip.classList.toggle("low-time", blackTime <= 10 && !!selectedMode);
-    }
-
-    const __uc = updateClocks;
-    updateClocks = function() { __uc(); patchStrips(); };
-
-    const __ui = updateInfo;
-    updateInfo = function() {
-        __ui();
-        document.querySelectorAll("#moveHistory > div").forEach((el) => {
-            el.className = "move-item";
-        });
-    };
-
-    document.getElementById("selectHumanBtn").addEventListener("click", () => {
-        isBotMode = false;
-        selectedBot = null;
-        window.PLAYER_COLOR = "w";
-        document.getElementById("gameModeScreen").style.display = "none";
-        timeControlScreen.style.display = "block";
-    });
-
-    document.getElementById("selectBotBtn").addEventListener("click", () => {
-        isBotMode = true;
-        document.getElementById("gameModeScreen").style.display = "none";
-        document.getElementById("botSelectScreen").style.display = "block";
-        buildBotGrid();
-    });
-
-    document.getElementById("backToModeBtn").addEventListener("click", () => {
-        document.getElementById("botSelectScreen").style.display = "none";
-        document.getElementById("gameModeScreen").style.display = "block";
-    });
-
-    document.getElementById("backFromTimeBtn").addEventListener("click", () => {
-        timeControlScreen.style.display = "none";
-        if (isBotMode) {
-            document.getElementById("botSelectScreen").style.display = "block";
-        } else {
-            document.getElementById("gameModeScreen").style.display = "block";
-        }
-    });
+  });
 </script>
 
     </body>

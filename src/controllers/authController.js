@@ -34,7 +34,6 @@ async function registerUser(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Temporary username — profile setup mein change hoga
     const tempUsername = "user_" + Date.now();
 
     if (existingUser && !existingUser.profileSetup) {
@@ -49,7 +48,6 @@ async function registerUser(req, res) {
       });
     }
 
-    // Email session mein store karo
     req.session.setupEmail = email;
 
     return res.redirect("/setup-profile");
@@ -87,7 +85,6 @@ async function setupProfile(req, res) {
       return res.redirect("/setup-profile");
     }
 
-    // Username unique check
     const user = await User.findOne({ email });
     const existingUsername = await User.findOne({
       username,
@@ -108,7 +105,6 @@ async function setupProfile(req, res) {
 
     await user.save();
 
-    // Session set karo — auto login
     req.session.setupEmail = null;
     req.session.user = {
       id: user._id,
@@ -156,8 +152,6 @@ async function loginUser(req, res) {
       req.flash("error", "Invalid email or password.");
       return res.redirect("/login");
     }
-
-    // Profile setup nahi kiya toh wahan bhejo
     if (!user.profileSetup) {
       req.session.setupEmail = email;
       return res.redirect("/setup-profile");

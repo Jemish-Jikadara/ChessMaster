@@ -23,6 +23,12 @@ const gameOverTitle = document.getElementById("gameOverTitle");
 const gameOverMessage = document.getElementById("gameOverMessage");
 const newGameBtn = document.getElementById("newGameBtn");
 const gameOverSaveBtn = document.getElementById("gameOverSaveBtn");
+const botThinking = document.getElementById("botThinking");
+
+
+const coachPanel = document.getElementById("coachPanel");
+const coachNameLabel = document.getElementById("coachNameLabel");
+const coachAdviceText = document.getElementById("coachAdviceText");
 
 const game = new Chess();
 
@@ -44,6 +50,8 @@ let gameOver = false;
 let positionHistory = [game.fen()];
 let reviewIndex = 0;
 let isReviewing = false;
+let isCoachThinking = false;
+
 
 const pieceImages = {
   wp: "white-pawn",
@@ -190,7 +198,7 @@ function createBoard() {
 }
 
 function handleSquareClick(squareName) {
-  if (!gameStarted || isReviewing || gameOver) return;
+  if (!gameStarted || isReviewing || gameOver || isCoachThinking) return;
   const botColor = (window.PLAYER_COLOR === "b") ? "w" : "b";
 if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() === botColor) return;
 
@@ -226,7 +234,7 @@ if (typeof window.isBotMode === "function" && window.isBotMode() && game.turn() 
 }
 
 function handleDragStart(event, squareName, piece) {
-  if (!gameStarted || isReviewing || gameOver) {
+  if (!gameStarted || isReviewing || gameOver || isCoachThinking) {
     event.preventDefault();
     return;
   }
@@ -301,6 +309,12 @@ function afterSuccessfulMove(move) {
   updateClocks();
   updateReviewControls();
   createBoard();
+
+  // showCoachAdvice(move);
+
+// if (shouldCoachReply()) {
+//   makeCoachMove();
+// }
 
   // Bot hook — if bot mode active and game not over, trigger bot move
   if (typeof window._botHook === "function") {
@@ -473,6 +487,13 @@ function resetGamePosition() {
   isReviewing = false;
 
   if (gameOverModal) gameOverModal.style.display = "none";
+  if (coachPanel) {
+  coachPanel.style.display = window.isCoachMode ? "block" : "none";
+}
+
+if (coachAdviceText && window.isCoachMode) {
+  coachAdviceText.textContent = "Your coach will guide you after moves.";
+}
 
   updateInfo();
   updateReviewControls();
@@ -582,7 +603,51 @@ function getWinner() {
 
   return "draw";
 }
+function showCoachAdvice() {
+  return;
+}
 
+function getCoachAdviceForUserMove() {
+  return "";
+}
+
+function shouldCoachReply() {
+  return false;
+}
+
+function makeCoachMove() {
+  return;
+}
+
+function getCoachThinkDelay() {
+  return 0;
+}
+
+function setCoachThinking() {
+  if (typeof botThinking !== "undefined" && botThinking) {
+    botThinking.style.display = "none";
+  }
+}
+
+function chooseCoachMove(moves) {
+  return moves && moves.length ? moves[0] : null;
+}
+
+function pickFromTop(scoredMoves) {
+  return scoredMoves && scoredMoves.length ? scoredMoves[0].move : null;
+}
+
+function scoreCoachMove() {
+  return 0;
+}
+
+function getCoachRandomness() {
+  return 0;
+}
+
+function showCoachMoveExplanation() {
+  return;
+}
 document.querySelectorAll("[data-mode]").forEach((button) => {
   button.addEventListener("click", () => {
     clearInterval(timerInterval);
@@ -744,9 +809,6 @@ newGameBtn.addEventListener("click", () => {
   startGameBtn.textContent = "Start Game";
 });
 
-// BUG 1 FIX: Removed nested addEventListener. The original code added a NEW
-// listener inside every click, so it never fired on first click and saved
-// multiple times on subsequent clicks. Now it's a single, flat listener.
 gameOverSaveBtn.addEventListener("click", () => {
   saveGameBtn.dispatchEvent(new Event("click"));
 });
