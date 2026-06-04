@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const path = require("path");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -14,6 +16,14 @@ const settingsRoutes = require("./src/routes/settingsRoutes");
 const friendRoutes = require("./src/routes/friendRoutes");
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL || "*",
+    methods: ["GET", "POST"]
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 connectDB();
@@ -38,7 +48,7 @@ app.use(
   maxAge: 1000 * 60 * 60 * 24 * 7,
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+  sameSite: "lax"
 }
   })
 );
@@ -60,7 +70,57 @@ app.use("/", friendRoutes);
 app.use((req, res) => {
   res.status(404).render("error");
 });
+let waitingPlayer = null;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
+
+  socket.on("findMatch", (player) => {
+    if (waitingPlayer && waitingPlayer.socketId !== socket.id) {
+      const roomId = `room-${waitingPlayer.socketId}-${socket.id}`;
+
+      socket.join(roomId);
+      io.sockets.sockets.get(waitingPlayer.socketId)?.join(roomId);
+
+      io.to(waitingPlayer.socketId).emit("matchFound", {
+        roomId,
+        color: "w",
+        opponent: player
+      });
+
+      socket.emit("matchFound", {
+        roomId,
+        color: "b",
+        opponent: waitingPlayer.player
+      });
+
+      waitingPlayer = null;
+    } else {
+      waitingPlayer = {
+        socketId: socket.id,
+        player
+      };
+
+      socket.emit("waitingForOpponent");
+    }
+  });
+
+  socket.on("joinOnlineRoom", ({ roomId }) => {
+    socket.join(roomId);
+  });
+
+  socket.on("onlineMove", ({ roomId, move }) => {
+    socket.to(roomId).emit("opponentMove", move);
+  });
+
+  socket.on("disconnect", () => {
+    if (waitingPlayer && waitingPlayer.socketId === socket.id) {
+      waitingPlayer = null;
+    }
+
+    console.log("Socket disconnected:", socket.id);
+  });
+});
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

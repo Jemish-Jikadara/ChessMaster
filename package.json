@@ -29,6 +29,7 @@
     "express-session": "^1.19.0",
     "mongoose": "^9.6.2",
     "nodemailer": "^8.0.9",
+    "socket.io": "^4.8.3",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {

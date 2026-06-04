@@ -40,6 +40,40 @@
 
         .mode-btn-bot { width: 100%; padding: 13px; background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.35); border-radius: 10px; color: #f472b6; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; }
         .mode-btn-bot:hover { background: linear-gradient(135deg, #ec4899, #db2777); border-color: #ec4899; color: #fff; }
+        .mode-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.mode-card.online::before {
+    background: radial-gradient(ellipse at top left, rgba(34,197,94,0.12), transparent 70%);
+}
+
+.mode-btn-online {
+    width: 100%;
+    padding: 13px;
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.35);
+    border-radius: 10px;
+    color: #86efac;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-btn-online:hover {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: #22c55e;
+    color: #fff;
+}
+
+@media (max-width: 860px) {
+    .mode-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
         /* ── BOT GRID ── */
         .bot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 32px; }
@@ -316,6 +350,16 @@
                         </button>
                     </article>
                     -->
+                    <article class="mode-card online">
+                        <span class="mode-icon">🌐</span>
+                        <h3>Play Online</h3>
+                        <p>Find a real player and play a live match with
+                            real-time moves.</p>
+                        <button type="button" id="selectOnlineBtn"
+                            class="mode-btn-online">
+                            Find Online Match
+                        </button>
+                    </article>
                 </div>
             </section>
 
@@ -663,6 +707,10 @@
   window.isCoachMode = false;
   window.selectedCoach = null;
 
+  document.getElementById("selectOnlineBtn").addEventListener("click", () => {
+    window.location.href = "/online";
+});
+
   function syncPlayerNames() {
     const wn = document.getElementById("whiteName");
     const bn = document.getElementById("blackName");
@@ -670,7 +718,6 @@
     if (wn) wn.textContent = whitePlayerInput.value.trim() || "White";
     if (bn) bn.textContent = blackPlayerInput.value.trim() || "Black";
   }
-
   confirmPlayersBtn.addEventListener("click", () => {
     if (isBotMode && selectedBot) {
       const playerName = whitePlayerInput.value.trim() || "Player";

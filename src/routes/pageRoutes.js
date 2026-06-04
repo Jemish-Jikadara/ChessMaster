@@ -20,5 +20,11 @@ router.get("/leaderboard", async (req, res) => {
 router.get("/about", (req, res) => {
   res.render("pages/about");
 });
+router.get("/online", isAuthenticated, (req, res) => {
+  res.render("pages/online");
+});
+router.get("/online/play", isAuthenticated, (req, res) => {
+  res.render("pages/online-play");
+});
 
 module.exports = router;

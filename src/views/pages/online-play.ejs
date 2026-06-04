@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Online Game</title>
+        <link rel="stylesheet" href="/css/style.css">
+        <style>
+            .cm-online-board-panel-relative {
+  position: relative;
+}
+
+.cm-online-game-over {
+  position: absolute;
+  inset: 22px;
+  display: none;
+  place-items: center;
+  border-radius: 22px;
+  background: rgba(5, 8, 22, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 80;
+}
+
+.cm-online-game-over-card {
+  width: min(92%, 360px);
+  padding: 30px;
+  border-radius: 22px;
+  background: #080d1d;
+  border: 1px solid rgba(250,204,21,0.35);
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+}
+
+.cm-online-game-over-card span {
+  display: block;
+  color: #facc15;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.cm-online-game-over-card h2 {
+  font-size: 30px;
+  font-weight: 950;
+  color: #fff;
+}
+
+.cm-online-game-over-card p {
+  margin-top: 8px;
+  color: #94a3b8;
+}
+
+.cm-online-game-over-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.cm-online-game-over-btn {
+  min-height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  text-decoration: none;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.cm-online-game-over-btn.primary {
+  background: #facc15;
+  color: #050816;
+}
+
+.cm-online-game-over-btn.secondary {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+}
+        </style>
+    </head>
+    <body class="cm-body">
+        <%- include("../partials/navbar") %>
+
+        <main class="cm-online-game-page">
+            <section class="cm-online-game-shell">
+                <div class="cm-online-game-head">
+                    <div>
+                        <span class="cm-kicker">Live Match</span>
+                        <h1>Online Game</h1>
+                        <p id="onlineGameInfo">Connecting match...</p>
+                    </div>
+
+                    <a href="/online" class="cm-online-back-btn">
+                        Leave
+                    </a>
+                </div>
+
+                <div class="cm-online-layout">
+                    <section class="cm-online-board-panel cm-online-board-panel-relative"></section>
+                        <div class="cm-online-status-row">
+                            <div>
+                                <span>Your Color</span>
+                                <strong id="playerColorLabel">-</strong>
+                            </div>
+                            <div>
+                                <span>Turn</span>
+                                <strong id="onlineTurnLabel">White</strong>
+                            </div>
+                            <div>
+                                <span>Status</span>
+                                <strong id="onlineStatusLabel">Active</strong>
+                            </div>
+                        </div>
+
+                        <div class="cm-online-board-wrap">
+                            <div id="onlineChessBoard"
+                                class="cm-online-board"></div>
+                        </div>
+                        <div id="onlineGameOverModal"
+                            class="cm-online-game-over">
+                            <div class="cm-online-game-over-card">
+                                <span>Game Over</span>
+                                <h2 id="onlineGameOverTitle">Checkmate</h2>
+                                <p id="onlineGameOverMessage">White wins.</p>
+
+                                <div class="cm-online-game-over-actions">
+                                    <a href="/online"
+                                        class="cm-online-game-over-btn primary">
+                                        New Match
+                                    </a>
+                                    <button id="onlineSaveGameBtn" type="button"
+                                        class="cm-online-game-over-btn secondary">
+                                        Save Game
+                                    </button>
+                                    <button id="onlineCloseGameOverBtn"
+                                        type="button"
+                                        class="cm-online-game-over-btn secondary">
+                                        Review
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <aside class="cm-online-side-panel">
+                        <div>
+                            <span class="cm-kicker">Opponent</span>
+                            <h2 id="opponentName">Finding...</h2>
+                        </div>
+
+                        <div class="cm-online-moves">
+                            <h3>Moves</h3>
+                            <div id="onlineMoveHistory">
+                                <p>No moves yet.</p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/online-game.js"></script>
+    </body>
+</html>

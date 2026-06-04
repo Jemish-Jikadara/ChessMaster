@@ -47,10 +47,11 @@ async function registerUser(req, res) {
         profileSetup: false
       });
     }
+req.session.setupEmail = email;
 
-    req.session.setupEmail = email;
-
-    return res.redirect("/setup-profile");
+return req.session.save(() => {
+  res.redirect("/setup-profile");
+});
   } catch (error) {
     console.error("Register error:", error);
     req.flash("error", "Something went wrong. Please try again.");
@@ -117,8 +118,11 @@ async function setupProfile(req, res) {
       boardTheme: user.boardTheme
     };
 
-    req.flash("success", "Welcome to ChessMaster!");
-    return res.redirect("/profile");
+    req.session.setupEmail = email;
+
+return req.session.save(() => {
+  res.redirect("/setup-profile");
+});
   } catch (error) {
     console.error("Setup profile error:", error);
     req.flash("error", "Something went wrong.");
@@ -153,9 +157,12 @@ async function loginUser(req, res) {
       return res.redirect("/login");
     }
     if (!user.profileSetup) {
-      req.session.setupEmail = email;
-      return res.redirect("/setup-profile");
-    }
+  req.session.setupEmail = email;
+
+  return req.session.save(() => {
+    res.redirect("/setup-profile");
+  });
+}
 
     req.session.user = {
       id: user._id,
@@ -169,7 +176,10 @@ async function loginUser(req, res) {
     };
 
     req.flash("success", "Logged in successfully.");
-    return res.redirect("/profile");
+
+return req.session.save(() => {
+  res.redirect("/profile");
+});
   } catch (error) {
     req.flash("error", "Something went wrong while logging in.");
     return res.redirect("/login");

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ChessMaster | Online Match</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body class="cm-body">
+        <%- include("../partials/navbar") %>
+
+        <main class="cm-online-page">
+            <section class="cm-online-card">
+                <span class="cm-kicker">Real Time</span>
+                <h1>Online Matchmaking</h1>
+                <p>Find another player online and start a live chess match.</p>
+
+                <button id="findMatchBtn" type="button" class="cm-online-btn">
+                    Find Match
+                </button>
+
+                <p id="matchStatus" class="cm-online-status">
+                    Ready to search.
+                </p>
+            </section>
+        </main>
+
+        <%- include("../partials/footer") %>
+
+        <script>
+  window.currentUsername = "<%= currentUser ? currentUser.username : 'Player' %>";
+</script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/online.js"></script>
+    </body>
+</html>
