@@ -4,27 +4,38 @@ const findMatchBtn = document.getElementById("findMatchBtn");
 const matchStatus = document.getElementById("matchStatus");
 
 findMatchBtn.addEventListener("click", () => {
-  const player = {
-    username: window.currentUsername || "Player"
-  };
+    if (!selectedTimeControl) return;
 
-  findMatchBtn.disabled = true;
-  findMatchBtn.textContent = "Searching...";
-  matchStatus.textContent = "Looking for opponent...";
+    // Purana data clear karo
+    sessionStorage.removeItem("onlineMoves");
+    sessionStorage.removeItem("onlineTimeControl");
+    sessionStorage.removeItem("onlineRoomId");
+    sessionStorage.removeItem("onlineColor");
+    sessionStorage.removeItem("onlineOpponent");
 
-  socket.emit("findMatch", player);
+    const player = {
+        username: window.currentUsername || "Player"
+    };
+
+    findMatchBtn.disabled = true;
+    findMatchBtn.textContent = "Searching...";
+    matchStatus.textContent = "Looking for opponent...";
+
+    socket.emit("findMatch", {
+        player,
+        timeControl: selectedTimeControl
+    });
 });
-
 socket.on("waitingForOpponent", () => {
-  matchStatus.textContent = "Waiting for another player...";
+    matchStatus.textContent = `Waiting for ${selectedTimeControl.label} opponent...`;
 });
+socket.on("matchFound", ({ roomId, color, opponent, timeControl }) => {
+    matchStatus.textContent = "Match found. Starting game...";
 
-socket.on("matchFound", ({ roomId, color, opponent }) => {
-  matchStatus.textContent = "Match found. Starting game...";
+    sessionStorage.setItem("onlineRoomId", roomId);
+    sessionStorage.setItem("onlineColor", color);
+    sessionStorage.setItem("onlineOpponent", JSON.stringify(opponent));
+    sessionStorage.setItem("onlineTimeControl", JSON.stringify(timeControl));
 
-  sessionStorage.setItem("onlineRoomId", roomId);
-  sessionStorage.setItem("onlineColor", color);
-  sessionStorage.setItem("onlineOpponent", JSON.stringify(opponent));
-
-  window.location.href = "/online/play";
+    window.location.href = "/online/play";
 });

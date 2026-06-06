@@ -23,6 +23,23 @@ let selectedSquare = null;
 let legalMoves = [];
 let lastMove = null;
 let gameOver = false;
+// Timer variables
+let whiteTime = 0;
+let blackTime = 0;
+let incrementSeconds = 0;
+let timerInterval = null;
+const onlineWhiteClock = document.getElementById("onlineWhiteClock");
+const onlineBlackClock = document.getElementById("onlineBlackClock");
+const whiteClockBox = document.getElementById("whiteClockBox");
+const blackClockBox = document.getElementById("blackClockBox");
+
+const savedTC = JSON.parse(sessionStorage.getItem("onlineTimeControl") || "{}");
+if (savedTC.minutes) {
+    // Refresh pe saved time lo, warna fresh time lo
+    whiteTime = Number(sessionStorage.getItem("onlineWhiteTime")) || savedTC.minutes * 60;
+    blackTime = Number(sessionStorage.getItem("onlineBlackTime")) || savedTC.minutes * 60;
+    incrementSeconds = savedTC.increment || 0;
+}
 
 const pieceImages = {
   wp: "white-pawn",
@@ -190,17 +207,34 @@ socket.on("opponentDisconnected", () => {
 });
 
 function afterOnlineMove(move) {
-  lastMove = {
-    from: move.from,
-    to: move.to
-  };
+    lastMove = {
+        from: move.from,
+        to: move.to
+    };
 
-  selectedSquare = null;
-  legalMoves = [];
+    selectedSquare = null;
+    legalMoves = [];
 
-  updateOnlineInfo();
-checkOnlineGameOver();
-  createOnlineBoard();
+    // Increment apply karo
+    if (incrementSeconds > 0) {
+        if (move.color === "w") whiteTime += incrementSeconds;
+        else blackTime += incrementSeconds;
+    }
+
+    // Moves sessionStorage mein save karo
+    const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
+    savedMoves.push({ from: move.from, to: move.to, promotion: move.promotion || "q" });
+    sessionStorage.setItem("onlineMoves", JSON.stringify(savedMoves));
+
+    updateOnlineInfo();
+    updateOnlineClocks();
+    checkOnlineGameOver();
+    createOnlineBoard();
+
+    // Timer start karo pehle move ke baad
+    if (!timerInterval && savedMoves.length >= 1) {
+        startOnlineTimer();
+    }
 }
 function checkOnlineGameOver() {
   if (game.in_checkmate()) {
@@ -216,10 +250,12 @@ function checkOnlineGameOver() {
 
 function finishOnlineGame(title, message) {
   gameOver = true;
-
   selectedSquare = null;
   legalMoves = [];
-
+  clearInterval(timerInterval);
+  sessionStorage.removeItem("onlineMoves"); 
+  sessionStorage.removeItem("onlineWhiteTime");
+  sessionStorage.removeItem("onlineBlackTime");
   if (onlineGameOverModal) {
     onlineGameOverModal.style.display = "grid";
   }
@@ -279,6 +315,66 @@ if (onlineCloseGameOverBtn) {
   onlineCloseGameOverBtn.addEventListener("click", () => {
     onlineGameOverModal.style.display = "none";
   });
+}
+
+const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
+if (savedMoves.length > 0) {
+  savedMoves.forEach((move) => {
+    game.move(move);
+  });
+  lastMove = {
+    from: savedMoves[savedMoves.length - 1].from,
+    to: savedMoves[savedMoves.length - 1].to
+  };
+}
+function formatTime(seconds) {
+    const s = Math.max(0, seconds);
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+function updateOnlineClocks() {
+    if (onlineWhiteClock) onlineWhiteClock.textContent = formatTime(whiteTime);
+    if (onlineBlackClock) onlineBlackClock.textContent = formatTime(blackTime);
+
+    if (whiteClockBox && blackClockBox) {
+        whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && !gameOver);
+        blackClockBox.classList.toggle("cm-active", game.turn() === "b" && !gameOver);
+        whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10 && whiteTime > 0);
+        blackClockBox.classList.toggle("cm-low-time", blackTime <= 10 && blackTime > 0);
+    }
+}
+function startOnlineTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (gameOver) {
+            clearInterval(timerInterval);
+            return;
+        }
+
+        if (game.turn() === "w") {
+            whiteTime -= 1;
+        } else {
+            blackTime -= 1;
+        }
+
+        // Har second time save karo
+        sessionStorage.setItem("onlineWhiteTime", whiteTime);
+        sessionStorage.setItem("onlineBlackTime", blackTime);
+
+        if (whiteTime <= 0 || blackTime <= 0) {
+            whiteTime = Math.max(0, whiteTime);
+            blackTime = Math.max(0, blackTime);
+            clearInterval(timerInterval);
+            finishOnlineGame(
+                "Time Out",
+                whiteTime <= 0 ? "Black wins on time!" : "White wins on time!"
+            );
+        }
+
+        updateOnlineClocks();
+    }, 1000);
 }
 createOnlineBoard();
 updateOnlineInfo();

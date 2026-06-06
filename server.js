@@ -74,36 +74,44 @@ let waitingPlayer = null;
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
+socket.on("findMatch", ({ player, timeControl }) => {
+    if (waitingPlayer && 
+        waitingPlayer.socketId !== socket.id &&
+        waitingPlayer.timeControl.mode === timeControl.mode &&
+        waitingPlayer.timeControl.minutes === timeControl.minutes &&
+        waitingPlayer.timeControl.increment === timeControl.increment) {
+        const roomId = `room-${waitingPlayer.socketId}-${socket.id}`;
 
-  socket.on("findMatch", (player) => {
-    if (waitingPlayer && waitingPlayer.socketId !== socket.id) {
-      const roomId = `room-${waitingPlayer.socketId}-${socket.id}`;
+        socket.join(roomId);
+        io.sockets.sockets.get(waitingPlayer.socketId)?.join(roomId);
 
-      socket.join(roomId);
-      io.sockets.sockets.get(waitingPlayer.socketId)?.join(roomId);
+        const tc = waitingPlayer.timeControl || timeControl;
 
-      io.to(waitingPlayer.socketId).emit("matchFound", {
-        roomId,
-        color: "w",
-        opponent: player
-      });
+        io.to(waitingPlayer.socketId).emit("matchFound", {
+            roomId,
+            color: "w",
+            opponent: player,
+            timeControl: tc
+        });
 
-      socket.emit("matchFound", {
-        roomId,
-        color: "b",
-        opponent: waitingPlayer.player
-      });
+        socket.emit("matchFound", {
+            roomId,
+            color: "b",
+            opponent: waitingPlayer.player,
+            timeControl: tc
+        });
 
-      waitingPlayer = null;
+        waitingPlayer = null;
     } else {
-      waitingPlayer = {
-        socketId: socket.id,
-        player
-      };
+        waitingPlayer = {
+            socketId: socket.id,
+            player,
+            timeControl
+        };
 
-      socket.emit("waitingForOpponent");
+        socket.emit("waitingForOpponent");
     }
-  });
+});
 
   socket.on("joinOnlineRoom", ({ roomId }) => {
     socket.join(roomId);

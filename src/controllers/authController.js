@@ -117,11 +117,8 @@ async function setupProfile(req, res) {
       bulletRating: user.bulletRating,
       boardTheme: user.boardTheme
     };
-
-    req.session.setupEmail = email;
-
 return req.session.save(() => {
-  res.redirect("/setup-profile");
+  res.redirect("/profile");
 });
   } catch (error) {
     console.error("Setup profile error:", error);
