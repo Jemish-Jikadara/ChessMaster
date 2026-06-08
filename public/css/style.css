@@ -2603,12 +2603,13 @@ video {
   text-decoration: none;
   font-weight: 800;
 }
-
 .cm-online-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 640px) 320px;
   gap: 22px;
   align-items: start;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .cm-online-board-panel,

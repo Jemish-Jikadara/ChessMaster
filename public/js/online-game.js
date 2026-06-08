@@ -6,16 +6,37 @@ const onlineGameOverTitle = document.getElementById("onlineGameOverTitle");
 const onlineGameOverMessage = document.getElementById("onlineGameOverMessage");
 const onlineCloseGameOverBtn = document.getElementById("onlineCloseGameOverBtn");
 const onlineSaveGameBtn = document.getElementById("onlineSaveGameBtn");
-const playerColorLabel = document.getElementById("playerColorLabel");
-const onlineTurnLabel = document.getElementById("onlineTurnLabel");
-const onlineStatusLabel = document.getElementById("onlineStatusLabel");
 const onlineMoveHistory = document.getElementById("onlineMoveHistory");
-const opponentName = document.getElementById("opponentName");
-const onlineGameInfo = document.getElementById("onlineGameInfo");
+
+// New UI elements
+const ogOpponentName = document.getElementById("ogOpponentName");
+const ogOpponentRating = document.getElementById("ogOpponentRating");
+const ogOpponentAvatar = document.getElementById("ogOpponentAvatar");
+const ogOpponentClock = document.getElementById("ogOpponentClock");
+const ogOpponentStrip = document.getElementById("ogOpponentStrip");
+const ogMyName = document.getElementById("ogMyName");
+const ogMyRating = document.getElementById("ogMyRating");
+const ogMyAvatar = document.getElementById("ogMyAvatar");
+const ogMyClock = document.getElementById("ogMyClock");
+const ogMyStrip = document.getElementById("ogMyStrip");
+const ogTurnLabel = document.getElementById("ogTurnLabel");
+const ogStatusBadge = document.getElementById("ogStatusBadge");
+const ogDisconnectMsg = document.getElementById("ogDisconnectMsg");
+const ogResignBtn = document.getElementById("ogResignBtn");
+const ogResignOverlay = document.getElementById("ogResignOverlay");
+const ogResignConfirmBtn = document.getElementById("ogResignConfirmBtn");
+const ogResignCancelBtn = document.getElementById("ogResignCancelBtn");
+const ogDrawBtn = document.getElementById("ogDrawBtn");
+const ogDrawBanner = document.getElementById("ogDrawBanner");
+const ogDrawAcceptBtn = document.getElementById("ogDrawAcceptBtn");
+const ogDrawDeclineBtn = document.getElementById("ogDrawDeclineBtn");
+const ogAbortBtn = document.getElementById("ogAbortBtn");
+const ogChatBtn = document.getElementById("ogChatBtn");
 
 const roomId = sessionStorage.getItem("onlineRoomId");
 const playerColor = sessionStorage.getItem("onlineColor");
 const opponent = JSON.parse(sessionStorage.getItem("onlineOpponent") || "{}");
+const savedTC = JSON.parse(sessionStorage.getItem("onlineTimeControl") || "{}");
 
 const game = new Chess();
 
@@ -23,343 +44,377 @@ let selectedSquare = null;
 let legalMoves = [];
 let lastMove = null;
 let gameOver = false;
-// Timer variables
+let disconnectTimer = null;
+let drawOfferMoveCount = -99;
+let canOfferDraw = false;
+
+// Timer
 let whiteTime = 0;
 let blackTime = 0;
 let incrementSeconds = 0;
 let timerInterval = null;
-const onlineWhiteClock = document.getElementById("onlineWhiteClock");
-const onlineBlackClock = document.getElementById("onlineBlackClock");
-const whiteClockBox = document.getElementById("whiteClockBox");
-const blackClockBox = document.getElementById("blackClockBox");
 
-const savedTC = JSON.parse(sessionStorage.getItem("onlineTimeControl") || "{}");
 if (savedTC.minutes) {
-    // Refresh pe saved time lo, warna fresh time lo
     whiteTime = Number(sessionStorage.getItem("onlineWhiteTime")) || savedTC.minutes * 60;
     blackTime = Number(sessionStorage.getItem("onlineBlackTime")) || savedTC.minutes * 60;
     incrementSeconds = savedTC.increment || 0;
 }
 
 const pieceImages = {
-  wp: "white-pawn",
-  wr: "white-rook",
-  wn: "white-knight",
-  wb: "white-bishop",
-  wq: "white-queen",
-  wk: "white-king",
-  bp: "black-pawn",
-  br: "black-rook",
-  bn: "black-knight",
-  bb: "black-bishop",
-  bq: "black-queen",
-  bk: "black-king"
+    wp: "white-pawn", wr: "white-rook", wn: "white-knight",
+    wb: "white-bishop", wq: "white-queen", wk: "white-king",
+    bp: "black-pawn", br: "black-rook", bn: "black-knight",
+    bb: "black-bishop", bq: "black-queen", bk: "black-king"
 };
 
 if (!roomId || !playerColor) {
-  window.location.href = "/online";
+    window.location.href = "/online";
 }
 
 socket.emit("joinOnlineRoom", { roomId });
 
-playerColorLabel.textContent = playerColor === "w" ? "White" : "Black";
-opponentName.textContent = opponent.username || "Opponent";
-onlineGameInfo.textContent = `Room: ${roomId}`;
+// ── SETUP PLAYER INFO ──
+function setupPlayerInfo() {
+    const myUsername = window.currentUsername || "You";
+    const myRating = window.currentRating || 1200;
+    const opponentUsername = opponent.username || opponent.player?.username || "Opponent";
+    const opponentRating = opponent.rating || opponent.player?.rating || 1200;
 
+    const tc = savedTC;
+    let ratingKey = "rapidRating";
+    if (tc.mode === "blitz") ratingKey = "blitzRating";
+    if (tc.mode === "bullet") ratingKey = "bulletRating";
+
+    ogMyName.textContent = myUsername;
+    ogMyRating.textContent = `${myRating} • ${tc.label || "Rapid"}`;
+    ogMyAvatar.textContent = myUsername.charAt(0).toUpperCase();
+
+    ogOpponentName.textContent = opponentUsername;
+    ogOpponentRating.textContent = `${opponentRating} • ${tc.label || "Rapid"}`;
+    ogOpponentAvatar.textContent = opponentUsername.charAt(0).toUpperCase();
+
+    // Avatar colors based on piece color
+    if (playerColor === "w") {
+        ogMyAvatar.className = "og-avatar white-av";
+        ogOpponentAvatar.className = "og-avatar black-av";
+    } else {
+        ogMyAvatar.className = "og-avatar black-av";
+        ogOpponentAvatar.className = "og-avatar white-av";
+    }
+}
+
+setupPlayerInfo();
+
+// ── BOARD ──
 function createOnlineBoard() {
-  onlineChessBoard.innerHTML = "";
-  onlineChessBoard.classList.toggle("cm-board-flipped", playerColor === "b");
+    onlineChessBoard.innerHTML = "";
+onlineChessBoard.style.transform = "";
+const board = game.board();
+const rows = playerColor === "b" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+const cols = playerColor === "b" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+    rows.forEach((row) => {
+        cols.forEach((col) => {
+            const squareName = getSquareName(row, col);
+            const square = document.createElement("div");
+            const isLightSquare = (row + col) % 2 === 0;
+            const isSelected = selectedSquare === squareName;
+            const legalMove = legalMoves.find((m) => m.to === squareName);
+            const piece = board[row][col];
+            const isLastMove = lastMove && (lastMove.from === squareName || lastMove.to === squareName);
 
-  const board = game.board();
-  const rows = [0,1,2,3,4,5,6,7];
-const cols = [0,1,2,3,4,5,6,7];
-  rows.forEach((row) => {
-    cols.forEach((col) => {
-      const squareName = getSquareName(row, col);
-      const square = document.createElement("div");
-      const displayRow = rows.indexOf(row);
-const displayCol = cols.indexOf(col);
-const isLightSquare = (row + col) % 2 === 0;
-      const isSelected = selectedSquare === squareName;
-      const legalMove = legalMoves.find((move) => move.to === squareName);
-      const piece = board[row][col];
+            square.className = `aspect-square relative flex items-center justify-center ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""} hover:brightness-110 transition`;
+            square.style.backgroundColor = isLastMove
+                ? (isLightSquare ? "#fef08a" : "#ca8a04")
+                : (isLightSquare ? "#f0d9b5" : "#b58863");
 
-      const isLastMoveSquare =
-        lastMove &&
-        (lastMove.from === squareName || lastMove.to === squareName);
+            if (legalMove) {
+                const dot = document.createElement("div");
+                dot.style.cssText = `position:absolute;pointer-events:none;z-index:20;border-radius:50%;${legalMove.captured ? "width:78%;height:78%;border:5px solid rgba(250,204,21,0.85)" : "width:16px;height:16px;background:rgba(250,204,21,0.9)"}`;
+                square.appendChild(dot);
+            }
 
-      square.className = `
-        aspect-square relative flex items-center justify-center
-        ${isLightSquare ? "bg-stone-200" : "bg-red-700"}
-        ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""}
-        hover:brightness-110 transition
-      `;
+            if (piece) {
+                const img = document.createElement("img");
+                img.src = `/images/pieces/${pieceImages[piece.color + piece.type]}.png`;
+                img.alt = piece.type;
+                img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
+                square.appendChild(img);
+            }
 
-      if (isLastMoveSquare) {
-        square.style.backgroundColor = isLightSquare ? "#fef08a" : "#ca8a04";
-      }
-
-      if (legalMove) {
-        const moveMark = document.createElement("div");
-        moveMark.style.position = "absolute";
-        moveMark.style.pointerEvents = "none";
-        moveMark.style.zIndex = "20";
-        moveMark.style.width = legalMove.captured ? "78%" : "16px";
-        moveMark.style.height = legalMove.captured ? "78%" : "16px";
-        moveMark.style.borderRadius = "50%";
-
-        if (legalMove.captured) {
-          moveMark.style.border = "5px solid rgba(250, 204, 21, 0.85)";
-        } else {
-          moveMark.style.backgroundColor = "rgba(250, 204, 21, 0.9)";
-        }
-
-        square.appendChild(moveMark);
-      }
-
-      if (piece) {
-        const img = document.createElement("img");
-        const imageName = pieceImages[piece.color + piece.type];
-
-        img.src = `/images/pieces/${imageName}.png`;
-        img.alt = imageName;
-        img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
-
-        square.appendChild(img);
-      }
-
-      square.addEventListener("click", () => {
-        handleOnlineSquareClick(squareName);
-      });
-
-      onlineChessBoard.appendChild(square);
+            square.addEventListener("click", () => handleOnlineSquareClick(squareName));
+            onlineChessBoard.appendChild(square);
+        });
     });
-  });
 }
 
 function handleOnlineSquareClick(squareName) {
-  if (gameOver || game.game_over()) return;
-  if (game.turn() !== playerColor) return;
+    if (gameOver || game.game_over()) return;
+    if (game.turn() !== playerColor) return;
 
-  const piece = game.get(squareName);
+    const piece = game.get(squareName);
 
-  if (!selectedSquare) {
-    if (!piece) return;
-    if (piece.color !== playerColor) return;
+    if (!selectedSquare) {
+        if (!piece || piece.color !== playerColor) return;
+        selectedSquare = squareName;
+        legalMoves = game.moves({ square: squareName, verbose: true });
+        createOnlineBoard();
+        return;
+    }
 
-    selectedSquare = squareName;
-    legalMoves = game.moves({
-      square: squareName,
-      verbose: true
-    });
+    const move = game.move({ from: selectedSquare, to: squareName, promotion: "q" });
 
-    createOnlineBoard();
-    return;
-  }
+    if (move) {
+        afterOnlineMove(move);
+        socket.emit("onlineMove", { roomId, move: { from: move.from, to: move.to, promotion: "q" } });
+        return;
+    }
 
-  const move = game.move({
-    from: selectedSquare,
-    to: squareName,
-    promotion: "q"
-  });
-
-  if (move) {
-    afterOnlineMove(move);
-
-    socket.emit("onlineMove", {
-      roomId,
-      move: {
-        from: move.from,
-        to: move.to,
-        promotion: "q"
-      }
-    });
-
-    return;
-  }
-
-  if (piece && piece.color === playerColor) {
-    selectedSquare = squareName;
-    legalMoves = game.moves({
-      square: squareName,
-      verbose: true
-    });
-    createOnlineBoard();
-    return;
-  }
-
-  selectedSquare = null;
-  legalMoves = [];
-  createOnlineBoard();
-}
-
-socket.on("opponentMove", (moveData) => {
-  const move = game.move(moveData);
-
-  if (!move) return;
-
-  afterOnlineMove(move);
-});
-
-socket.on("opponentDisconnected", () => {
-  onlineStatusLabel.textContent = "Opponent left";
-  onlineStatusLabel.style.color = "#ef4444";
-});
-
-function afterOnlineMove(move) {
-    lastMove = {
-        from: move.from,
-        to: move.to
-    };
+    if (piece && piece.color === playerColor) {
+        selectedSquare = squareName;
+        legalMoves = game.moves({ square: squareName, verbose: true });
+        createOnlineBoard();
+        return;
+    }
 
     selectedSquare = null;
     legalMoves = [];
+    createOnlineBoard();
+}
 
-    // Increment apply karo
+// ── AFTER MOVE ──
+function afterOnlineMove(move) {
+    lastMove = { from: move.from, to: move.to };
+    selectedSquare = null;
+    legalMoves = [];
+
     if (incrementSeconds > 0) {
         if (move.color === "w") whiteTime += incrementSeconds;
         else blackTime += incrementSeconds;
     }
 
-    // Moves sessionStorage mein save karo
     const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
     savedMoves.push({ from: move.from, to: move.to, promotion: move.promotion || "q" });
     sessionStorage.setItem("onlineMoves", JSON.stringify(savedMoves));
 
+    // Abort button hide after first move
+    const totalMoves = savedMoves.length;
+    if (totalMoves >= 2 && ogAbortBtn) {
+        ogAbortBtn.style.display = "none";
+    }
+
+    // Draw offer enable after 30 moves (15 each)
+    if (totalMoves >= 30) {
+        canOfferDraw = true;
+        const movesSinceDecline = totalMoves - drawOfferMoveCount;
+        if (movesSinceDecline >= 2) {
+            ogDrawBtn.disabled = false;
+        }
+    }
+
     updateOnlineInfo();
-    updateOnlineClocks();
+    updateClockStrips();
     checkOnlineGameOver();
     createOnlineBoard();
 
-    // Timer start karo pehle move ke baad
-    if (!timerInterval && savedMoves.length >= 1) {
+    if (!timerInterval && totalMoves >= 1) {
         startOnlineTimer();
     }
 }
-function checkOnlineGameOver() {
-  if (game.in_checkmate()) {
-    const winnerColor = game.turn() === "w" ? "Black" : "White";
-    finishOnlineGame("Checkmate", `${winnerColor} wins by checkmate.`);
-    return;
-  }
 
-  if (game.in_draw()) {
-    finishOnlineGame("Draw", "The game ended in a draw.");
-  }
+// ── SOCKET EVENTS ──
+socket.on("opponentMove", (moveData) => {
+    const move = game.move(moveData);
+    if (!move) return;
+    afterOnlineMove(move);
+});
+
+socket.on("opponentDisconnected", () => {
+    if (gameOver) return;
+    ogDisconnectMsg.style.display = "block";
+    let sec = 30;
+    ogDisconnectMsg.textContent = `Disconnected — auto-win in ${sec}s`;
+    disconnectTimer = setInterval(() => {
+        sec--;
+        ogDisconnectMsg.textContent = `Disconnected — auto-win in ${sec}s`;
+        if (sec <= 0) {
+            clearInterval(disconnectTimer);
+            finishOnlineGame("Opponent Disconnected", "Your opponent left. You win!");
+        }
+    }, 1000);
+});
+
+socket.on("opponentReconnected", () => {
+    clearInterval(disconnectTimer);
+    ogDisconnectMsg.style.display = "none";
+});
+
+socket.on("drawOffered", () => {
+    ogDrawBanner.style.display = "block";
+});
+
+socket.on("drawDeclined", () => {
+    drawOfferMoveCount = game.history().length;
+    ogDrawBtn.disabled = true;
+});
+
+socket.on("drawAccepted", () => {
+    finishOnlineGame("Draw", "Both players agreed to a draw.");
+});
+
+socket.on("opponentResigned", () => {
+    finishOnlineGame("Opponent Resigned", "Your opponent resigned. You win!");
+});
+
+socket.on("gameAborted", () => {
+    finishOnlineGame("Game Aborted", "The game was aborted.");
+});
+
+socket.on("firstMoveTimeout", () => {
+    finishOnlineGame("Game Aborted", "No moves were made in time. Game aborted.");
+});
+
+// ── RESIGN ──
+ogResignBtn.addEventListener("click", () => {
+    ogResignOverlay.classList.add("show");
+});
+
+ogResignCancelBtn.addEventListener("click", () => {
+    ogResignOverlay.classList.remove("show");
+});
+
+ogResignConfirmBtn.addEventListener("click", () => {
+    ogResignOverlay.classList.remove("show");
+    socket.emit("resign", { roomId });
+    finishOnlineGame("You Resigned", "You resigned the game.");
+});
+
+// ── DRAW ──
+ogDrawBtn.addEventListener("click", () => {
+    if (ogDrawBtn.disabled) return;
+    ogDrawBtn.disabled = true;
+    socket.emit("offerDraw", { roomId });
+});
+
+ogDrawAcceptBtn.addEventListener("click", () => {
+    ogDrawBanner.style.display = "none";
+    socket.emit("acceptDraw", { roomId });
+    finishOnlineGame("Draw", "Both players agreed to a draw.");
+});
+
+ogDrawDeclineBtn.addEventListener("click", () => {
+    ogDrawBanner.style.display = "none";
+    socket.emit("declineDraw", { roomId });
+});
+
+// ── ABORT ──
+ogAbortBtn.addEventListener("click", () => {
+    socket.emit("abortGame", { roomId });
+    finishOnlineGame("Game Aborted", "The game was aborted.");
+});
+
+// ── CHAT (placeholder) ──
+ogChatBtn.addEventListener("click", () => {
+    alert("Live chat coming soon!");
+});
+
+// ── GAME OVER ──
+function checkOnlineGameOver() {
+    if (game.in_checkmate()) {
+        const winner = game.turn() === "w" ? "Black" : "White";
+        finishOnlineGame("Checkmate", `${winner} wins by checkmate.`);
+        return;
+    }
+    if (game.in_draw()) {
+        finishOnlineGame("Draw", "The game ended in a draw.");
+    }
 }
 
 function finishOnlineGame(title, message) {
-  gameOver = true;
-  selectedSquare = null;
-  legalMoves = [];
-  clearInterval(timerInterval);
-  sessionStorage.removeItem("onlineMoves"); 
-  sessionStorage.removeItem("onlineWhiteTime");
-  sessionStorage.removeItem("onlineBlackTime");
-  if (onlineGameOverModal) {
-    onlineGameOverModal.style.display = "grid";
-  }
+    gameOver = true;
+    selectedSquare = null;
+    legalMoves = [];
+    clearInterval(timerInterval);
+    clearInterval(disconnectTimer);
+    sessionStorage.removeItem("onlineMoves");
+    sessionStorage.removeItem("onlineWhiteTime");
+    sessionStorage.removeItem("onlineBlackTime");
 
-  if (onlineGameOverTitle) {
-    onlineGameOverTitle.textContent = title;
-  }
-
-  if (onlineGameOverMessage) {
-    onlineGameOverMessage.textContent = message;
-  }
-}
-function updateOnlineInfo() {
-  onlineTurnLabel.textContent = game.turn() === "w" ? "White" : "Black";
-
-  if (game.in_checkmate()) {
-    onlineStatusLabel.textContent = "Checkmate";
-    onlineStatusLabel.style.color = "#ef4444";
-  } else if (game.in_check()) {
-    onlineStatusLabel.textContent = "Check";
-    onlineStatusLabel.style.color = "#facc15";
-  } else if (game.in_draw()) {
-    onlineStatusLabel.textContent = "Draw";
-    onlineStatusLabel.style.color = "#60a5fa";
-  } else {
-    onlineStatusLabel.textContent = "Active";
-    onlineStatusLabel.style.color = "#facc15";
-  }
-
-  const history = game.history({ verbose: true });
-
-  if (history.length === 0) {
-    onlineMoveHistory.innerHTML = `<p>No moves yet.</p>`;
-    return;
-  }
-
-  onlineMoveHistory.innerHTML = history
-    .map((move, index) => {
-      return `
-        <div class="cm-online-move-item">
-          <strong>${index + 1}.</strong>
-          ${move.san}
-          <span style="color:#94a3b8">(${move.from} → ${move.to})</span>
-        </div>
-      `;
-    })
-    .join("");
+    onlineGameOverModal.classList.add("show");
+    if (onlineGameOverTitle) onlineGameOverTitle.textContent = title;
+    if (onlineGameOverMessage) onlineGameOverMessage.textContent = message;
 }
 
-function getSquareName(row, col) {
-  const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
-  const rank = 8 - row;
-
-  return `${files[col]}${rank}`;
-}
 if (onlineCloseGameOverBtn) {
-  onlineCloseGameOverBtn.addEventListener("click", () => {
-    onlineGameOverModal.style.display = "none";
-  });
+    onlineCloseGameOverBtn.addEventListener("click", () => {
+        onlineGameOverModal.classList.remove("show");
+    });
 }
 
-const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
-if (savedMoves.length > 0) {
-  savedMoves.forEach((move) => {
-    game.move(move);
-  });
-  lastMove = {
-    from: savedMoves[savedMoves.length - 1].from,
-    to: savedMoves[savedMoves.length - 1].to
-  };
-}
-function formatTime(seconds) {
-    const s = Math.max(0, seconds);
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${m}:${String(sec).padStart(2, "0")}`;
-}
+// ── INFO UPDATE ──
+function updateOnlineInfo() {
+    const turn = game.turn();
+    ogTurnLabel.textContent = turn === "w" ? "White to move" : "Black to move";
 
-function updateOnlineClocks() {
-    if (onlineWhiteClock) onlineWhiteClock.textContent = formatTime(whiteTime);
-    if (onlineBlackClock) onlineBlackClock.textContent = formatTime(blackTime);
-
-    if (whiteClockBox && blackClockBox) {
-        whiteClockBox.classList.toggle("cm-active", game.turn() === "w" && !gameOver);
-        blackClockBox.classList.toggle("cm-active", game.turn() === "b" && !gameOver);
-        whiteClockBox.classList.toggle("cm-low-time", whiteTime <= 10 && whiteTime > 0);
-        blackClockBox.classList.toggle("cm-low-time", blackTime <= 10 && blackTime > 0);
+    ogStatusBadge.className = "og-status-badge";
+    if (game.in_checkmate()) {
+        ogStatusBadge.textContent = "Checkmate";
+        ogStatusBadge.classList.add("over");
+    } else if (game.in_check()) {
+        ogStatusBadge.textContent = "Check!";
+        ogStatusBadge.classList.add("check");
+    } else if (game.in_draw()) {
+        ogStatusBadge.textContent = "Draw";
+        ogStatusBadge.classList.add("over");
+    } else {
+        ogStatusBadge.textContent = "Active";
+        ogStatusBadge.classList.add("active");
     }
+
+    const history = game.history({ verbose: true });
+    if (history.length === 0) {
+        onlineMoveHistory.innerHTML = `<p style="color:#6b7280;font-size:13px;">No moves yet.</p>`;
+        return;
+    }
+
+    onlineMoveHistory.innerHTML = history.map((m, i) => `
+        <div class="og-move-item">
+            <strong>${i + 1}.</strong> ${m.san}
+            <span>(${m.from}→${m.to})</span>
+        </div>
+    `).join("");
+
+    onlineMoveHistory.scrollTop = onlineMoveHistory.scrollHeight;
 }
+
+// ── CLOCKS ──
+function formatTime(s) {
+    s = Math.max(0, s);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function updateClockStrips() {
+    const myIsWhite = playerColor === "w";
+    const myTime = myIsWhite ? whiteTime : blackTime;
+    const oppTime = myIsWhite ? blackTime : whiteTime;
+
+    ogMyClock.textContent = formatTime(myTime);
+    ogOpponentClock.textContent = formatTime(oppTime);
+
+    const myTurn = game.turn() === playerColor;
+    ogMyStrip.classList.toggle("active-turn", myTurn && !gameOver);
+    ogOpponentStrip.classList.toggle("active-turn", !myTurn && !gameOver);
+    ogMyStrip.classList.toggle("low-time", myTime <= 10 && myTime > 0);
+    ogOpponentStrip.classList.toggle("low-time", oppTime <= 10 && oppTime > 0);
+}
+
 function startOnlineTimer() {
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-        if (gameOver) {
-            clearInterval(timerInterval);
-            return;
-        }
+        if (gameOver) { clearInterval(timerInterval); return; }
 
-        if (game.turn() === "w") {
-            whiteTime -= 1;
-        } else {
-            blackTime -= 1;
-        }
+        if (game.turn() === "w") whiteTime--;
+        else blackTime--;
 
-        // Har second time save karo
         sessionStorage.setItem("onlineWhiteTime", whiteTime);
         sessionStorage.setItem("onlineBlackTime", blackTime);
 
@@ -367,14 +422,36 @@ function startOnlineTimer() {
             whiteTime = Math.max(0, whiteTime);
             blackTime = Math.max(0, blackTime);
             clearInterval(timerInterval);
-            finishOnlineGame(
-                "Time Out",
-                whiteTime <= 0 ? "Black wins on time!" : "White wins on time!"
-            );
+            finishOnlineGame("Time Out", whiteTime <= 0 ? "Black wins on time!" : "White wins on time!");
         }
 
-        updateOnlineClocks();
+        updateClockStrips();
     }, 1000);
 }
+
+// ── HELPERS ──
+function getSquareName(row, col) {
+    return `${"abcdefgh"[col]}${8 - row}`;
+}
+
+// ── RESTORE ON REFRESH ──
+const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
+if (savedMoves.length > 0) {
+    savedMoves.forEach(m => game.move(m));
+    lastMove = { from: savedMoves[savedMoves.length - 1].from, to: savedMoves[savedMoves.length - 1].to };
+    if (savedMoves.length >= 2) ogAbortBtn.style.display = "none";
+    if (savedMoves.length >= 30) {
+        canOfferDraw = true;
+        ogDrawBtn.disabled = false;
+    }
+    if (savedMoves.length >= 1) startOnlineTimer();
+}
+
+// ── INIT ──
 createOnlineBoard();
 updateOnlineInfo();
+updateClockStrips();
+
+if (savedMoves.length === 0) {
+    startOnlineTimer();
+}
