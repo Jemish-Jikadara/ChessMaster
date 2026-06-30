@@ -2,19 +2,23 @@ const Game = require("../models/Game");
 const User = require("../models/User");
 
 async function saveGame(req, res) {
+  console.log("API HIT");
+console.log(req.body);
   try {
     const {
-      gameId,
-      whitePlayer,
-      blackPlayer,
-      winner,
-      playerColor,  
-      timeMode,
-      timeControl,
-      increment,
-      totalMoves,
-      moves
-    } = req.body;
+  gameId,
+  whiteUser,
+  blackUser,
+  whitePlayer,
+  blackPlayer,
+  winner,
+  playerColor,
+  timeMode,
+  timeControl,
+  increment,
+  totalMoves,
+  moves
+} = req.body;
 
     // Duplicate save guard
     if (gameId) {
@@ -23,19 +27,29 @@ async function saveGame(req, res) {
         return res.status(200).json({ success: true, game: existing });
       }
     }
+console.log("SESSION USER:", req.session.user);
+const game = await Game.create({
+  gameId: gameId || null,
 
-    const game = await Game.create({
-      gameId: gameId || null,
-      whiteUser: req.session.user.id,
-      whitePlayer,
-      blackPlayer,
-      winner,
-      timeMode,
-      timeControl,
-      increment,
-      totalMoves,
-      moves
-    });
+  whiteUser,
+  blackUser,
+
+  whitePlayer,
+  blackPlayer,
+
+  winner,
+  timeMode,
+  timeControl,
+  increment,
+  totalMoves,
+  moves
+});
+    console.log({
+    whiteUser: req.session.user.id,
+    blackUser: "???",
+    whitePlayer,
+    blackPlayer
+});
     const statsUpdate = { $inc: { gamesPlayed: 1 } };
 
 const isPlayerWhite = playerColor === "w";
@@ -63,6 +77,7 @@ if (winner === "draw") {
 
     res.status(201).json({ success: true, game });
   } catch (error) {
+    console.error("Error saving game:", error);
     res.status(400).json({ success: false, message: error.message });
   }
 }

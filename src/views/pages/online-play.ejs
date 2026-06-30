@@ -653,6 +653,7 @@
         <script>
         window.currentUsername = "<%= currentUser ? currentUser.username : 'Player' %>";
         window.currentRating = <%= currentUser ? (currentUser.rapidRating || currentUser.blitzRating || currentUser.bulletRating || 1200) : 1200 %>;
+        window.currentUserId = "<%= currentUser ? currentUser.id : '' %>";
     </script>
         <script src="/js/online-game.js"></script>
     </body>

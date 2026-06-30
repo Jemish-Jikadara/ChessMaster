@@ -186,12 +186,12 @@ function afterOnlineMove(move) {
     lastMove = { from: move.from, to: move.to };
     selectedSquare = null;
     legalMoves = [];
-
+/*
     if (incrementSeconds > 0) {
         if (move.color === "w") whiteTime += incrementSeconds;
         else blackTime += incrementSeconds;
     }
-
+*/
     const savedMoves = JSON.parse(sessionStorage.getItem("onlineMoves") || "[]");
     savedMoves.push({ from: move.from, to: move.to, promotion: move.promotion || "q" });
     sessionStorage.setItem("onlineMoves", JSON.stringify(savedMoves));
@@ -216,9 +216,11 @@ function afterOnlineMove(move) {
     checkOnlineGameOver();
     createOnlineBoard();
 
+    /*
     if (!timerInterval && totalMoves >= 1) {
         startOnlineTimer();
     }
+        */
 }
 
 // ── SOCKET EVENTS ──
@@ -226,6 +228,24 @@ socket.on("opponentMove", (moveData) => {
     const move = game.move(moveData);
     if (!move) return;
     afterOnlineMove(move);
+});
+//new code for timer update from server
+socket.on("timerUpdate", (data) => {
+
+    whiteTime = Math.max(0, data.whiteTime);
+    blackTime = Math.max(0, data.blackTime);
+
+    updateClockStrips();
+
+});
+socket.on("timeOut", ({ winner }) => {
+
+    finishOnlineGame(
+        "Time Out",
+        `${winner.charAt(0).toUpperCase() + winner.slice(1)} wins on time!`,
+        "timeout"
+    );
+
 });
 
 socket.on("opponentDisconnected", () => {
@@ -238,7 +258,11 @@ socket.on("opponentDisconnected", () => {
         ogDisconnectMsg.textContent = `Disconnected — auto-win in ${sec}s`;
         if (sec <= 0) {
             clearInterval(disconnectTimer);
-            finishOnlineGame("Opponent Disconnected", "Your opponent left. You win!");
+            finishOnlineGame(
+                            "Opponent Disconnected",
+                            "Your opponent left. You win!",
+                        "disconnect"
+);
         }
     }, 1000);
 });
@@ -258,11 +282,11 @@ socket.on("drawDeclined", () => {
 });
 
 socket.on("drawAccepted", () => {
-    finishOnlineGame("Draw", "Both players agreed to a draw.");
+    finishOnlineGame("Draw", "Both players agreed to a draw.", "draw");
 });
 
 socket.on("opponentResigned", () => {
-    finishOnlineGame("Opponent Resigned", "Your opponent resigned. You win!");
+    finishOnlineGame("Opponent Resigned", "Your opponent resigned. You win!","opponent_resigned");
 });
 
 socket.on("gameAborted", () => {
@@ -285,7 +309,7 @@ ogResignCancelBtn.addEventListener("click", () => {
 ogResignConfirmBtn.addEventListener("click", () => {
     ogResignOverlay.classList.remove("show");
     socket.emit("resign", { roomId });
-    finishOnlineGame("You Resigned", "You resigned the game.");
+    finishOnlineGame("You Resigned", "You resigned the game.", "resign");
 });
 
 // ── DRAW ──
@@ -321,35 +345,153 @@ ogChatBtn.addEventListener("click", () => {
 function checkOnlineGameOver() {
     if (game.in_checkmate()) {
         const winner = game.turn() === "w" ? "Black" : "White";
-        finishOnlineGame("Checkmate", `${winner} wins by checkmate.`);
+        finishOnlineGame("Checkmate", `${winner} wins by checkmate.`, "checkmate");
         return;
     }
     if (game.in_draw()) {
         finishOnlineGame("Draw", "The game ended in a draw.");
     }
 }
+let onlineGameSaved = false;
 
-function finishOnlineGame(title, message) {
+async function saveOnlineGame(reason) {
+    if (playerColor !== "w") {
+    return;
+}
+
+    if (onlineGameSaved) return;
+    onlineGameSaved = true;
+
+    const history = game.history();
+
+    if (history.length === 0) return;
+
+    const tc = JSON.parse(sessionStorage.getItem("onlineTimeControl") || "{}");
+
+    const myName = window.currentUsername || "Player";
+    const opponentName =
+        opponent.username ||
+        opponent.player?.username ||
+        "Opponent";
+
+    let whitePlayer, blackPlayer;
+
+    if (playerColor === "w") {
+        whitePlayer = myName;
+        blackPlayer = opponentName;
+    } else {
+        whitePlayer = opponentName;
+        blackPlayer = myName;
+    }
+
+    let winner = "draw";
+
+    switch (reason) {
+
+        case "checkmate":
+        case "timeout":
+
+            if (game.turn() === "w") {
+                winner = "black";
+            } else {
+                winner = "white";
+            }
+
+            break;
+
+        case "resign":
+
+            winner = playerColor === "w" ? "black" : "white";
+
+            break;
+
+        case "opponent_resigned":
+
+            winner = playerColor === "w" ? "white" : "black";
+
+            break;
+
+        case "draw":
+            winner = "draw";
+            break;
+
+        case "disconnect":
+
+            winner = playerColor === "w" ? "white" : "black";
+
+            break;
+    }
+
+    try {
+
+        await fetch("/api/games", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                whiteUser:
+                    playerColor === "w"? window.currentUserId: opponent.id,
+
+                blackUser:
+                    playerColor === "b"? window.currentUserId: opponent.id,
+
+                gameId: roomId,
+
+                whitePlayer,
+
+                blackPlayer,
+
+                winner,
+
+                playerColor,
+
+                timeMode: tc.mode,
+
+                timeControl: `${tc.minutes}+${tc.increment}`,
+
+                increment: tc.increment,
+
+                totalMoves: history.length,
+
+                moves: history
+            })
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}function finishOnlineGame(title, message, reason = "draw") {
     gameOver = true;
     selectedSquare = null;
     legalMoves = [];
+
     clearInterval(timerInterval);
     clearInterval(disconnectTimer);
+
+    // SAVE FIRST
+    saveOnlineGame(reason);
+
+    // THEN CLEAR SESSION
     sessionStorage.removeItem("onlineMoves");
     sessionStorage.removeItem("onlineWhiteTime");
     sessionStorage.removeItem("onlineBlackTime");
 
     onlineGameOverModal.classList.add("show");
-    if (onlineGameOverTitle) onlineGameOverTitle.textContent = title;
-    if (onlineGameOverMessage) onlineGameOverMessage.textContent = message;
-}
 
-if (onlineCloseGameOverBtn) {
-    onlineCloseGameOverBtn.addEventListener("click", () => {
-        onlineGameOverModal.classList.remove("show");
-    });
-}
+    if (onlineGameOverTitle)
+        onlineGameOverTitle.textContent = title;
 
+    if (onlineGameOverMessage)
+        onlineGameOverMessage.textContent = message;
+}
 // ── INFO UPDATE ──
 function updateOnlineInfo() {
     const turn = game.turn();
@@ -407,7 +549,7 @@ function updateClockStrips() {
     ogOpponentStrip.classList.toggle("low-time", oppTime <= 10 && oppTime > 0);
 }
 
-function startOnlineTimer() {
+/*function startOnlineTimer() {
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         if (gameOver) { clearInterval(timerInterval); return; }
@@ -428,6 +570,7 @@ function startOnlineTimer() {
         updateClockStrips();
     }, 1000);
 }
+    */
 
 // ── HELPERS ──
 function getSquareName(row, col) {
@@ -444,7 +587,7 @@ if (savedMoves.length > 0) {
         canOfferDraw = true;
         ogDrawBtn.disabled = false;
     }
-    if (savedMoves.length >= 1) startOnlineTimer();
+    //if (savedMoves.length >= 1) startOnlineTimer();
 }
 
 // ── INIT ──
@@ -452,6 +595,8 @@ createOnlineBoard();
 updateOnlineInfo();
 updateClockStrips();
 
+/*
 if (savedMoves.length === 0) {
     startOnlineTimer();
 }
+    */

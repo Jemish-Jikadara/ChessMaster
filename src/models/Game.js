@@ -12,6 +12,11 @@ const gameSchema = new mongoose.Schema(
       ref: "User",
       required: true
     },
+    blackUser:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true
+},
     whitePlayer: {
       type: String,
       required: true,

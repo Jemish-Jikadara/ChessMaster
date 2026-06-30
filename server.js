@@ -83,31 +83,91 @@ io.on("connection", (socket) => {
 
       socket.join(roomId);
       io.sockets.sockets.get(waitingPlayer.socketId)?.join(roomId);
+const totalSeconds = tc.minutes * 60;
 
-      // Room create karo
-      rooms[roomId] = {
-        sockets: new Set([waitingPlayer.socketId, socket.id]),
-        moved: false,
-        firstMoveTimer: null
-      };
+rooms[roomId] = {
+    sockets: new Set([waitingPlayer.socketId, socket.id]),
+    moved: false,
+    firstMoveTimer: null,
 
-      // 1 min first move timer shuru karo
+    // Players
+    whiteUser: waitingPlayer.player,
+    blackUser: player,
+
+    whiteTime: totalSeconds,
+    blackTime: totalSeconds,
+    increment: tc.increment || 0,
+
+    turn: "w",
+
+    lastUpdate: Date.now(),
+
+    timer: null
+};
+
       rooms[roomId].firstMoveTimer = setTimeout(() => {
         if (rooms[roomId] && !rooms[roomId].moved) {
           io.to(roomId).emit("firstMoveTimeout");
           clearRoom(roomId);
         }
       }, 60000);
+io.to(waitingPlayer.socketId).emit("matchFound", {
+    roomId,
+    color: "w",
+    opponent: {
+        id: player.id,
+        username: player.username
+    },
+    timeControl: tc
+});
 
-      io.to(waitingPlayer.socketId).emit("matchFound", {
-        roomId, color: "w", opponent: player, timeControl: tc
-      });
-
-      socket.emit("matchFound", {
-        roomId, color: "b", opponent: waitingPlayer.player, timeControl: tc
-      });
+socket.emit("matchFound", {
+    roomId,
+    color: "b",
+    opponent: {
+        id: waitingPlayer.player.id,
+        username: waitingPlayer.player.username
+    },
+    timeControl: tc
+});
 
       waitingPlayer = null;
+      // ---- SERVER TIMER ----
+rooms[roomId].timer = setInterval(() => {
+
+    const room = rooms[roomId];
+    if (!room) return;
+
+    const now = Date.now();
+    const elapsed = Math.floor((now - room.lastUpdate) / 1000);
+
+    if (elapsed <= 0) return;
+
+    room.lastUpdate = now;
+
+    if (room.turn === "w") {
+        room.whiteTime -= elapsed;
+    } else {
+        room.blackTime -= elapsed;
+    }
+
+    io.to(roomId).emit("timerUpdate", {
+        whiteTime: room.whiteTime,
+        blackTime: room.blackTime,
+        turn: room.turn
+    });
+
+    if (room.whiteTime <= 0 || room.blackTime <= 0) {
+
+        clearInterval(room.timer);
+
+        io.to(roomId).emit("timeOut", {
+            winner: room.whiteTime <= 0 ? "black" : "white"
+        });
+
+    }
+
+}, 1000);
 
     } else {
       waitingPlayer = { socketId: socket.id, player, timeControl };
@@ -115,16 +175,50 @@ io.on("connection", (socket) => {
     }
   });
 
-socket.on("joinOnlineRoom", ({ roomId }) => {
+/*
+  socket.on("joinOnlineRoom", ({ roomId }) => {
     socket.join(roomId);
     socketToRoom[socket.id] = roomId;
 
     if (rooms[roomId]) {
       rooms[roomId].sockets.add(socket.id);
     }
+    const room = rooms[roomId];
+
+if (room) {
+    socket.emit("timerUpdate", {
+        whiteTime: room.whiteTime,
+        blackTime: room.blackTime,
+        turn: room.turn
+    });
+}
   });
+  */
+ socket.on("joinOnlineRoom", ({ roomId }) => {
+
+    socket.join(roomId);
+
+    socketToRoom[socket.id] = roomId;
+
+    if (rooms[roomId]) {
+
+        rooms[roomId].sockets.add(socket.id);
+
+        // NEW
+        socket.to(roomId).emit("opponentReconnected");
+
+        socket.emit("timerUpdate", {
+            whiteTime: rooms[roomId].whiteTime,
+            blackTime: rooms[roomId].blackTime,
+            turn: rooms[roomId].turn
+        });
+
+    }
+
+});
 
   // ── MOVE ──
+  /*
   socket.on("onlineMove", ({ roomId, move }) => {
     if (rooms[roomId] && !rooms[roomId].moved) {
       rooms[roomId].moved = true;
@@ -133,6 +227,47 @@ socket.on("joinOnlineRoom", ({ roomId }) => {
     }
     socket.to(roomId).emit("opponentMove", move);
   });
+  */
+ socket.on("onlineMove", ({ roomId, move }) => {
+
+    const room = rooms[roomId];
+    if (!room) return;
+
+    // First move timer stop
+    if (!room.moved) {
+        room.moved = true;
+        clearTimeout(room.firstMoveTimer);
+        room.firstMoveTimer = null;
+    }
+
+    const now = Date.now();
+    const elapsed = Math.floor((now - room.lastUpdate) / 1000);
+
+    // Current player's time reduce
+    if (room.turn === "w") {
+        room.whiteTime = Math.max(0, room.whiteTime - elapsed);
+        room.whiteTime += room.increment;
+    } else {
+        room.blackTime = Math.max(0, room.blackTime - elapsed);
+        room.blackTime += room.increment;
+    }
+
+    // Turn change
+    room.turn = room.turn === "w" ? "b" : "w";
+
+    room.lastUpdate = now;
+
+    // Send move
+    socket.to(roomId).emit("opponentMove", move);
+
+    // Send updated timer
+    io.to(roomId).emit("timerUpdate", {
+        whiteTime: room.whiteTime,
+        blackTime: room.blackTime,
+        turn: room.turn
+    });
+
+});
 
   // ── RESIGN ──
   socket.on("resign", ({ roomId }) => {
@@ -178,11 +313,11 @@ socket.on("joinOnlineRoom", ({ roomId }) => {
 
 function clearRoom(roomId) {
   if (rooms[roomId]) {
-    clearTimeout(rooms[roomId].firstMoveTimer);
+    clearInterval(rooms[roomId].timer);
     delete rooms[roomId];
   }
 }
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

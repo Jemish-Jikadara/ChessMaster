@@ -14,6 +14,8 @@ findMatchBtn.addEventListener("click", () => {
     sessionStorage.removeItem("onlineOpponent");
 
     const player = {
+
+    id: window.currentUserId,
         username: window.currentUsername || "Player"
     };
 
