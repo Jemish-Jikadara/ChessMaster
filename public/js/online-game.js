@@ -44,6 +44,7 @@ let selectedSquare = null;
 let legalMoves = [];
 let lastMove = null;
 let gameOver = false;
+let draggedSquare = null;
 let disconnectTimer = null;
 let drawOfferMoveCount = -99;
 let canOfferDraw = false;
@@ -138,10 +139,24 @@ const cols = playerColor === "b" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
                 img.src = `/images/pieces/${pieceImages[piece.color + piece.type]}.png`;
                 img.alt = piece.type;
                 img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
+                img.draggable = !gameOver;
+                img.style.touchAction = "none";
+                img.addEventListener("dragstart", (event) => {
+                handleOnlineDragStart(event, squareName, piece);
+                });
+
+                img.addEventListener("dragend", () => {
+                draggedSquare = null;
+                selectedSquare = null;
+                legalMoves = [];
+                createOnlineBoard();    
+                });
                 square.appendChild(img);
             }
 
             square.addEventListener("click", () => handleOnlineSquareClick(squareName));
+            square.addEventListener("dragover", (event) => {event.preventDefault();});
+            square.addEventListener("drop", (event) => {handleOnlineDrop(event, squareName);});
             onlineChessBoard.appendChild(square);
         });
     });
@@ -180,7 +195,75 @@ function handleOnlineSquareClick(squareName) {
     legalMoves = [];
     createOnlineBoard();
 }
+function handleOnlineDragStart(event, squareName, piece) {
 
+    if (gameOver) {
+        event.preventDefault();
+        return;
+    }
+
+    if (game.turn() !== playerColor) {
+        event.preventDefault();
+        return;
+    }
+
+    if (!piece || piece.color !== playerColor) {
+        event.preventDefault();
+        return;
+    }
+
+    draggedSquare = squareName;
+    selectedSquare = squareName;
+
+    legalMoves = game.moves({
+        square: squareName,
+        verbose: true
+    });
+
+    event.dataTransfer.setData("text/plain", squareName);
+    event.dataTransfer.effectAllowed = "move";
+
+    setTimeout(() => {
+        createOnlineBoard();
+    }, 0);
+}
+
+function handleOnlineDrop(event, targetSquare) {
+
+    event.preventDefault();
+
+    if (gameOver || !draggedSquare) return;
+
+    const move = game.move({
+        from: draggedSquare,
+        to: targetSquare,
+        promotion: "q"
+    });
+
+    if (move) {
+
+        draggedSquare = null;
+
+        afterOnlineMove(move);
+
+        socket.emit("onlineMove", {
+            roomId,
+            move: {
+                from: move.from,
+                to: move.to,
+                promotion: "q"
+            }
+        });
+
+        return;
+    }
+
+    draggedSquare = null;
+    selectedSquare = null;
+    legalMoves = [];
+
+    createOnlineBoard();
+}
 // ── AFTER MOVE ──
 function afterOnlineMove(move) {
     lastMove = { from: move.from, to: move.to };
