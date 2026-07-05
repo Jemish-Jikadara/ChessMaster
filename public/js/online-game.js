@@ -48,6 +48,8 @@ let draggedSquare = null;
 let disconnectTimer = null;
 let drawOfferMoveCount = -99;
 let canOfferDraw = false;
+let premove = null;
+let premoveHighlights = [];
 
 // Timer
 let whiteTime = 0;
@@ -121,23 +123,46 @@ const cols = playerColor === "b" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
             const isSelected = selectedSquare === squareName;
             const legalMove = legalMoves.find((m) => m.to === squareName);
             const piece = board[row][col];
+            let displayPiece = piece;
+
+if (premove) {
+
+    // Original square se piece hide
+    if (squareName === premove.from) {
+        displayPiece = null;
+    }
+
+    // Destination par piece dikhao
+    if (squareName === premove.to) {
+        displayPiece = game.get(premove.from);
+    }
+}
             const isLastMove = lastMove && (lastMove.from === squareName || lastMove.to === squareName);
+            const isPremoveSquare =  premove &&(premove.from === squareName || premove.to === squareName);
 
             square.className = `aspect-square relative flex items-center justify-center ${isSelected ? "ring-4 ring-yellow-400 ring-inset" : ""} hover:brightness-110 transition`;
-            square.style.backgroundColor = isLastMove
-                ? (isLightSquare ? "#fef08a" : "#ca8a04")
-                : (isLightSquare ? "#f0d9b5" : "#b58863");
-
+            if (isPremoveSquare) {
+    square.style.backgroundColor = isLightSquare
+        ? "rgba(255, 0, 0, 0.53)"
+        : "rgba(180, 0, 0, 0.57)";
+} else if (isLastMove) {
+    square.style.backgroundColor = isLightSquare
+        ? "#fef08a"
+        : "#ca8a04";
+} else {
+    square.style.backgroundColor = isLightSquare
+        ? "#f0d9b5"
+        : "#b58863";
+}
             if (legalMove) {
                 const dot = document.createElement("div");
                 dot.style.cssText = `position:absolute;pointer-events:none;z-index:20;border-radius:50%;${legalMove.captured ? "width:78%;height:78%;border:5px solid rgba(250,204,21,0.85)" : "width:16px;height:16px;background:rgba(250,204,21,0.9)"}`;
                 square.appendChild(dot);
             }
-
-            if (piece) {
+            if (displayPiece) {
                 const img = document.createElement("img");
-                img.src = `/images/pieces/${pieceImages[piece.color + piece.type]}.png`;
-                img.alt = piece.type;
+                img.src = `/images/pieces/${pieceImages[displayPiece.color + displayPiece.type]}.png`;
+                img.alt = displayPiece.type;
                 img.className = "relative z-30 w-[78%] h-[78%] object-contain cursor-pointer select-none";
                 img.draggable = !gameOver;
                 img.style.touchAction = "none";
@@ -164,7 +189,43 @@ const cols = playerColor === "b" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
 
 function handleOnlineSquareClick(squareName) {
     if (gameOver || game.game_over()) return;
-    if (game.turn() !== playerColor) return;
+    // ---------------- PREMOVE ----------------
+if (game.turn() !== playerColor) {
+
+    const piece = game.get(squareName);
+
+    // First click
+    if (!selectedSquare) {
+
+        if (!piece || piece.color !== playerColor) return;
+
+        selectedSquare = squareName;
+        createOnlineBoard();
+        return;
+    }
+
+    // Don't allow same square
+    if (selectedSquare === squareName) {
+        selectedSquare = null;
+        premove = null;
+        createOnlineBoard();
+        return;
+    }
+
+    // Save premove
+    premove = {
+        from: selectedSquare,
+        to: squareName
+    };
+
+    selectedSquare = null;
+
+    console.log("PREMOVE:", premove);
+
+    createOnlineBoard();
+    return;
+}
+
 
     const piece = game.get(squareName);
 
@@ -311,6 +372,35 @@ socket.on("opponentMove", (moveData) => {
     const move = game.move(moveData);
     if (!move) return;
     afterOnlineMove(move);
+    // -------- Execute Premove --------
+if (premove) {
+
+    const premoveResult = game.move({
+        from: premove.from,
+        to: premove.to,
+        promotion: "q"
+    });
+
+    if (premoveResult) {
+
+        afterOnlineMove(premoveResult);
+
+        socket.emit("onlineMove", {
+            roomId,
+            move: {
+                from: premoveResult.from,
+                to: premoveResult.to,
+                promotion: "q"
+            }
+        });
+
+        console.log("Premove executed");
+    } else {
+        console.log("Premove cancelled");
+    }
+
+    premove = null;
+}
 });
 //new code for timer update from server
 socket.on("timerUpdate", (data) => {
