@@ -380,26 +380,31 @@ if (premove) {
         to: premove.to,
         promotion: "q"
     });
-
     if (premoveResult) {
 
-        afterOnlineMove(premoveResult);
+    premove = null;   // <-- pehle clear karo
 
-        socket.emit("onlineMove", {
-            roomId,
-            move: {
-                from: premoveResult.from,
-                to: premoveResult.to,
-                promotion: "q"
-            }
-        });
+    afterOnlineMove(premoveResult);
 
-        console.log("Premove executed");
-    } else {
-        console.log("Premove cancelled");
-    }
+    socket.emit("onlineMove", {
+        roomId,
+        move: {
+            from: premoveResult.from,
+            to: premoveResult.to,
+            promotion: "q"
+        }
+    });
 
-    premove = null;
+    console.log("Premove executed");
+
+} else {
+
+    premove = null;   
+
+    createOnlineBoard(); 
+
+    console.log("Premove cancelled");
+}
 }
 });
 //new code for timer update from server
