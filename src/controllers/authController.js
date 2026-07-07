@@ -202,6 +202,11 @@ async function showProfile(req, res) {
   res.render("pages/profile", { title: "Profile", user, games });
 }
 
+async function showStatus(req, res) {
+  res.render("pages/status");
+}
+
+
 // ── LOGOUT ────────────────────────────────────
 function logoutUser(req, res) {
   req.session.destroy((error) => {
@@ -215,5 +220,5 @@ module.exports = {
   showRegister, registerUser,
   showSetupProfile, setupProfile,
   showLogin, loginUser,
-  showProfile, logoutUser
+  showProfile, logoutUser,showStatus,
 };

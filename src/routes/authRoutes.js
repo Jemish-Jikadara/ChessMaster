@@ -14,6 +14,7 @@ router.get("/login", isGuest, authController.showLogin);
 router.post("/login", isGuest, authController.loginUser);
 
 router.get("/profile", isAuthenticated, authController.showProfile);
+router.get("/profile/status", isAuthenticated,authController.showStatus);
 router.post("/logout", isAuthenticated, authController.logoutUser);
 
 module.exports = router;
