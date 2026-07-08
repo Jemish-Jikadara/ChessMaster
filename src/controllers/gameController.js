@@ -1,5 +1,6 @@
 const Game = require("../models/Game");
 const User = require("../models/User");
+const { updateRatings } = require("../utils/rating");
 
 async function saveGame(req, res) {
   console.log("API HIT");
@@ -44,44 +45,28 @@ const game = await Game.create({
   totalMoves,
   moves
 });
-    console.log({
-    whiteUser: req.session.user.id,
-    blackUser: "???",
-    whitePlayer,
-    blackPlayer
-});
-    const statsUpdate = { $inc: { gamesPlayed: 1 } };
+console.log("Updating ratings...");
 
-const isPlayerWhite = playerColor === "w";
+await updateRatings(
+    whiteUser,
+    blackUser,
+    winner,
+    timeMode
+);
 
-if (winner === "draw") {
-  statsUpdate.$inc.draws = 1;
-} else if (
-  (winner === "white" && isPlayerWhite) ||
-  (winner === "black" && !isPlayerWhite)
-) {
-  statsUpdate.$inc.wins = 1;
-} else {
-  statsUpdate.$inc.losses = 1;
-}
+console.log("Ratings updated successfully");
+const currentUser = await User.findById(req.session.user.id);
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.session.user.id,
-      statsUpdate,
-      { returnDocument: "after" }
-    );
-
-    req.session.user.rapidRating = updatedUser.rapidRating;
-    req.session.user.blitzRating = updatedUser.blitzRating;
-    req.session.user.bulletRating = updatedUser.bulletRating;
-
+req.session.user.rapidRating = currentUser.rapidRating;
+req.session.user.blitzRating = currentUser.blitzRating;
+req.session.user.bulletRating = currentUser.bulletRating;
+console.log(req.session.user);
     res.status(201).json({ success: true, game });
   } catch (error) {
     console.error("Error saving game:", error);
     res.status(400).json({ success: false, message: error.message });
   }
 }
-
 async function getReplay(req, res) {
   try {
     const game = await Game.findById(req.params.id).lean();

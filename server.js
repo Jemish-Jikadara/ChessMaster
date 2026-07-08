@@ -14,6 +14,7 @@ const gameRoutes = require("./src/routes/gameRoutes");
 const pageRoutes = require("./src/routes/pageRoutes");
 const settingsRoutes = require("./src/routes/settingsRoutes");
 const friendRoutes = require("./src/routes/friendRoutes");
+const { calculateElo } = require("./src/utils/rating");
 
 const app = express();
 const server = http.createServer(app);
@@ -175,25 +176,6 @@ rooms[roomId].timer = setInterval(() => {
     }
   });
 
-/*
-  socket.on("joinOnlineRoom", ({ roomId }) => {
-    socket.join(roomId);
-    socketToRoom[socket.id] = roomId;
-
-    if (rooms[roomId]) {
-      rooms[roomId].sockets.add(socket.id);
-    }
-    const room = rooms[roomId];
-
-if (room) {
-    socket.emit("timerUpdate", {
-        whiteTime: room.whiteTime,
-        blackTime: room.blackTime,
-        turn: room.turn
-    });
-}
-  });
-  */
  socket.on("joinOnlineRoom", ({ roomId }) => {
 
     socket.join(roomId);
@@ -217,17 +199,6 @@ if (room) {
 
 });
 
-  // ── MOVE ──
-  /*
-  socket.on("onlineMove", ({ roomId, move }) => {
-    if (rooms[roomId] && !rooms[roomId].moved) {
-      rooms[roomId].moved = true;
-      clearTimeout(rooms[roomId].firstMoveTimer);
-      rooms[roomId].firstMoveTimer = null;
-    }
-    socket.to(roomId).emit("opponentMove", move);
-  });
-  */
  socket.on("onlineMove", ({ roomId, move }) => {
 
     const room = rooms[roomId];
@@ -317,6 +288,29 @@ function clearRoom(roomId) {
     delete rooms[roomId];
   }
 }
+console.log("=== Rating Test ===");
+
+console.log(
+    "2000 loses vs 1500 =>",
+    calculateElo(2000, 1500, "lose")
+);
+
+console.log(
+    "2000 beats 1500 =>",
+    calculateElo(2000, 1500, "win")
+);
+
+console.log(
+    "1500 beats 1500 =>",
+    calculateElo(1500, 1500, "win")
+);
+
+console.log(
+    "1500 lose vs 2000 =>",
+    calculateElo(1500, 2000, "lose")
+);
+
+console.log("===================");
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
