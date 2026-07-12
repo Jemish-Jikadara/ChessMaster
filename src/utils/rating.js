@@ -36,6 +36,10 @@ async function updateRatings(
 
     const whiteOld = white[ratingField];
     const blackOld = black[ratingField];
+    const gamesField = `${mode}Games`;
+    const winsField = `${mode}Wins`;
+    const lossesField = `${mode}Losses`;
+    const drawsField = `${mode}Draws`;
 
     if (winner === "white") {
 
@@ -47,6 +51,14 @@ async function updateRatings(
 
         white.wins++;
         black.losses++;
+        white.gamesPlayed++;
+black.gamesPlayed++;
+
+white[gamesField]++;
+black[gamesField]++;
+
+white[winsField]++;
+black[lossesField]++;
 
     }
 
@@ -60,6 +72,14 @@ async function updateRatings(
 
         black.wins++;
         white.losses++;
+        white.gamesPlayed++;
+        black.gamesPlayed++;
+
+        white[gamesField]++;
+        black[gamesField]++;
+
+        black[winsField]++;
+        white[lossesField]++;
 
     }
 
@@ -73,11 +93,30 @@ async function updateRatings(
 
         white.draws++;
         black.draws++;
+        white.gamesPlayed++;
+        black.gamesPlayed++;
+
+        white[gamesField]++;
+        black[gamesField]++;
+
+        white[drawsField]++;
+        black[drawsField]++;
 
     }
+    // Update Peak Rating
 
-    white.gamesPlayed++;
-    black.gamesPlayed++;
+if (white[ratingField] > white[`${mode}Peak`]) {
+    white[`${mode}Peak`] = white[ratingField];
+}
+
+if (black[ratingField] > black[`${mode}Peak`]) {
+    black[`${mode}Peak`] = black[ratingField];
+}
+if (!white[`${mode}History`]) white[`${mode}History`] = [];
+if (!black[`${mode}History`]) black[`${mode}History`] = [];
+
+white[`${mode}History`].push(white[ratingField]);
+black[`${mode}History`].push(black[ratingField]);
 
     await white.save();
     await black.save();

@@ -288,29 +288,6 @@ function clearRoom(roomId) {
     delete rooms[roomId];
   }
 }
-console.log("=== Rating Test ===");
-
-console.log(
-    "2000 loses vs 1500 =>",
-    calculateElo(2000, 1500, "lose")
-);
-
-console.log(
-    "2000 beats 1500 =>",
-    calculateElo(2000, 1500, "win")
-);
-
-console.log(
-    "1500 beats 1500 =>",
-    calculateElo(1500, 1500, "win")
-);
-
-console.log(
-    "1500 lose vs 2000 =>",
-    calculateElo(1500, 2000, "lose")
-);
-
-console.log("===================");
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

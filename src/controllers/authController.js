@@ -203,7 +203,69 @@ async function showProfile(req, res) {
 }
 
 async function showStatus(req, res) {
-  res.render("pages/status");
+
+    const user = await User.findById(req.session.user.id);
+
+    const totalGames = user.gamesPlayed || 0;
+
+    const winRate =
+        totalGames === 0
+            ? 0
+            : Math.round((user.wins / totalGames) * 100);
+    const rapidWinRate =
+    user.rapidGames === 0
+        ? 0
+        : Math.round((user.rapidWins / user.rapidGames) * 100);
+
+const blitzWinRate =
+    user.blitzGames === 0
+        ? 0
+        : Math.round((user.blitzWins / user.blitzGames) * 100);
+
+const bulletWinRate =
+    user.bulletGames === 0
+        ? 0
+        : Math.round((user.bulletWins / user.bulletGames) * 100);
+
+    res.render("pages/status", {
+        rapidRating: user.rapidRating,
+        blitzRating: user.blitzRating,
+        bulletRating: user.bulletRating,
+
+        wins: user.wins,
+        losses: user.losses,
+        rapidPeak:user.rapidPeak,
+        blitzPeak:user.blitzPeak,
+        bulletPeak:user.bulletPeak,
+        
+
+        rapidHistory: user.rapidHistory,
+        blitzHistory: user.blitzHistory,
+        bulletHistory: user.bulletHistory,
+
+        rapidGames: user.rapidGames,
+        rapidWins: user.rapidWins,
+        rapidLosses: user.rapidLosses,
+        rapidDraws: user.rapidDraws,
+
+        blitzGames: user.blitzGames,
+        blitzWins: user.blitzWins,
+        blitzLosses: user.blitzLosses,
+        blitzDraws: user.blitzDraws,
+
+        bulletGames: user.bulletGames,
+        bulletWins: user.bulletWins,
+        bulletLosses: user.bulletLosses,
+        bulletDraws: user.bulletDraws,
+
+        draws: user.draws,
+        gamesPlayed: totalGames,
+        winRate,
+        rapidWinRate,
+        blitzWinRate,
+        bulletWinRate
+    });
+
 }
 
 

@@ -67,12 +67,37 @@ const userSchema = new mongoose.Schema(
     rapidRating:  { type: Number, default: 1200 },
     blitzRating:  { type: Number, default: 1200 },
     bulletRating: { type: Number, default: 1200 },
+    // ── Rating History ─────────────────────────────
+    rapidHistory: { type: [Number],default: [1200]},
+    blitzHistory: { type: [Number],default: [1200]},
+    bulletHistory:{ type: [Number],default: [1200]},
+    // ── Peak Ratings ─────────────────────────────
+rapidPeak: { type: Number, default: 1200 },
+blitzPeak: { type: Number, default: 1200 },
+bulletPeak: { type: Number, default: 1200 },
+    // ── Overall Stats ───────────────────────────
+wins:        { type: Number, default: 0 },
+losses:      { type: Number, default: 0 },
+draws:       { type: Number, default: 0 },
+gamesPlayed: { type: Number, default: 0 },
 
-    // ── Stats ─────────────────────────────────────
-    wins:        { type: Number, default: 0 },
-    losses:      { type: Number, default: 0 },
-    draws:       { type: Number, default: 0 },
-    gamesPlayed: { type: Number, default: 0 },
+// ── Rapid Stats ─────────────────────────────
+rapidGames:  { type: Number, default: 0 },
+rapidWins:   { type: Number, default: 0 },
+rapidLosses: { type: Number, default: 0 },
+rapidDraws:  { type: Number, default: 0 },
+
+// ── Blitz Stats ─────────────────────────────
+blitzGames:  { type: Number, default: 0 },
+blitzWins:   { type: Number, default: 0 },
+blitzLosses: { type: Number, default: 0 },
+blitzDraws:  { type: Number, default: 0 },
+
+// ── Bullet Stats ────────────────────────────
+bulletGames:  { type: Number, default: 0 },
+bulletWins:   { type: Number, default: 0 },
+bulletLosses: { type: Number, default: 0 },
+bulletDraws:  { type: Number, default: 0 },
 
     // ── Friends ───────────────────────────────────
     friends: [{
