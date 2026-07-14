@@ -80,6 +80,7 @@ function showSetupProfile(req, res) {
 }
 
 async function setupProfile(req, res) {
+  
   try {
     const { username, fullName, country, bio, dateOfBirth } = req.body;
 

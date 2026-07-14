@@ -5,17 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ChessMaster | <%= user.username %></title>
         <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/theme-redesign.css">
         <link
-            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet">
         <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; background:#080810; color:#f0ece4; }
+        body { font-family:'Inter',sans-serif; background:var(--cm-bg); color:var(--cm-ink); }
 
-        /* ── HERO BANNER ── */
+        /* -- HERO BANNER -- */
         .profile-banner {
-            background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(236,72,153,0.08) 50%, transparent 100%);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: linear-gradient(135deg, rgba(201,162,39,0.10) 0%, rgba(122,149,105,0.07) 50%, transparent 100%);
+            border-bottom: 1px solid var(--cm-line);
             padding: 48px 24px 0;
             position: relative;
             overflow: hidden;
@@ -24,135 +25,121 @@
             content: '';
             position: absolute;
             width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(201,162,39,0.12) 0%, transparent 70%);
             top: -200px; right: -100px;
             pointer-events: none;
         }
         .banner-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* Avatar row */
         .avatar-row { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
         .profile-avatar {
             width: 100px; height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            background: linear-gradient(135deg, var(--cm-brass), #a9791f);
             display: flex; align-items: center; justify-content: center;
-            font-size: 40px; font-family: 'Syne', sans-serif; font-weight: 800; color: #fff;
-            border: 4px solid #080810;
-            box-shadow: 0 0 0 2px rgba(124,58,237,0.4), 0 8px 32px rgba(124,58,237,0.3);
+            font-size: 40px; font-family: 'Fraunces', serif; font-weight: 700; color: #1a1408;
+            border: 4px solid var(--cm-bg);
+            box-shadow: 0 0 0 2px rgba(201,162,39,0.4), 0 8px 32px rgba(201,162,39,0.25);
             flex-shrink: 0;
         }
         .avatar-info { flex: 1; padding-bottom: 4px; }
-        .profile-username { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:800; color:#f0ece4; margin:0 0 4px; letter-spacing:-0.02em; }
-        .profile-fullname { font-size:14px; color:#9ca3af; margin-bottom:10px; }
+        .profile-username { font-family:'Fraunces',serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700; color:var(--cm-ink); margin:0 0 4px; letter-spacing:-0.02em; }
+        .profile-fullname { font-size:14px; color:var(--cm-ink-dim); margin-bottom:10px; }
         .profile-meta { display:flex; flex-wrap:wrap; gap:10px; }
-        .meta-pill { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#6b7280; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); padding:4px 10px; border-radius:100px; }
-        .profile-bio { font-size:14px; color:#9ca3af; line-height:1.6; margin-top:12px; max-width:560px; padding-bottom:20px; }
+        .meta-pill { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--cm-ink-faint); background:rgba(243,234,217,0.03); border:1px solid var(--cm-line); padding:4px 10px; border-radius:100px; }
+        .profile-bio { font-size:14px; color:var(--cm-ink-dim); line-height:1.6; margin-top:12px; max-width:560px; padding-bottom:20px; }
 
-        /* Profile actions */
         .profile-actions { display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; align-self:flex-start; padding-top:8px; }
 
-        /* Tabs */
-        .profile-tabs { display:flex; gap:0; border-top:1px solid rgba(255,255,255,0.06); margin-top:4px; }
-        .tab { padding:14px 20px; font-size:13px; font-weight:600; color:#6b7280; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; font-family:'Syne',sans-serif; text-decoration:none; }
-        .tab.active { color:#f0ece4; border-bottom-color:#a78bfa; }
-        .tab:hover { color:#f0ece4; }
+        .profile-tabs { display:flex; gap:0; border-top:1px solid var(--cm-line); margin-top:4px; }
+        .tab { padding:14px 20px; font-size:13px; font-weight:600; color:var(--cm-ink-faint); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; font-family:'Fraunces',serif; text-decoration:none; }
+        .tab.active { color:var(--cm-ink); border-bottom-color:var(--cm-brass); }
+        .tab:hover { color:var(--cm-ink); }
 
-        /* Buttons */
-        .btn-primary { padding:9px 18px; background:linear-gradient(135deg,#7c3aed,#ec4899); border:none; border-radius:9px; color:#fff; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 14px rgba(124,58,237,0.3); }
-        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,58,237,0.4); }
-        .btn-secondary { padding:9px 18px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:9px; color:#9ca3af; font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
-        .btn-secondary:hover { border-color:rgba(255,255,255,0.2); color:#f0ece4; }
-        .btn-danger { padding:9px 18px; background:transparent; border:1px solid rgba(239,68,68,0.25); border-radius:9px; color:#f87171; font-size:13px; cursor:pointer; transition:all 0.2s; }
-        .btn-danger:hover { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.4); }
+        .btn-primary { padding:9px 18px; background:linear-gradient(135deg,var(--cm-brass),#a9791f); border:none; border-radius:9px; color:#1a1408; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 14px rgba(201,162,39,0.28); }
+        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(201,162,39,0.4); }
+        .btn-secondary { padding:9px 18px; background:transparent; border:1px solid var(--cm-line); border-radius:9px; color:var(--cm-ink-dim); font-size:13px; font-weight:500; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+        .btn-secondary:hover { border-color:rgba(243,234,217,0.25); color:var(--cm-ink); }
+        .btn-danger { padding:9px 18px; background:transparent; border:1px solid rgba(181,84,31,0.3); border-radius:9px; color:#e08a5b; font-size:13px; cursor:pointer; transition:all 0.2s; }
+        .btn-danger:hover { background:rgba(181,84,31,0.1); border-color:rgba(181,84,31,0.5); }
 
-        /* ── MAIN LAYOUT ── */
         .profile-body { max-width:1100px; margin:0 auto; padding:28px 24px 80px; display:grid; grid-template-columns:1fr 290px; gap:24px; }
         @media (max-width:900px) { .profile-body { grid-template-columns:1fr; } }
 
-        /* Section titles */
-        .sec-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#f0ece4; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
-        .sec-title a { font-size:12px; color:#a78bfa; text-decoration:none; font-weight:500; }
-        .sec-title a:hover { color:#c4b5fd; }
+        .sec-title { font-family:'Fraunces',serif; font-size:15px; font-weight:700; color:var(--cm-ink); margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
+        .sec-title a { font-size:12px; color:var(--cm-brass-lt); text-decoration:none; font-weight:500; font-family:'JetBrains Mono',monospace; }
+        .sec-title a:hover { color:var(--cm-brass); }
 
-        /* ── RATINGS ── */
         .ratings-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
         @media (max-width:560px) { .ratings-grid { grid-template-columns:1fr; } }
-        .rating-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:20px 16px; transition:border-color 0.2s,transform 0.2s; position:relative; overflow:hidden; }
+        .rating-card { background:var(--cm-bg-2); border:1px solid var(--cm-line); border-radius:14px; padding:20px 16px; transition:border-color 0.2s,transform 0.2s; position:relative; overflow:hidden; }
         .rating-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; opacity:0; transition:opacity 0.2s; }
-        .rating-card:hover { border-color:rgba(124,58,237,0.25); transform:translateY(-2px); }
+        .rating-card:hover { border-color:rgba(201,162,39,0.3); transform:translateY(-2px); }
         .rating-card:hover::before { opacity:1; }
-        .rc-1::before { background:linear-gradient(90deg,#a78bfa,#ec4899); }
-        .rc-2::before { background:linear-gradient(90deg,#3b82f6,#06b6d4); }
-        .rc-3::before { background:linear-gradient(90deg,#f59e0b,#ef4444); }
+        .rc-1::before { background:linear-gradient(90deg,var(--cm-brass),var(--cm-brass-lt)); }
+        .rc-2::before { background:linear-gradient(90deg,var(--cm-sage),var(--cm-sage-lt)); }
+        .rc-3::before { background:linear-gradient(90deg,var(--cm-rust),#e08a5b); }
         .rc-icon { font-size:18px; margin-bottom:10px; }
-        .rc-mode { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.1em; font-family:'Syne',sans-serif; margin-bottom:4px; }
-        .rc-val { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; margin-bottom:2px; }
-        .rc-val.purple { background:linear-gradient(135deg,#a78bfa,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .rc-val.blue { background:linear-gradient(135deg,#3b82f6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .rc-val.yellow { color:#fbbf24; }
-        .rc-sub { font-size:11px; color:#4b5563; }
+        .rc-mode { font-size:11px; color:var(--cm-ink-faint); text-transform:uppercase; letter-spacing:0.1em; font-family:'JetBrains Mono',monospace; margin-bottom:4px; }
+        .rc-val { font-family:'Fraunces',serif; font-size:30px; font-weight:700; margin-bottom:2px; }
+        .rc-val.brass { color:var(--cm-brass-lt); }
+        .rc-val.sage { color:var(--cm-sage-lt); }
+        .rc-val.rust { color:#e08a5b; }
+        .rc-sub { font-size:11px; color:var(--cm-ink-faint); }
 
-        /* ── STATS ── */
         .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
-        .stat-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:16px; text-align:center; }
-        .sb-val { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; }
-        .sb-val.green { color:#4ade80; }
-        .sb-val.red { color:#f87171; }
-        .sb-val.gray { color:#9ca3af; }
-        .sb-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; font-family:'Syne',sans-serif; }
+        .stat-box { background:var(--cm-bg-2); border:1px solid var(--cm-line); border-radius:12px; padding:16px; text-align:center; }
+        .sb-val { font-family:'Fraunces',serif; font-size:26px; font-weight:700; }
+        .sb-val.green { color:var(--cm-sage-lt); }
+        .sb-val.red { color:#e08a5b; }
+        .sb-val.gray { color:var(--cm-ink-dim); }
+        .sb-label { font-size:11px; color:var(--cm-ink-faint); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; font-family:'JetBrains Mono',monospace; }
 
-        /* ── GAMES TABLE ── */
-        .table-wrap { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:14px; overflow:hidden; }
+        .table-wrap { background:var(--cm-bg-2); border:1px solid var(--cm-line); border-radius:14px; overflow:hidden; }
         table { width:100%; border-collapse:collapse; }
-        thead { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.07); }
-        th { padding:11px 14px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#6b7280; text-align:left; font-family:'Syne',sans-serif; }
-        td { padding:11px 14px; font-size:13px; color:#d1d5db; border-bottom:1px solid rgba(255,255,255,0.04); }
+        thead { background:rgba(243,234,217,0.03); border-bottom:1px solid var(--cm-line); }
+        th { padding:11px 14px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--cm-ink-faint); text-align:left; font-family:'JetBrains Mono',monospace; }
+        td { padding:11px 14px; font-size:13px; color:var(--cm-ink-dim); border-bottom:1px solid var(--cm-line-soft); }
         tr:last-child td { border-bottom:none; }
-        tr:hover td { background:rgba(255,255,255,0.02); }
-        .td-p { color:#f0ece4; font-weight:500; }
-        .bw { padding:2px 8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:100px; font-size:11px; font-weight:600; color:#f0ece4; }
-        .bb { padding:2px 8px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:100px; font-size:11px; font-weight:600; color:#9ca3af; }
-        .bd { padding:2px 8px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:100px; font-size:11px; font-weight:600; color:#60a5fa; }
-        .btn-watch { padding:3px 10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#9ca3af; font-size:12px; text-decoration:none; transition:all 0.2s; }
-        .btn-watch:hover { background:rgba(124,58,237,0.12); border-color:rgba(124,58,237,0.4); color:#a78bfa; }
-        .empty-row { text-align:center; color:#4b5563; padding:32px !important; }
-        .show-more { text-align:center; padding:14px; border-top:1px solid rgba(255,255,255,0.05); }
-        .show-more-btn { background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#6b7280; font-size:13px; padding:8px 20px; cursor:pointer; transition:all 0.2s; }
-        .show-more-btn:hover { border-color:rgba(124,58,237,0.4); color:#a78bfa; }
+        tr:hover td { background:rgba(243,234,217,0.02); }
+        .td-p { color:var(--cm-ink); font-weight:500; }
+        .bw { padding:2px 8px; background:rgba(243,234,217,0.08); border:1px solid rgba(243,234,217,0.18); border-radius:100px; font-size:11px; font-weight:600; color:var(--cm-ink); }
+        .bb { padding:2px 8px; background:rgba(0,0,0,0.35); border:1px solid var(--cm-line); border-radius:100px; font-size:11px; font-weight:600; color:var(--cm-ink-dim); }
+        .bd { padding:2px 8px; background:rgba(122,149,105,0.15); border:1px solid rgba(122,149,105,0.3); border-radius:100px; font-size:11px; font-weight:600; color:var(--cm-sage-lt); }
+        .btn-watch { padding:3px 10px; background:rgba(243,234,217,0.03); border:1px solid var(--cm-line); border-radius:6px; color:var(--cm-ink-dim); font-size:12px; text-decoration:none; transition:all 0.2s; }
+        .btn-watch:hover { background:rgba(201,162,39,0.12); border-color:rgba(201,162,39,0.4); color:var(--cm-brass-lt); }
+        .empty-row { text-align:center; color:var(--cm-ink-faint); padding:32px !important; }
+        .show-more { text-align:center; padding:14px; border-top:1px solid var(--cm-line-soft); }
+        .show-more-btn { background:transparent; border:1px solid var(--cm-line); border-radius:8px; color:var(--cm-ink-faint); font-size:13px; padding:8px 20px; cursor:pointer; transition:all 0.2s; }
+        .show-more-btn:hover { border-color:rgba(201,162,39,0.4); color:var(--cm-brass-lt); }
 
-        /* ── RIGHT SIDEBAR ── */
         .right-col { display:flex; flex-direction:column; gap:16px; }
-        .side-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:20px; }
-        .side-card-title { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; color:#f0ece4; margin-bottom:14px; text-transform:uppercase; letter-spacing:0.12em; }
-        .info-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .side-card { background:var(--cm-bg-2); border:1px solid var(--cm-line); border-radius:16px; padding:20px; }
+        .side-card-title { font-family:'Fraunces',serif; font-size:12px; font-weight:700; color:var(--cm-ink); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.12em; }
+        .info-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--cm-line-soft); }
         .info-row:last-child { border-bottom:none; }
-        .ir-label { font-size:12px; color:#6b7280; }
-        .ir-value { font-size:12px; color:#f0ece4; font-weight:500; }
+        .ir-label { font-size:12px; color:var(--cm-ink-faint); }
+        .ir-value { font-size:12px; color:var(--cm-ink); font-weight:500; }
 
-        /* Mini board */
         .mini-board { display:grid; grid-template-columns:repeat(4,1fr); border-radius:8px; overflow:hidden; margin:10px 0; }
         .mb-sq { aspect-ratio:1; }
 
-        /* Friends */
-        .friend-item { display:flex; align-items:center; justify-content:space-between; padding:8px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:6px; }
-        .friend-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#ec4899); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0; }
-        .friend-name { font-size:13px; color:#f0ece4; font-weight:500; margin-left:8px; }
-        .friend-remove { background:transparent; border:none; color:#4b5563; font-size:11px; cursor:pointer; padding:3px 7px; border-radius:5px; transition:color 0.2s; }
-        .friend-remove:hover { color:#f87171; }
+        .friend-item { display:flex; align-items:center; justify-content:space-between; padding:8px; background:rgba(243,234,217,0.02); border-radius:8px; border:1px solid var(--cm-line-soft); margin-bottom:6px; }
+        .friend-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--cm-brass),#a9791f); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#1a1408; flex-shrink:0; }
+        .friend-name { font-size:13px; color:var(--cm-ink); font-weight:500; margin-left:8px; }
+        .friend-remove { background:transparent; border:none; color:var(--cm-ink-faint); font-size:11px; cursor:pointer; padding:3px 7px; border-radius:5px; transition:color 0.2s; }
+        .friend-remove:hover { color:#e08a5b; }
 
-        /* Search */
-        .search-input { width:100%; padding:9px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#f0ece4; font-size:13px; outline:none; transition:border-color 0.2s; margin-bottom:8px; }
-        .search-input:focus { border-color:rgba(124,58,237,0.4); }
-        .search-result-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:5px; }
-        .add-btn { padding:3px 10px; background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3); border-radius:6px; color:#a78bfa; font-size:11px; cursor:pointer; transition:all 0.2s; }
-        .add-btn:hover { background:rgba(124,58,237,0.25); }
+        .search-input { width:100%; padding:9px 12px; background:rgba(243,234,217,0.04); border:1px solid var(--cm-line); border-radius:8px; color:var(--cm-ink); font-size:13px; outline:none; transition:border-color 0.2s; margin-bottom:8px; font-family:'Inter',sans-serif; }
+        .search-input:focus { border-color:rgba(201,162,39,0.4); }
+        .search-result-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(243,234,217,0.02); border:1px solid var(--cm-line-soft); border-radius:8px; margin-bottom:5px; }
+        .add-btn { padding:3px 10px; background:rgba(201,162,39,0.12); border:1px solid rgba(201,162,39,0.3); border-radius:6px; color:var(--cm-brass-lt); font-size:11px; cursor:pointer; transition:all 0.2s; }
+        .add-btn:hover { background:rgba(201,162,39,0.22); }
 
-        /* Request item */
-        .req-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(124,58,237,0.05); border:1px solid rgba(124,58,237,0.18); border-radius:8px; margin-bottom:5px; }
+        .req-item { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(201,162,39,0.05); border:1px solid rgba(201,162,39,0.18); border-radius:8px; margin-bottom:5px; }
         .req-btns { display:flex; gap:5px; }
-        .req-accept { padding:3px 8px; background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.3); border-radius:5px; color:#4ade80; font-size:11px; cursor:pointer; }
-        .req-decline { padding:3px 8px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); border-radius:5px; color:#f87171; font-size:11px; cursor:pointer; }
+        .req-accept { padding:3px 8px; background:rgba(122,149,105,0.14); border:1px solid rgba(122,149,105,0.3); border-radius:5px; color:var(--cm-sage-lt); font-size:11px; cursor:pointer; }
+        .req-decline { padding:3px 8px; background:rgba(181,84,31,0.12); border:1px solid rgba(181,84,31,0.25); border-radius:5px; color:#e08a5b; font-size:11px; cursor:pointer; }
         @media (max-width: 768px) {
   .avatar-row { flex-direction: column; align-items: flex-start; }
   .profile-actions { margin-left: 0; width: 100%; }
@@ -165,7 +152,6 @@
   .stats-row { grid-template-columns: repeat(3, 1fr); }
   table { font-size: 12px; }
   th, td { padding: 8px 10px; }
-  /* Hide some columns on mobile */
   table th:nth-child(5),
   table td:nth-child(5),
   table th:nth-child(6),
@@ -181,7 +167,6 @@
     <body class="cm-body">
         <%- include("../partials/navbar") %>
 
-        <!-- PROFILE BANNER -->
         <div class="profile-banner">
             <div class="banner-inner">
                 <div class="avatar-row">
@@ -195,21 +180,21 @@
                         <% } %>
                         <div class="profile-meta">
                             <% if (user.country) { %>
-                            <span class="meta-pill">🌍 <%= user.country
+                            <span class="meta-pill">Country: <%= user.country
                                 %></span>
                             <% } %>
-                            <span class="meta-pill">♟ <%= user.gamesPlayed %>
+                            <span class="meta-pill"><%= user.gamesPlayed %>
                                 games</span>
-                            <span class="meta-pill">📅 Joined <%= new
+                            <span class="meta-pill">Joined <%= new
                                 Date(user.createdAt).toLocaleDateString('en-US',{month:'short',year:'numeric'})
                                 %></span>
-                            <span class="meta-pill">👥 <%= user.friends ?
+                            <span class="meta-pill"><%= user.friends ?
                                 user.friends.length : 0 %> friends</span>
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <a href="/play" class="btn-primary">♟ Play</a>
-                        <a href="/settings" class="btn-secondary">⚙ Settings</a>
+                        <a href="/play" class="btn-primary">Play</a>
+                        <a href="/settings" class="btn-secondary">Settings</a>
                         <form action="/logout" method="POST" style="margin:0;">
                             <button type="submit"
                                 class="btn-danger">Logout</button>
@@ -220,7 +205,6 @@
                 <p class="profile-bio"><%= user.bio %></p>
                 <% } %>
 
-                <!-- TABS -->
                 <div class="profile-tabs">
                     <a class="tab active" href="#overview">Overview</a>
                     <a class="tab" href="#games">Games</a>
@@ -230,41 +214,37 @@
             </div>
         </div>
 
-        <!-- MAIN -->
         <main>
             <div class="profile-body">
 
-                <!-- LEFT -->
                 <div>
 
-                    <!-- RATINGS -->
                     <div class="sec-title"
                         style="margin-bottom:14px;">Ratings</div>
                     <div class="ratings-grid">
                         <div class="rating-card rc-1">
-                            <div class="rc-icon">⏱</div>
+                            <div class="rc-icon">Rapid</div>
                             <div class="rc-mode">Rapid</div>
-                            <div class="rc-val purple"><%= user.rapidRating ||
+                            <div class="rc-val brass"><%= user.rapidRating ||
                                 1200 %></div>
                             <div class="rc-sub">Rating</div>
                         </div>
                         <div class="rating-card rc-2">
-                            <div class="rc-icon">⚡</div>
+                            <div class="rc-icon">Blitz</div>
                             <div class="rc-mode">Blitz</div>
-                            <div class="rc-val blue"><%= user.blitzRating ||
+                            <div class="rc-val sage"><%= user.blitzRating ||
                                 1200 %></div>
                             <div class="rc-sub">Rating</div>
                         </div>
                         <div class="rating-card rc-3">
-                            <div class="rc-icon">🔥</div>
+                            <div class="rc-icon">Bullet</div>
                             <div class="rc-mode">Bullet</div>
-                            <div class="rc-val yellow"><%= user.bulletRating ||
+                            <div class="rc-val rust"><%= user.bulletRating ||
                                 1200 %></div>
                             <div class="rc-sub">Rating</div>
                         </div>
                     </div>
 
-                    <!-- STATS -->
                     <div class="stats-row">
                         <div class="stat-box">
                             <div class="sb-val green"><%= user.wins %></div>
@@ -280,12 +260,11 @@
                         </div>
                     </div>
 
-                    <!-- RECENT GAMES -->
                     <div id="games">
                         <div class="sec-title">
                             Recent Games
                             <% if (games && games.length >= 10) { %>
-                            <a href="/games/<%= user._id %>">Show all →</a>
+                            <a href="/games/<%= user._id %>">Show all -></a>
                             <% } %>
                         </div>
                         <div class="table-wrap">
@@ -304,11 +283,11 @@
                                 <tbody>
                                     <% if (!games || games.length === 0) { %>
                                     <tr><td colspan="7" class="empty-row">No
-                                            games yet — go play! ♟</td></tr>
+                                            games yet, go play!</td></tr>
                                     <% } else { %>
                                     <% games.forEach((game, index) => { %>
                                     <tr>
-                                        <td style="color:#4b5563;"><%= index + 1
+                                        <td style="color:var(--cm-ink-faint);"><%= index + 1
                                             %></td>
                                         <td class="td-p"><%= game.whitePlayer
                                             %></td>
@@ -316,10 +295,9 @@
                                             %></td>
                                         <td>
                                             <% if (game.winner === "white") {
-                                            %><span class="bw">⬜ White</span>
+                                            %><span class="bw">White</span>
                                             <% } else if (game.winner ===
-                                            "black") { %><span class="bb">⬛
-                                                Black</span>
+                                            "black") { %><span class="bb">Black</span>
                                             <% } else { %><span
                                                 class="bd">Draw</span><% } %>
                                         </td>
@@ -328,7 +306,7 @@
                                             Date(game.createdAt).toLocaleDateString()
                                             %></td>
                                         <td><a href="/game/<%= game._id %>"
-                                                class="btn-watch">▶</a></td>
+                                                class="btn-watch">View</a></td>
                                     </tr>
                                     <% }) %>
                                     <% } %>
@@ -338,7 +316,7 @@
                             <div class="show-more">
                                 <button class="show-more-btn"
                                     onclick="window.location='/games/<%= user._id %>'">Show
-                                    all games →</button>
+                                    all games -></button>
                             </div>
                             <% } %>
                         </div>
@@ -346,16 +324,14 @@
 
                 </div>
 
-                <!-- RIGHT SIDEBAR -->
                 <div class="right-col">
 
-                    <!-- ACCOUNT INFO -->
                     <div class="side-card">
                         <div class="side-card-title">Account</div>
                         <div class="info-row">
                             <span class="ir-label">Email</span>
                             <span class="ir-value"
-                                style="color:#6b7280;font-size:11px;"><%=
+                                style="color:var(--cm-ink-faint);font-size:11px;"><%=
                                 user.email %></span>
                         </div>
                         <div class="info-row">
@@ -377,7 +353,6 @@
                         <% } %>
                     </div>
 
-                    <!-- BOARD THEME -->
                     <div class="side-card">
                         <div class="side-card-title">Board Theme</div>
                         <% const themes = { classic:['#f0d9b5','#b58863'],
@@ -394,14 +369,13 @@
                             <% } %>
                         </div>
                         <div
-                            style="font-size:12px;color:#9ca3af;text-align:center;text-transform:capitalize;margin-bottom:10px;"><%=
+                            style="font-size:12px;color:var(--cm-ink-dim);text-align:center;text-transform:capitalize;margin-bottom:10px;"><%=
                             user.boardTheme || 'classic' %></div>
                         <a href="/settings"
-                            style="display:block;text-align:center;font-size:12px;color:#a78bfa;text-decoration:none;">Change
-                            theme →</a>
+                            style="display:block;text-align:center;font-size:12px;color:var(--cm-brass-lt);text-decoration:none;">Change
+                            theme -></a>
                     </div>
 
-                    <!-- FRIENDS -->
                     <div class="side-card" id="friends">
                         <div
                             style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -409,11 +383,10 @@
                                 style="margin-bottom:0;">Friends (<%=
                                 user.friends ? user.friends.length : 0 %>)</div>
                             <button onclick="toggleSearch()"
-                                style="background:transparent;border:1px solid rgba(124,58,237,0.3);border-radius:7px;color:#a78bfa;font-size:11px;padding:4px 10px;cursor:pointer;">+
+                                style="background:transparent;border:1px solid rgba(201,162,39,0.3);border-radius:7px;color:var(--cm-brass-lt);font-size:11px;padding:4px 10px;cursor:pointer;">+
                                 Add</button>
                         </div>
 
-                        <!-- Search box -->
                         <div id="searchBox"
                             style="display:none;margin-bottom:12px;">
                             <input type="text" id="friendSearch"
@@ -422,15 +395,13 @@
                             <div id="searchResults"></div>
                         </div>
 
-                        <!-- Pending requests -->
                         <div id="friendRequests"></div>
 
-                        <!-- Friends list -->
                         <div id="friendsList">
                             <% if (!user.friends || user.friends.length === 0) {
                             %>
                             <p
-                                style="font-size:13px;color:#4b5563;text-align:center;padding:16px 0;">No
+                                style="font-size:13px;color:var(--cm-ink-faint);text-align:center;padding:16px 0;">No
                                 friends yet!</p>
                             <% } else { %>
                             <% user.friends.forEach(friend => { %>
@@ -451,16 +422,14 @@
                         </div>
                     </div>
 
-                    <!-- QUICK ACTIONS -->
                     <div class="side-card">
                         <div class="side-card-title">Quick Actions</div>
                         <div
                             style="display:flex;flex-direction:column;gap:8px;">
                             <a href="/play" class="btn-primary"
-                                style="justify-content:center;">♟ Play Now</a>
+                                style="justify-content:center;">Play Now</a>
                             <a href="/leaderboard" class="btn-secondary"
-                                style="justify-content:center;">🏆
-                                Leaderboard</a>
+                                style="justify-content:center;">Leaderboard</a>
                         </div>
                     </div>
 
@@ -487,14 +456,14 @@
             const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
             const data = await res.json();
             if (!data.users.length) {
-                results.innerHTML = '<p style="font-size:12px;color:#4b5563;text-align:center;padding:8px;">No users found</p>';
+                results.innerHTML = '<p style="font-size:12px;color:var(--cm-ink-faint);text-align:center;padding:8px;">No users found</p>';
                 return;
             }
             results.innerHTML = data.users.map(u => `
                 <div class="search-result-item">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <div class="friend-avatar">${u.username.charAt(0).toUpperCase()}</div>
-                        <span style="font-size:13px;color:#f0ece4;">${u.username}</span>
+                        <span style="font-size:13px;color:var(--cm-ink);">${u.username}</span>
                     </div>
                     <button class="add-btn" onclick="sendRequest('${u._id}', this)">+ Add</button>
                 </div>
@@ -509,9 +478,9 @@
             body: JSON.stringify({ userId })
         });
         const data = await res.json();
-        btn.textContent = data.success ? "Sent ✓" : data.message;
+        btn.textContent = data.success ? "Sent" : data.message;
         btn.disabled = true;
-        btn.style.color = data.success ? "#4ade80" : "#f87171";
+        btn.style.color = data.success ? "#a4c191" : "#e08a5b";
     }
 
     async function loadRequests() {
@@ -520,18 +489,18 @@
         const container = document.getElementById("friendRequests");
         if (!data.requests || !data.requests.length) return;
         container.innerHTML = `
-            <div style="font-size:11px;color:#a78bfa;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;font-family:'Syne',sans-serif;">
+            <div style="font-size:11px;color:var(--cm-brass-lt);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;font-family:'Fraunces',serif;">
                 Requests (${data.requests.length})
             </div>
             ${data.requests.map(r => `
                 <div class="req-item">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <div class="friend-avatar">${r.username.charAt(0).toUpperCase()}</div>
-                        <span style="font-size:13px;color:#f0ece4;">${r.username}</span>
+                        <span style="font-size:13px;color:var(--cm-ink);">${r.username}</span>
                     </div>
                     <div class="req-btns">
-                        <button class="req-accept" onclick="acceptRequest('${r._id}', this.closest('.req-item'))">✓</button>
-                        <button class="req-decline" onclick="declineRequest('${r._id}', this.closest('.req-item'))">✕</button>
+                        <button class="req-accept" onclick="acceptRequest('${r._id}', this.closest('.req-item'))">Accept</button>
+                        <button class="req-decline" onclick="declineRequest('${r._id}', this.closest('.req-item'))">Decline</button>
                     </div>
                 </div>
             `).join("")}

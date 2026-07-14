@@ -10,6 +10,7 @@ router.post("/register", isGuest, authController.registerUser);
 router.get("/setup-profile", authController.showSetupProfile);
 router.post("/setup-profile", authController.setupProfile);
 
+
 router.get("/login", isGuest, authController.showLogin);
 router.post("/login", isGuest, authController.loginUser);
 

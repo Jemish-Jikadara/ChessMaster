@@ -7,6 +7,7 @@ const path = require("path");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
+const cloudinary = require("./src/config/cloudinary");
 
 const connectDB = require("./src/config/db");
 const authRoutes = require("./src/routes/authRoutes");

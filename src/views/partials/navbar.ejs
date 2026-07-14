@@ -1,38 +1,39 @@
 <nav
-  style="background:#0a0a12; border-bottom:1px solid rgba(255,255,255,0.07); position:sticky; top:0; z-index:100; backdrop-filter:blur(10px);">
+  style="background:#15120e; border-bottom:1px solid rgba(243,234,217,0.08); position:sticky; top:0; z-index:100; backdrop-filter:blur(10px);">
   <div
     style="max-width:1200px; margin:0 auto; padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between;">
     <a href="/"
-      style="display:flex; align-items:center; gap:8px; text-decoration:none; font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:#f0ece4;">
-      <span style="font-size:22px;">♞</span>
+      style="display:flex; align-items:center; gap:8px; text-decoration:none; font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:#f3ead9;">
+      <span style="font-size:22px; color:#c9a227;">♞</span>
       ChessMaster
     </a>
 
     <button id="menuBtn" type="button"
-      style="display:none; background:transparent; border:1px solid rgba(255,255,255,0.1); color:#f0ece4; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:18px;">☰</button>
+      style="display:none; background:transparent; border:1px solid rgba(243,234,217,0.1); color:#f3ead9; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:18px;">☰</button>
 
     <div id="navLinks" style="display:flex; align-items:center; gap:8px;">
       <a href="/"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Home</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Home</a>
       <a href="/play"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Play</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Play</a>
       <a href="/leaderboard"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Leaderboard</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Leaderboard</a>
       <a href="/about"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">About</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">About</a>
 
       <% if (currentUser) { %>
       <a href="/profile"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Profile</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px; transition:color 0.2s;">Profile</a>
+      <!--
       <form action="/logout" method="POST" style="margin:0;">
         <button type="submit"
-          style="padding:7px 14px; background:transparent; border:1px solid rgba(255,255,255,0.1); color:#9ca3af; font-size:14px; border-radius:8px; cursor:pointer; transition:all 0.2s;">Logout</button>
-      </form>
+          style="padding:7px 14px; background:transparent; border:1px solid rgba(243,234,217,0.1); color:#b6a892; font-size:14px; border-radius:8px; cursor:pointer; transition:all 0.2s;">Logout</button>
+      </form> -->
       <% } else { %>
       <a href="/login"
-        style="padding:7px 14px; color:#9ca3af; text-decoration:none; font-size:14px; border-radius:8px;">Login</a>
+        style="padding:7px 14px; color:#b6a892; text-decoration:none; font-size:14px; border-radius:8px;">Login</a>
       <a href="/register"
-        style="padding:8px 18px; background:linear-gradient(135deg,#7c3aed,#ec4899); color:#fff; text-decoration:none; font-size:14px; font-weight:600; border-radius:8px; box-shadow:0 4px 14px rgba(124,58,237,0.3);">Register</a>
+        style="padding:8px 18px; background:linear-gradient(135deg,#c9a227,#a9791f); color:#1a1408; text-decoration:none; font-size:14px; font-weight:600; border-radius:8px; box-shadow:0 4px 14px rgba(201,162,39,0.3);">Register</a>
       <% } %>
     </div>
   </div>
@@ -41,7 +42,7 @@
 <style>
 @media (max-width: 768px) {
   #menuBtn { display:block !important; }
-  #navLinks { display:none !important; flex-direction:column; position:absolute; top:60px; left:0; right:0; background:#0a0a12; border-bottom:1px solid rgba(255,255,255,0.07); padding:16px 24px; gap:4px !important; }
+  #navLinks { display:none !important; flex-direction:column; position:absolute; top:60px; left:0; right:0; background:#15120e; border-bottom:1px solid rgba(243,234,217,0.08); padding:16px 24px; gap:4px !important; }
   #navLinks.cm-open { display:flex !important; }
 }
 </style>
