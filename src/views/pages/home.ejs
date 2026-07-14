@@ -5,253 +5,361 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ChessMaster | Play Chess Online</title>
         <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/theme-redesign.css">
         <link
-            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet">
         <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
-        .hero { min-height: 100vh; position: relative; display: flex; align-items: center; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%); top: -100px; left: -100px; pointer-events: none; }
-        .hero::after { content: ''; position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%); bottom: -50px; right: 10%; pointer-events: none; }
-        .hero-orb { position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%); top: 40%; left: 40%; pointer-events: none; }
-        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 120px 24px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; width: 100%; }
-        @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; text-align: center; } }
-        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.35); border-radius: 100px; font-size: 12px; color: #a78bfa; font-weight: 500; letter-spacing: 0.05em; margin-bottom: 24px; }
-        .hero-badge .dot { width: 6px; height: 6px; background: #a78bfa; border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-        .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 800; line-height: 1.05; margin-bottom: 20px; letter-spacing: -0.02em; }
-        .grad-1 { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .grad-2 { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .hero-desc { font-size: 16px; color: #9ca3af; line-height: 1.7; margin-bottom: 36px; max-width: 480px; }
-        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-        @media (max-width: 900px) { .hero-btns { justify-content: center; } }
-        .btn-primary { padding: 14px 28px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 24px rgba(124,58,237,0.35); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,0.5); }
-        .btn-secondary { padding: 14px 28px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; color: #f0ece4; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s, border-color 0.2s, transform 0.2s; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
-        .hero-stats { display: flex; gap: 32px; margin-top: 44px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.07); }
-        @media (max-width: 900px) { .hero-stats { justify-content: center; } }
-        .hero-stats div { text-align: center; }
-        .hero-stats strong { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; display: block; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .hero-stats span { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; }
-        .board-visual { position: relative; }
-        .board-glow { position: absolute; inset: -30px; background: radial-gradient(ellipse, rgba(124,58,237,0.2) 0%, transparent 70%); pointer-events: none; }
-        .board-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; position: relative; backdrop-filter: blur(10px); }
-        .board-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-        .bc-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; }
-        .board-card-top h3 { font-family: 'Syne', sans-serif; font-size: 16px; color: #f0ece4; }
-        .live-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); padding: 4px 10px; border-radius: 100px; }
-        .live-badge .live-dot { width: 5px; height: 5px; background: #4ade80; border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
-        .preview-board { display: grid; grid-template-columns: repeat(8, 1fr); border-radius: 10px; overflow: hidden; border: 2px solid rgba(255,255,255,0.08); aspect-ratio: 1; }
-        .preview-board .pl { background: #f0d9b5; }
-        .preview-board .pd { background: #b58863; }
-        .board-card-bottom { display: flex; gap: 8px; margin-top: 16px; }
-        .bc-tag { flex: 1; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; text-align: center; }
-        .bc-tag span { font-size: 10px; color: #6b7280; display: block; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
-        .bc-tag strong { font-size: 13px; color: #f0ece4; }
-        .section { max-width: 1200px; margin: 0 auto; padding: 100px 24px; }
-        .section-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
-        .badge-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; }
-        .badge-blue { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; }
-        .badge-pink { background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.3); color: #f472b6; }
-        .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
-        .section-sub { font-size: 16px; color: #9ca3af; line-height: 1.7; max-width: 520px; margin-bottom: 56px; }
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
-        .feature-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 28px 24px; transition: border-color 0.25s, transform 0.2s, background 0.25s; position: relative; overflow: hidden; }
-        .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 16px 16px 0 0; opacity: 0; transition: opacity 0.25s; }
-        .feature-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-4px); background: rgba(255,255,255,0.05); }
-        .feature-card:hover::before { opacity: 1; }
-        .fc-1::before { background: linear-gradient(90deg, #7c3aed, #ec4899); }
-        .fc-2::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
-        .fc-3::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-        .fc-4::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
-        .fc-5::before { background: linear-gradient(90deg, #ec4899, #f59e0b); }
-        .fc-6::before { background: linear-gradient(90deg, #8b5cf6, #3b82f6); }
-        .feature-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
-        .fi-1 { background: rgba(124,58,237,0.15); }
-        .fi-2 { background: rgba(59,130,246,0.15); }
-        .fi-3 { background: rgba(245,158,11,0.15); }
-        .fi-4 { background: rgba(16,185,129,0.15); }
-        .fi-5 { background: rgba(236,72,153,0.15); }
-        .fi-6 { background: rgba(139,92,246,0.15); }
-        .feature-card h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: #f0ece4; margin-bottom: 8px; }
-        .feature-card p { font-size: 13px; color: #9ca3af; line-height: 1.65; }
-        .how-wrap { background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-        @media (max-width: 768px) { .steps-grid { grid-template-columns: 1fr; } }
-        .step { text-align: center; padding: 20px; }
-        .step-num { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin: 0 auto 20px; }
-        .sn-1 { background: linear-gradient(135deg, #7c3aed, #ec4899); color: #fff; }
-        .sn-2 { background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; }
-        .sn-3 { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
-        .step h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0ece4; margin-bottom: 8px; }
-        .step p { font-size: 13px; color: #9ca3af; line-height: 1.65; }
-        .cta-wrap { padding: 100px 24px; text-align: center; position: relative; overflow: hidden; }
-        .cta-wrap::before { content: ''; position: absolute; width: 800px; height: 400px; background: radial-gradient(ellipse, rgba(124,58,237,0.15) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
-        .cta-inner h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
-        .cta-inner p { font-size: 16px; color: #9ca3af; margin-bottom: 36px; line-height: 1.6; }
-        .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 0 24px; }
+      /* ---------- Hero ---------- */
+      .h-hero{ position:relative; overflow:hidden; padding:110px 0 80px; }
+      .h-hero::before{ content:''; position:absolute; width:640px; height:640px; background:radial-gradient(circle,rgba(201,162,39,0.16) 0%,transparent 70%); top:-160px; left:-160px; pointer-events:none; }
+      .h-hero::after{ content:''; position:absolute; width:520px; height:520px; background:radial-gradient(circle,rgba(122,149,105,0.14) 0%,transparent 70%); bottom:-120px; right:-80px; pointer-events:none; }
+      .h-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:64px; align-items:center; position:relative; z-index:1; }
+      @media (max-width:960px){ .h-grid{ grid-template-columns:1fr; text-align:center; } }
+      .h-btns{ display:flex; gap:12px; flex-wrap:wrap; margin-top:32px; }
+      @media (max-width:960px){ .h-btns{ justify-content:center; } }
+      .h-stats{ display:flex; gap:36px; margin-top:48px; padding-top:28px; border-top:1px solid var(--cm-line); flex-wrap:wrap; }
+      @media (max-width:960px){ .h-stats{ justify-content:center; } }
+      .h-stats div{ text-align:left; }
+      @media (max-width:960px){ .h-stats div{ text-align:center; } }
+      .h-stats strong{ font-family:var(--cm-serif); font-size:26px; font-weight:700; display:block; color:var(--cm-brass-lt); }
+      .h-stats span{ font-size:11px; color:var(--cm-ink-faint); text-transform:uppercase; letter-spacing:0.09em; font-family:var(--cm-mono); }
+
+      /* ---------- Board card (signature element) ---------- */
+      .board-frame{
+        position:relative; background:linear-gradient(160deg,#2b2016,#1a140d);
+        border:1px solid rgba(201,162,39,0.25); border-radius:22px; padding:22px;
+        box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+      }
+      .board-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+      .board-top .cm2-tag{ margin-bottom:2px; }
+      .board-top h3{ font-family:var(--cm-serif); font-size:16px; color:var(--cm-ink); font-weight:600; }
+      .live-dot-wrap{ display:flex; align-items:center; gap:6px; font-family:var(--cm-mono); font-size:11px; color:var(--cm-sage-lt); background:rgba(122,149,105,0.1); border:1px solid rgba(122,149,105,0.3); padding:4px 10px; border-radius:100px; }
+      .live-dot{ width:6px; height:6px; border-radius:50%; background:var(--cm-sage-lt); animation:cmblink 1.6s ease-in-out infinite; }
+      @keyframes cmblink{ 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+      .board-outer{ display:grid; grid-template-columns:20px 1fr; grid-template-rows:1fr 20px; gap:4px; }
+      .board-ranks{ display:grid; grid-template-rows:repeat(8,1fr); font-family:var(--cm-mono); font-size:10px; color:var(--cm-ink-faint); }
+      .board-ranks span{ display:flex; align-items:center; justify-content:center; }
+      .board-files{ display:grid; grid-template-columns:repeat(8,1fr); font-family:var(--cm-mono); font-size:10px; color:var(--cm-ink-faint); grid-column:2; }
+      .board-files span{ display:flex; align-items:center; justify-content:center; }
+      .board-8{ grid-column:2; grid-row:1; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(8,1fr); border-radius:8px; overflow:hidden; border:2px solid rgba(201,162,39,0.3); aspect-ratio:1; }
+      .board-8 .sqlt{ background:var(--cm-board-lt); }
+      .board-8 .sqdk{ background:var(--cm-board-dk); }
+      .board-8 .sq{ display:flex; align-items:center; justify-content:center; position:relative; }
+      .board-8 .sq img{ width:82%; height:82%; object-fit:contain; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.35)); }
+
+      .board-bottom{ display:flex; gap:8px; margin-top:16px; }
+      .board-bottom .bc-tag{ flex:1; padding:10px; background:rgba(243,234,217,0.03); border:1px solid var(--cm-line); border-radius:10px; text-align:center; }
+      .board-bottom .bc-tag span{ font-size:9px; color:var(--cm-ink-faint); display:block; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:3px; font-family:var(--cm-mono); }
+      .board-bottom .bc-tag strong{ font-size:13px; color:var(--cm-ink); font-family:var(--cm-serif); }
+
+      /* ---------- Choose-your-battle ---------- */
+      .battle-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:44px; }
+      @media (max-width:900px){ .battle-grid{ grid-template-columns:1fr; } }
+      .battle-card{ display:flex; flex-direction:column; height:100%; }
+      .battle-icon{ width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:18px; }
+      .battle-card p{ font-size:13.5px; color:var(--cm-ink-dim); line-height:1.65; flex-grow:1; margin-bottom:18px; }
+      .battle-link{ font-family:var(--cm-mono); font-size:13px; font-weight:500; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+
+      /* ---------- Features ---------- */
+      .feat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:40px; }
+      @media (max-width:768px){ .feat-grid{ grid-template-columns:1fr; } }
+      .feat-icon{ width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:19px; margin-bottom:14px; }
+      .feat-card p{ font-size:13px; color:var(--cm-ink-dim); line-height:1.6; }
+
+      /* ---------- How it works ---------- */
+      .how-wrap{ background:var(--cm-bg-2); border-top:1px solid var(--cm-line); border-bottom:1px solid var(--cm-line); }
+      .steps-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:36px; margin-top:48px; }
+      @media (max-width:768px){ .steps-grid{ grid-template-columns:1fr; } }
+      .step{ text-align:center; padding:10px; }
+      .step-num{ width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--cm-serif); font-size:19px; font-weight:700; margin:0 auto 18px; border:1.5px solid rgba(201,162,39,0.4); color:var(--cm-brass-lt); background:rgba(201,162,39,0.08); }
+      .step p{ font-size:13px; color:var(--cm-ink-dim); line-height:1.6; max-width:280px; margin:0 auto; }
+
+      /* ---------- CTA ---------- */
+      .cta-wrap{ padding:100px 0; text-align:center; position:relative; overflow:hidden; }
+      .cta-wrap::before{ content:''; position:absolute; width:760px; height:380px; background:radial-gradient(ellipse,rgba(201,162,39,0.12) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+      .cta-inner{ position:relative; z-index:1; max-width:600px; margin:0 auto; }
+      .cta-btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
     </style>
     </head>
-    <body class="cm-body">
+    <body class="cm2-body">
         <%- include("../partials/navbar") %>
         <main>
 
             <!-- HERO -->
-            <section class="hero">
-                <div class="hero-orb"></div>
-                <div class="hero-inner">
+            <section class="h-hero">
+                <div class="cm2-wrap h-grid">
                     <div>
-                        <div class="hero-badge">
-                            <span class="dot"></span>
-                            Full-stack Chess Platform
-                        </div>
-                        <h1 class="hero-title">
-                            Play Chess.<br>
-                            <span class="grad-1">Challenge Friends.</span><br>
-                            <span class="grad-2">Beat the Bot.</span>
+                        <span class="cm2-eyebrow"><span class="sq"></span>1.e4
+                            e5 2.Nf3 — it's your move</span>
+                        <h1 class="cm2-h1">
+                            Play real chess.<br>
+                            <span class="cm2-accent">Against friends,</span><br>
+                            <span class="cm2-accent-sage">bots, or strangers
+                                online.</span>
                         </h1>
-                        <p class="hero-desc">
-                            ChessMaster is a real chess platform — play vs
-                            friends, challenge 32 AI bots from 100 to 3200
-                            rating, track your stats, and review every game.
+                        <p class="cm2-sub">
+                            ChessMaster is a full chess platform, not a demo
+                            board: local two-player,
+                            32 rated Stockfish bots, live online multiplayer, a
+                            friends list you can
+                            challenge, and every game saved for replay.
                         </p>
-                        <div class="hero-btns">
-                            <a href="/play" class="btn-primary">♟ Play Now</a>
+                        <div class="h-btns">
+                            <a href="/play" class="cm2-btn cm2-btn-primary">♟
+                                Play Now</a>
                             <% if (!currentUser) { %>
-                            <a href="/register" class="btn-secondary">Create
+                            <a href="/register"
+                                class="cm2-btn cm2-btn-secondary">Create Free
                                 Account →</a>
                             <% } else { %>
-                            <a href="/leaderboard" class="btn-secondary">View
-                                Leaderboard →</a>
+                            <a href="/online"
+                                class="cm2-btn cm2-btn-secondary">Play Online
+                                →</a>
                             <% } %>
                         </div>
-                        <div class="hero-stats">
+                        <div class="h-stats">
                             <div><strong>32</strong><span>AI Bots</span></div>
+                            <div><strong>Live</strong><span>Online
+                                    PvP</span></div>
                             <div><strong>6</strong><span>Board
                                     Themes</span></div>
-                            <div><strong>∞</strong><span>Games</span></div>
                             <div><strong>100%</strong><span>Free</span></div>
                         </div>
                     </div>
 
-                    <div class="board-visual">
-                        <div class="board-glow"></div>
-                        <div class="board-card">
-                            <div class="board-card-top">
-                                <div>
-                                    <div class="bc-label">Live Preview</div>
-                                    <h3>Chess Board</h3>
-                                </div>
-                                <div class="live-badge">
-                                    <span class="live-dot"></span>
-                                    Ready
-                                </div>
+                    <div class="board-frame">
+                        <div class="board-top">
+                            <div>
+                                <div class="cm2-tag">Starting Position</div>
+                                <h3>Ready when you are</h3>
                             </div>
-                            <div class="preview-board">
-                                <% for(let row = 0; row < 8; row++) { %>
-                                <% for(let col = 0; col < 8; col++) { %>
+                            <div class="live-dot-wrap"><span
+                                    class="live-dot"></span>Engine idle</div>
+                        </div>
+
+                        <div class="board-outer">
+                            <div class="board-ranks">
+                                <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+                            </div>
+                            <div class="board-8">
+                                <%
+                                const backRow =
+                                ["rook","knight","bishop","queen","king","bishop","knight","rook"];
+                                %>
+                                <% for (let row = 0; row < 8; row++) { %>
+                                <% for (let col = 0; col < 8; col++) { %>
+                                <%
+                                const isLight = (row + col) % 2 === 0;
+                                let piece = null;
+                                if (row === 0) piece = { color: "black", type:
+                                backRow[col] };
+                                else if (row === 1) piece = { color: "black",
+                                type: "pawn" };
+                                else if (row === 6) piece = { color: "white",
+                                type: "pawn" };
+                                else if (row === 7) piece = { color: "white",
+                                type: backRow[col] };
+                                %>
                                 <div
-                                    class="<%= (row + col) % 2 === 0 ? 'pl' : 'pd' %>"></div>
+                                    class="sq <%= isLight ? 'sqlt' : 'sqdk' %>">
+                                    <% if (piece) { %>
+                                    <img
+                                        src="/images/pieces/<%= piece.color %>-<%= piece.type %>.png"
+                                        alt="<%= piece.color %> <%= piece.type %>">
+                                    <% } %>
+                                </div>
                                 <% } %>
                                 <% } %>
                             </div>
-                            <div class="board-card-bottom">
-                                <div
-                                    class="bc-tag"><span>Turn</span><strong>White</strong></div>
-                                <div
-                                    class="bc-tag"><span>Status</span><strong>Active</strong></div>
-                                <div class="bc-tag"><span>Mode</span><strong>2
-                                        Player</strong></div>
+                            <div></div>
+                            <div class="board-files">
+                                <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
                             </div>
+                        </div>
+
+                        <div class="board-bottom">
+                            <div
+                                class="bc-tag"><span>Turn</span><strong>White</strong></div>
+                            <div class="bc-tag"><span>Mode</span><strong>Your
+                                    Choice</strong></div>
+                            <div
+                                class="bc-tag"><span>Engine</span><strong>Stockfish</strong></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <div class="divider"></div>
+            <div class="cm2-wrap"><div class="cm2-divider"></div></div>
 
-            <!-- FEATURES -->
-            <div class="section">
-                <div class="section-badge badge-purple">✦ Features</div>
-                <h2 class="section-title">Everything you need<br>to play great
-                    chess</h2>
-                <p class="section-sub">From beginner-friendly bots to full game
-                    replay — ChessMaster has it all.</p>
-                <div class="features-grid">
-                    <div class="feature-card fc-1">
-                        <div class="feature-icon fi-1">♟</div>
-                        <h3>Interactive Board</h3>
-                        <p>Click or drag pieces, see legal move hints, captures,
-                            check highlights — smooth and responsive.</p>
-                    </div>
-                    <div class="feature-card fc-2">
-                        <div class="feature-icon fi-2">🤖</div>
-                        <h3>32 AI Bots</h3>
-                        <p>Challenge bots from 100 to 3200 rating — powered by
-                            Stockfish, the world's best chess engine.</p>
-                    </div>
-                    <div class="feature-card fc-3">
-                        <div class="feature-icon fi-3">⏱</div>
-                        <h3>Time Controls</h3>
-                        <p>Rapid, Blitz, or Bullet — pick your pace. Clocks
-                            tick, increment applies, timeout ends the game.</p>
-                    </div>
-                    <div class="feature-card fc-4">
-                        <div class="feature-icon fi-4">▶</div>
-                        <h3>Game Replay</h3>
-                        <p>Every saved game is replayable — step through moves,
-                            see highlights, review your decisions.</p>
-                    </div>
-                    <div class="feature-card fc-5">
-                        <div class="feature-icon fi-5">🏆</div>
-                        <h3>Leaderboard</h3>
-                        <p>All games saved to MongoDB — see recent matches,
-                            winners, and move counts on the leaderboard.</p>
-                    </div>
-                    <div class="feature-card fc-6">
-                        <div class="feature-icon fi-6">🎨</div>
-                        <h3>Board Themes</h3>
-                        <p>6 unique board themes — Classic, Midnight, Forest,
-                            Ocean, Ruby, Walnut. Your choice, your profile.</p>
+            <!-- CHOOSE YOUR BATTLE -->
+            <section class="cm2-section">
+                <div class="cm2-wrap">
+                    <span class="cm2-eyebrow"><span class="sq"></span>Three ways
+                        to play</span>
+                    <h2 class="cm2-h2">Pick your opponent</h2>
+                    <p class="cm2-sub">Same board, three completely different
+                        fights.</p>
+
+                    <div class="battle-grid">
+                        <div class="cm2-card battle-card">
+                            <div class="battle-icon"
+                                style="background:rgba(122,149,105,0.15);">🧑‍🤝‍🧑</div>
+                            <h3 class="cm2-h3">Play a Friend</h3>
+                            <p>Pass-and-play on one screen. Perfect for settling
+                                the argument
+                                over who's actually better, right now, no
+                                setup.</p>
+                            <a href="/play" class="battle-link"
+                                style="color:var(--cm-sage-lt);">Start a local
+                                game →</a>
+                        </div>
+                        <div class="cm2-card battle-card">
+                            <div class="battle-icon"
+                                style="background:rgba(201,162,39,0.15);">🤖</div>
+                            <h3 class="cm2-h3">Challenge a Bot</h3>
+                            <p>32 opponents from 100 to 3200 rating, all running
+                                on Stockfish.
+                                Lose to one, then come back and beat it.</p>
+                            <a href="/play" class="battle-link"
+                                style="color:var(--cm-brass-lt);">Pick a bot
+                                →</a>
+                        </div>
+                        <div class="cm2-card battle-card">
+                            <div class="battle-icon"
+                                style="background:rgba(181,84,31,0.16);">🌐</div>
+                            <h3 class="cm2-h3">Go Online</h3>
+                            <p>Real-time multiplayer over Socket.IO. Add
+                                friends, send a
+                                challenge, and play live from anywhere.</p>
+                            <a href="/online" class="battle-link"
+                                style="color:#e08a5b;">Find an opponent →</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="divider"></div>
+            <div class="cm2-wrap"><div class="cm2-divider"></div></div>
+
+            <!-- FEATURES -->
+            <section class="cm2-section">
+                <div class="cm2-wrap">
+                    <span class="cm2-eyebrow"><span class="sq"></span>Everything
+                        included</span>
+                    <h2 class="cm2-h2">A full board, not a toy</h2>
+                    <p class="cm2-sub">From move validation to a friends list —
+                        the parts a real
+                        chess site needs, all built in.</p>
+
+                    <div class="feat-grid">
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(201,162,39,0.15);">♟</div>
+                            <h3 class="cm2-h3">Interactive Board</h3>
+                            <p>Click or drag pieces, see legal move hints,
+                                captures, and
+                                check highlights in real time.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(122,149,105,0.15);">🤖</div>
+                            <h3 class="cm2-h3">32 AI Bots</h3>
+                            <p>Challenge bots from 100 to 3200 rating, powered
+                                by Stockfish —
+                                the world's strongest chess engine.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(181,84,31,0.16);">🌐</div>
+                            <h3 class="cm2-h3">Online Multiplayer</h3>
+                            <p>Live games over Socket.IO — create a room, share
+                                it, or match
+                                with a friend directly from your list.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(201,162,39,0.15);">🧑‍🤝‍🧑</div>
+                            <h3 class="cm2-h3">Friends & Challenges</h3>
+                            <p>Search players by username, send friend requests,
+                                and
+                                challenge anyone on your list to a game.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(122,149,105,0.15);">⏱</div>
+                            <h3 class="cm2-h3">Time Controls</h3>
+                            <p>Rapid, Blitz, or Bullet — clocks tick, increment
+                                applies,
+                                timeout ends the game automatically.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(181,84,31,0.16);">▶</div>
+                            <h3 class="cm2-h3">Game Replay</h3>
+                            <p>Every game is auto-saved and fully replayable —
+                                step through
+                                moves and review your decisions.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(201,162,39,0.15);">🏆</div>
+                            <h3 class="cm2-h3">Leaderboard & Ratings</h3>
+                            <p>Every result is saved to MongoDB — wins, losses,
+                                draws, and an
+                                Elo-style rating for every player.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(122,149,105,0.15);">🎨</div>
+                            <h3 class="cm2-h3">Board Themes</h3>
+                            <p>Six themes — Classic, Midnight, Forest, Ocean,
+                                Ruby, Walnut —
+                                saved to your profile in Settings.</p>
+                        </div>
+                        <div class="cm2-card feat-card">
+                            <div class="feat-icon"
+                                style="background:rgba(181,84,31,0.16);">👤</div>
+                            <h3 class="cm2-h3">Player Profiles</h3>
+                            <p>A profile page with your stats, history, and
+                                rating — set up
+                                once at registration, editable anytime.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- HOW IT WORKS -->
             <div class="how-wrap">
-                <div class="section">
-                    <div style="text-align:center; margin-bottom: 56px;">
-                        <div class="section-badge badge-blue"
-                            style="margin: 0 auto 16px;">⚡ How it works</div>
-                        <h2 class="section-title" style="text-align:center;">Get
-                            playing in<br>3 simple steps</h2>
-                    </div>
-                    <div class="steps-grid">
-                        <div class="step">
-                            <div class="step-num sn-1">1</div>
-                            <h3>Create Account</h3>
-                            <p>Sign up for free — no credit card, no hassle.
-                                Your stats and games are saved to your
-                                profile.</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-num sn-2">2</div>
-                            <h3>Choose Your Game</h3>
-                            <p>Play vs a friend locally or pick any of 32 AI
-                                bots. Choose your time control and start.</p>
-                        </div>
-                        <div class="step">
-                            <div class="step-num sn-3">3</div>
-                            <h3>Review & Improve</h3>
-                            <p>Every game is auto-saved. Replay your moves,
-                                check the leaderboard, and keep improving.</p>
+                <div class="cm2-section">
+                    <div class="cm2-wrap" style="text-align:center;">
+                        <span class="cm2-eyebrow"
+                            style="margin:0 auto 16px;"><span
+                                class="sq"></span>Getting started</span>
+                        <h2 class="cm2-h2">Three moves to your first game</h2>
+                        <div class="steps-grid">
+                            <div class="step">
+                                <div class="step-num">1</div>
+                                <h3 class="cm2-h3">Create an account</h3>
+                                <p>Free, no card required. Your stats, friends,
+                                    and games are
+                                    saved to your profile from move one.</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-num">2</div>
+                                <h3 class="cm2-h3">Pick your opponent</h3>
+                                <p>A friend on the same screen, a Stockfish bot,
+                                    or someone
+                                    online — choose your time control and
+                                    go.</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-num">3</div>
+                                <h3 class="cm2-h3">Review and improve</h3>
+                                <p>Every game is auto-saved. Replay it, check
+                                    the leaderboard,
+                                    and get back to the board.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -260,25 +368,26 @@
             <!-- CTA -->
             <div class="cta-wrap">
                 <div class="cta-inner">
-                    <div class="section-badge badge-pink"
-                        style="margin: 0 auto 20px;">♟ Ready?</div>
-                    <h2>
-                        Your next move<br>
-                        <span
-                            style="background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                            starts here.
-                        </span>
+                    <span class="cm2-eyebrow" style="margin:0 auto 20px;"><span
+                            class="sq"></span>Checkmate awaits</span>
+                    <h2 class="cm2-h1"
+                        style="font-size:clamp(2rem,4.5vw,3.2rem);">
+                        Your next move<br><span class="cm2-accent">starts
+                            here.</span>
                     </h2>
-                    <p>Join ChessMaster — play, learn, and challenge yourself
-                        every day.</p>
+                    <p class="cm2-sub" style="margin:0 auto;">
+                        Join ChessMaster — play, learn, and challenge yourself
+                        every day.
+                    </p>
                     <div class="cta-btns">
                         <a href="<%= currentUser ? '/play' : '/register' %>"
-                            class="btn-primary">
+                            class="cm2-btn cm2-btn-primary">
                             ♟ <%= currentUser ? 'Play Now' : 'Get Started Free'
                             %>
                         </a>
-                        <a href="/leaderboard" class="btn-secondary">View
-                            Leaderboard →</a>
+                        <a href="/leaderboard"
+                            class="cm2-btn cm2-btn-secondary">View Leaderboard
+                            →</a>
                     </div>
                 </div>
             </div>

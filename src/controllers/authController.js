@@ -9,10 +9,14 @@ function showRegister(req, res) {
 
 async function registerUser(req, res) {
   try {
-    const { email, password, confirmPassword } = req.body;
+    const { email,mobile, password, confirmPassword } = req.body;
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !mobile || !password || !confirmPassword) {
       req.flash("error", "All fields are required.");
+      return res.redirect("/register");
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      req.flash("error", "Invalid email format.");
       return res.redirect("/register");
     }
 
@@ -31,6 +35,12 @@ async function registerUser(req, res) {
       req.flash("error", "Email is already registered.");
       return res.redirect("/register");
     }
+    const existingMobile = await User.findOne({ mobile });
+
+if (existingMobile && existingMobile.profileSetup) {
+    req.flash("error", "Mobile number is already registered.");
+    return res.redirect("/register");
+}
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -38,10 +48,12 @@ async function registerUser(req, res) {
 
     if (existingUser && !existingUser.profileSetup) {
       existingUser.password = hashedPassword;
+      existingUser.mobile = mobile;
       await existingUser.save();
     } else {
       await User.create({
         email,
+        mobile,
         password: hashedPassword,
         username: tempUsername,
         profileSetup: false

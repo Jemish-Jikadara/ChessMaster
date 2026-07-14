@@ -5,180 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChessMaster | About</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/theme-redesign.css">
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
+      /* ---------- Hero ---------- */
+      .a-hero{ position:relative; overflow:hidden; padding:110px 0 70px; }
+      .a-hero::before{ content:''; position:absolute; width:600px; height:600px; background:radial-gradient(circle,rgba(201,162,39,0.15) 0%,transparent 70%); top:-140px; right:-140px; pointer-events:none; }
+      .a-hero::after{ content:''; position:absolute; width:420px; height:420px; background:radial-gradient(circle,rgba(122,149,105,0.13) 0%,transparent 70%); bottom:-40px; left:2%; pointer-events:none; }
+      .a-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; position:relative; z-index:1; }
+      @media (max-width:940px){ .a-grid{ grid-template-columns:1fr; } }
+      .tech-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
 
-        /* ── HERO ── */
-        .about-hero { position: relative; overflow: hidden; padding: 120px 24px 80px; }
-        .about-hero::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
-        .about-hero::after { content: ''; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%); bottom: 0; left: 5%; pointer-events: none; }
+      .panel{ background:var(--cm-bg-2); border:1px solid var(--cm-line); border-radius:20px; padding:26px; }
+      .panel-title{ font-family:var(--cm-serif); font-size:17px; font-weight:600; color:var(--cm-ink); margin-bottom:18px; }
+      .feature-list{ display:flex; flex-direction:column; gap:10px; }
+      .feature-item{ display:flex; align-items:flex-start; gap:12px; padding:13px 15px; background:rgba(243,234,217,0.02); border:1px solid var(--cm-line-soft); border-radius:12px; transition:border-color .2s,background .2s; }
+      .feature-item:hover{ border-color:rgba(201,162,39,0.3); background:rgba(201,162,39,0.04); }
+      .fi-icon{ width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+      .fi-content h4{ font-family:var(--cm-serif); font-size:13.5px; font-weight:600; color:var(--cm-ink); margin-bottom:2px; }
+      .fi-content p{ font-size:12px; color:var(--cm-ink-dim); line-height:1.5; }
 
-        .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
-        @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
+      /* ---------- Stats ---------- */
+      .stats-wrap{ border-top:1px solid var(--cm-line); border-bottom:1px solid var(--cm-line); background:var(--cm-bg-2); }
+      .stats-inner{ padding:56px 0; display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+      @media (max-width:768px){ .stats-inner{ grid-template-columns:repeat(2,1fr); } }
+      .stat-card{ text-align:center; padding:22px 14px; background:rgba(243,234,217,0.02); border:1px solid var(--cm-line-soft); border-radius:14px; }
+      .stat-num{ font-family:var(--cm-serif); font-size:2.1rem; font-weight:700; margin-bottom:4px; color:var(--cm-brass-lt); }
+      .stat-label{ font-size:11px; color:var(--cm-ink-faint); text-transform:uppercase; letter-spacing:0.1em; font-family:var(--cm-mono); }
 
-        .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #a78bfa; margin-bottom: 12px; display: block; font-family: 'Syne', sans-serif; }
+      /* ---------- Philosophy ---------- */
+      .phil-grid{ display:grid; grid-template-columns:0.8fr 1.2fr; gap:56px; margin-top:36px; }
+      @media (max-width:900px){ .phil-grid{ grid-template-columns:1fr; } }
+      .phil-list{ display:flex; flex-direction:column; gap:20px; }
+      .phil-row{ display:flex; gap:14px; align-items:flex-start; }
+      .phil-mark{ font-family:var(--cm-mono); font-size:12px; color:var(--cm-brass-lt); padding-top:3px; }
+      .phil-row p{ font-size:14px; color:var(--cm-ink-dim); line-height:1.7; }
+      .phil-row strong{ color:var(--cm-ink); font-family:var(--cm-serif); font-weight:600; }
 
-        .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+      /* ---------- Tech stack ---------- */
+      .tech-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:36px; }
+      @media (max-width:768px){ .tech-grid{ grid-template-columns:1fr; } }
+      .tc-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+      .tc-icon{ width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; }
+      .tc-label{ font-size:10px; color:var(--cm-ink-faint); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px; font-family:var(--cm-mono); }
+      .tc-name{ font-family:var(--cm-serif); font-size:15px; font-weight:600; color:var(--cm-ink); }
+      .tc-desc{ font-size:12px; color:var(--cm-ink-dim); line-height:1.6; }
 
-        .grad { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-        .hero-desc { font-size: 15px; color: #9ca3af; line-height: 1.7; margin-bottom: 32px; }
-
-        /* Tech stack pills */
-        .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-        .pill { padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 500; }
-        .pill-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; }
-        .pill-blue   { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.3);  color: #60a5fa; }
-        .pill-green  { background: rgba(16,185,129,0.15);  border: 1px solid rgba(16,185,129,0.3);  color: #34d399; }
-        .pill-pink   { background: rgba(236,72,153,0.15);  border: 1px solid rgba(236,72,153,0.3);  color: #f472b6; }
-        .pill-yellow { background: rgba(245,158,11,0.15);  border: 1px solid rgba(245,158,11,0.3);  color: #fbbf24; }
-        .pill-cyan   { background: rgba(6,182,212,0.15);   border: 1px solid rgba(6,182,212,0.3);   color: #22d3ee; }
-
-        /* Right panel */
-        .hero-panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; }
-        .panel-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #f0ece4; margin-bottom: 20px; }
-
-        .feature-list { display: flex; flex-direction: column; gap: 12px; }
-        .feature-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; transition: border-color 0.2s, background 0.2s; }
-        .feature-item:hover { border-color: rgba(124,58,237,0.3); background: rgba(124,58,237,0.05); }
-        .fi-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .fi-1 { background: rgba(124,58,237,0.15); }
-        .fi-2 { background: rgba(59,130,246,0.15); }
-        .fi-3 { background: rgba(16,185,129,0.15); }
-        .fi-4 { background: rgba(245,158,11,0.15); }
-        .fi-5 { background: rgba(236,72,153,0.15); }
-        .fi-6 { background: rgba(6,182,212,0.15); }
-        .fi-content h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #f0ece4; margin-bottom: 3px; }
-        .fi-content p { font-size: 12px; color: #9ca3af; line-height: 1.5; }
-
-        /* ── STATS SECTION ── */
-        .stats-wrap { border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); }
-        .stats-inner { max-width: 1100px; margin: 0 auto; padding: 60px 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        @media (max-width: 768px) { .stats-inner { grid-template-columns: repeat(2, 1fr); } }
-
-        .stat-card { text-align: center; padding: 24px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; }
-        .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; }
-        .stat-label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; }
-        .sn-1 { background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .sn-2 { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .sn-3 { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .sn-4 { background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-
-        /* ── TECH STACK ── */
-        .tech-section { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
-        .section-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
-        .badge-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #a78bfa; }
-        .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; color: #f0ece4; margin-bottom: 8px; letter-spacing: -0.02em; }
-        .section-sub { font-size: 14px; color: #9ca3af; margin-bottom: 40px; line-height: 1.6; }
-
-        .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        @media (max-width: 768px) { .tech-grid { grid-template-columns: 1fr; } }
-
-        .tech-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px; transition: border-color 0.2s, transform 0.2s; }
-        .tech-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-3px); }
-        .tc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .tc-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .tc-label { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
-        .tc-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece4; }
-        .tc-desc { font-size: 12px; color: #9ca3af; line-height: 1.6; }
-
-        /* ── CTA ── */
-        .cta-wrap { padding: 80px 24px; text-align: center; position: relative; overflow: hidden; }
-        .cta-wrap::before { content: ''; position: absolute; width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        .cta-inner { position: relative; z-index: 1; max-width: 500px; margin: 0 auto; }
-        .cta-inner h2 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.02em; }
-        .cta-inner p { font-size: 15px; color: #9ca3af; margin-bottom: 28px; line-height: 1.6; }
-        .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .btn-primary { padding: 13px 26px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
-        .btn-secondary { padding: 13px 26px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #f0ece4; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s, border-color 0.2s, transform 0.2s; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
-        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+      /* ---------- CTA ---------- */
+      .cta-wrap{ padding:90px 0; text-align:center; position:relative; overflow:hidden; }
+      .cta-wrap::before{ content:''; position:absolute; width:640px; height:320px; background:radial-gradient(ellipse,rgba(201,162,39,0.12) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+      .cta-inner{ position:relative; z-index:1; max-width:520px; margin:0 auto; }
+      .cta-btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
     </style>
   </head>
 
-  <body class="cm-body">
+  <body class="cm2-body">
     <%- include("../partials/navbar") %>
 
     <main>
 
       <!-- HERO -->
-      <section class="about-hero">
-        <div class="hero-inner">
+      <section class="a-hero">
+        <div class="cm2-wrap a-grid">
           <div>
-            <span class="kicker">About ChessMaster</span>
-            <h1 class="hero-title">
-              A full-stack chess platform<br>
-              <span class="grad">built for real players.</span>
+            <span class="cm2-eyebrow"><span class="sq"></span>About
+              ChessMaster</span>
+            <h1 class="cm2-h1">
+              A full-stack chessboard,<br>
+              <span class="cm2-accent">built by hand.</span>
             </h1>
-            <p class="hero-desc">
-              ChessMaster is a browser-based chess platform built without React
-              — pure EJS, vanilla JavaScript, Express routes, and MongoDB. Real
-              chess logic, real AI, real games.
+            <p class="cm2-sub" style="max-width:none;">
+              No chess.com API, no drag-and-drop library, no framework doing
+              the hard part for us. ChessMaster is EJS, vanilla JavaScript,
+              Express routes, Socket.IO, and MongoDB — real move validation
+              and a real AI opponent, written from scratch.
             </p>
             <div class="tech-pills">
-              <span class="pill pill-purple">Node.js</span>
-              <span class="pill pill-blue">Express.js</span>
-              <span class="pill pill-green">MongoDB</span>
-              <span class="pill pill-pink">EJS</span>
-              <span class="pill pill-yellow">JavaScript</span>
-              <span class="pill pill-cyan">Stockfish</span>
+              <span class="cm2-pill cm2-pill-brass">Node.js</span>
+              <span class="cm2-pill cm2-pill-sage">Express</span>
+              <span class="cm2-pill cm2-pill-rust">MongoDB</span>
+              <span class="cm2-pill cm2-pill-brass">EJS</span>
+              <span class="cm2-pill cm2-pill-sage">Socket.IO</span>
+              <span class="cm2-pill cm2-pill-rust">Stockfish</span>
             </div>
           </div>
 
-          <div class="hero-panel">
+          <div class="panel">
             <div class="panel-title">What's inside</div>
             <div class="feature-list">
               <div class="feature-item">
-                <div class="fi-icon fi-1">♟</div>
+                <div class="fi-icon"
+                  style="background:rgba(201,162,39,0.15);">♟</div>
                 <div class="fi-content">
-                  <h4>Interactive Chess Board</h4>
-                  <p>Click or drag pieces, legal move hints, check highlights,
-                    drag & drop support.</p>
+                  <h4>Interactive Board</h4>
+                  <p>Click or drag pieces, legal move hints, check
+                    highlights.</p>
                 </div>
               </div>
               <div class="feature-item">
-                <div class="fi-icon fi-2">🤖</div>
+                <div class="fi-icon"
+                  style="background:rgba(122,149,105,0.15);">🤖</div>
                 <div class="fi-content">
                   <h4>32 AI Bots (Stockfish)</h4>
-                  <p>Bots from 100 to 3200 rating powered by Stockfish — the
-                    world's best chess engine.</p>
+                  <p>Rated 100–3200, powered by the world's strongest
+                    engine.</p>
                 </div>
               </div>
               <div class="feature-item">
-                <div class="fi-icon fi-3">▶</div>
+                <div class="fi-icon"
+                  style="background:rgba(181,84,31,0.16);">🌐</div>
                 <div class="fi-content">
-                  <h4>Game Replay</h4>
-                  <p>Every game is auto-saved and replayable — step through
-                    moves anytime.</p>
+                  <h4>Online Multiplayer</h4>
+                  <p>Live games over Socket.IO, no page refresh required.</p>
                 </div>
               </div>
               <div class="feature-item">
-                <div class="fi-icon fi-4">⏱</div>
+                <div class="fi-icon"
+                  style="background:rgba(201,162,39,0.15);">🧑‍🤝‍🧑</div>
+                <div class="fi-content">
+                  <h4>Friends & Challenges</h4>
+                  <p>Search players, send requests, challenge from your
+                    list.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="fi-icon"
+                  style="background:rgba(122,149,105,0.15);">⏱</div>
                 <div class="fi-content">
                   <h4>Time Controls</h4>
-                  <p>Rapid, Blitz, Bullet — full clock support with
-                    increment.</p>
+                  <p>Rapid, Blitz, Bullet — full clock logic with increment.</p>
                 </div>
               </div>
               <div class="feature-item">
-                <div class="fi-icon fi-5">🎨</div>
+                <div class="fi-icon"
+                  style="background:rgba(181,84,31,0.16);">🎨</div>
                 <div class="fi-content">
                   <h4>Board Themes</h4>
-                  <p>6 board themes saved per user — Classic, Midnight, Forest,
-                    Ocean, Ruby, Walnut.</p>
+                  <p>6 themes saved per user — Classic to Walnut.</p>
                 </div>
               </div>
               <div class="feature-item">
-                <div class="fi-icon fi-6">🏆</div>
+                <div class="fi-icon"
+                  style="background:rgba(201,162,39,0.15);">🏆</div>
                 <div class="fi-content">
-                  <h4>Leaderboard & Profile</h4>
-                  <p>All games saved to MongoDB — track wins, losses, draws, and
-                    ratings.</p>
+                  <h4>Leaderboard & Ratings</h4>
+                  <p>Every game saved to MongoDB with wins, losses, draws.</p>
                 </div>
               </div>
             </div>
@@ -186,134 +159,155 @@
         </div>
       </section>
 
-      <div class="divider"></div>
+      <div class="cm2-wrap"><div class="cm2-divider"></div></div>
 
       <!-- STATS -->
       <div class="stats-wrap">
-        <div class="stats-inner">
-          <div class="stat-card">
-            <div class="stat-num sn-1">32</div>
-            <div class="stat-label">AI Bots</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num sn-2">6</div>
-            <div class="stat-label">Board Themes</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num sn-3">3</div>
-            <div class="stat-label">Time Modes</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num sn-4">100%</div>
-            <div class="stat-label">Free</div>
-          </div>
+        <div class="cm2-wrap stats-inner">
+          <div class="stat-card"><div class="stat-num">32</div><div
+              class="stat-label">AI Bots</div></div>
+          <div class="stat-card"><div class="stat-num">6</div><div
+              class="stat-label">Board Themes</div></div>
+          <div class="stat-card"><div class="stat-num">3</div><div
+              class="stat-label">Time Controls</div></div>
+          <div class="stat-card"><div class="stat-num">100%</div><div
+              class="stat-label">Free</div></div>
         </div>
       </div>
 
-      <div class="divider"></div>
+      <!-- PHILOSOPHY -->
+      <section class="cm2-section">
+        <div class="cm2-wrap">
+          <span class="cm2-eyebrow"><span class="sq"></span>Why it's built this
+            way</span>
+          <h2 class="cm2-h2">Every piece has a reason to be there</h2>
+          <div class="phil-grid">
+            <p class="cm2-sub" style="max-width:none;">
+              Chess sites are usually one of two things: a bloated SaaS
+              product, or a bare board demo with no accounts and no memory.
+              ChessMaster sits in between — small enough to read in an
+              afternoon, complete enough to actually play on.
+            </p>
+            <div class="phil-list">
+              <div class="phil-row">
+                <span class="phil-mark">01</span>
+                <p><strong>Sessions, not tokens.</strong> Login uses signed,
+                  MongoDB-backed sessions — your game state survives a
+                  refresh without any client-side auth logic.</p>
+              </div>
+              <div class="phil-row">
+                <span class="phil-mark">02</span>
+                <p><strong>Rooms, not polling.</strong> Online games run on
+                  Socket.IO rooms — moves push to your opponent the instant
+                  you make them, no refresh, no delay.</p>
+              </div>
+              <div class="phil-row">
+                <span class="phil-mark">03</span>
+                <p><strong>A real engine, not a script.</strong> Bots aren't
+                  scripted "AI" — they're Stockfish running in a Web Worker,
+                  tuned across 32 rating bands.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="cm2-wrap"><div class="cm2-divider"></div></div>
 
       <!-- TECH STACK -->
-      <div class="tech-section">
-        <div class="section-badge badge-purple">⚙ Tech Stack</div>
-        <h2 class="section-title">Built with modern web tech</h2>
-        <p class="section-sub">No React, no Next.js — just clean server-side
-          rendering with real chess logic.</p>
+      <section class="cm2-section">
+        <div class="cm2-wrap">
+          <span class="cm2-eyebrow"><span class="sq"></span>Tech stack</span>
+          <h2 class="cm2-h2">Built with modern web tech</h2>
+          <p class="cm2-sub">No React, no Next.js — server-rendered pages,
+            real chess logic, and a live connection where it matters.</p>
 
-        <div class="tech-grid">
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(124,58,237,0.15);">🟢</div>
-              <div>
-                <div class="tc-label">Runtime</div>
-                <div class="tc-name">Node.js</div>
+          <div class="tech-grid">
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(201,162,39,0.15);">🟢</div>
+                <div><div class="tc-label">Runtime</div><div
+                    class="tc-name">Node.js</div></div>
               </div>
+              <p class="tc-desc">Server-side JavaScript runtime powering the
+                entire backend.</p>
             </div>
-            <p class="tc-desc">Server-side JavaScript runtime powering the
-              entire backend.</p>
-          </div>
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(59,130,246,0.15);">⚡</div>
-              <div>
-                <div class="tc-label">Framework</div>
-                <div class="tc-name">Express.js</div>
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(122,149,105,0.15);">⚡</div>
+                <div><div class="tc-label">Framework</div><div
+                    class="tc-name">Express.js</div></div>
               </div>
+              <p class="tc-desc">Handles routing, middleware, sessions, and API
+                endpoints.</p>
             </div>
-            <p class="tc-desc">Handles routing, middleware, sessions, and API
-              endpoints.</p>
-          </div>
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(16,185,129,0.15);">🍃</div>
-              <div>
-                <div class="tc-label">Database</div>
-                <div class="tc-name">MongoDB</div>
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(181,84,31,0.16);">🍃</div>
+                <div><div class="tc-label">Database</div><div
+                    class="tc-name">MongoDB</div></div>
               </div>
+              <p class="tc-desc">Stores users, games, ratings, and settings with
+                Mongoose.</p>
             </div>
-            <p class="tc-desc">Stores users, games, ratings, and settings with
-              Mongoose ODM.</p>
-          </div>
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(245,158,11,0.15);">📄</div>
-              <div>
-                <div class="tc-label">Templating</div>
-                <div class="tc-name">EJS</div>
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(201,162,39,0.15);">📄</div>
+                <div><div class="tc-label">Templating</div><div
+                    class="tc-name">EJS</div></div>
               </div>
+              <p class="tc-desc">Server-side HTML rendering with dynamic data
+                injection.</p>
             </div>
-            <p class="tc-desc">Server-side HTML rendering with dynamic data
-              injection.</p>
-          </div>
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(236,72,153,0.15);">♟</div>
-              <div>
-                <div class="tc-label">Chess Logic</div>
-                <div class="tc-name">Chess.js</div>
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(122,149,105,0.15);">🔌</div>
+                <div><div class="tc-label">Realtime</div><div
+                    class="tc-name">Socket.IO</div></div>
               </div>
+              <p class="tc-desc">Powers online multiplayer rooms and live move
+                syncing.</p>
             </div>
-            <p class="tc-desc">Legal move validation, check, checkmate, draw
-              detection.</p>
-          </div>
-          <div class="tech-card">
-            <div class="tc-head">
-              <div class="tc-icon"
-                style="background:rgba(6,182,212,0.15);">🤖</div>
-              <div>
-                <div class="tc-label">AI Engine</div>
-                <div class="tc-name">Stockfish</div>
+            <div class="cm2-card">
+              <div class="tc-head">
+                <div class="tc-icon"
+                  style="background:rgba(181,84,31,0.16);">🤖</div>
+                <div><div class="tc-label">AI Engine</div><div
+                    class="tc-name">Stockfish</div></div>
               </div>
+              <p class="tc-desc">World's strongest chess engine, run client-side
+                via a Web Worker.</p>
             </div>
-            <p class="tc-desc">World's strongest chess engine running in the
-              browser via WebAssembly Worker.</p>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- CTA -->
       <div class="cta-wrap">
         <div class="cta-inner">
-          <div class="section-badge badge-purple" style="margin: 0 auto 20px;">♟
-            Try it</div>
-          <h2>
-            Ready to play?<br>
-            <span class="grad">Make your move.</span>
+          <h2 class="cm2-h1" style="font-size:clamp(1.8rem,4vw,2.8rem);">
+            Ready to make<br><span class="cm2-accent">your first move?</span>
           </h2>
-          <p>Jump in and start playing — free forever.</p>
+          <p class="cm2-sub" style="margin:0 auto;">
+            Free to play, forever. Create an account and jump straight to the
+            board.
+          </p>
           <div class="cta-btns">
-            <a href="/play" class="btn-primary">♟ Play Now</a>
-            <a href="/leaderboard" class="btn-secondary">View Leaderboard →</a>
+            <a href="<%= currentUser ? '/play' : '/register' %>"
+              class="cm2-btn cm2-btn-primary">
+              ♟ <%= currentUser ? 'Play Now' : 'Get Started Free' %>
+            </a>
+            <a href="/" class="cm2-btn cm2-btn-secondary">Back to Home</a>
           </div>
         </div>
       </div>
 
     </main>
-
     <%- include("../partials/footer") %>
   </body>
 </html>

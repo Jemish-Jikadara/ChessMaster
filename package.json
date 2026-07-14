@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@getbrevo/brevo": "^5.0.4",
+    "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
