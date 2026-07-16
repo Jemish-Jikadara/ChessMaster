@@ -37,11 +37,9 @@ const userSchema = new mongoose.Schema(
       maxlength: 50,
       default: ""
     },
-    profileImage: {
-    type: String,
-    default:
-        "https://res.cloudinary.com/dvmqcqf9c/image/upload/v1/ChessMaster/default-avatar.png",
-    },
+     profileImage: {
+    type: String, // Cloudinary URL yaha store hogi
+    default: ''},
     bio: {
       type: String,
       trim: true,

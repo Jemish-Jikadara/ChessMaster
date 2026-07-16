@@ -85,8 +85,12 @@
                 <% } %>
 
                 <form action="/setup-profile" method="POST"
+                    enctype="multipart/form-data"
                     class="setup-form">
-
+                    <label>
+                        Profile Image <span class="optional-tag">optional</span>
+                        <input type="file" name="profileImage" accept="image/*">
+                    </label>
                     <label>Username *
                         <input type="text" name="username"
                             placeholder="e.g. chesswizard42" minlength="3"

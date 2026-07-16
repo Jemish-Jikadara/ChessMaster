@@ -8,167 +8,893 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
             rel="stylesheet">
-        <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #080810; color: #f0ece4; overflow-x: hidden; }
-        .page-wrap { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
-        .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 56px; flex-wrap: wrap; gap: 20px; }
-        .kicker { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #a78bfa; margin-bottom: 10px; display: block; font-family: 'Syne', sans-serif; }
-        .page-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: #f0ece4; margin: 0 0 8px; letter-spacing: -0.02em; line-height: 1.1; }
-        .page-sub { color: #6b7280; font-size: 14px; line-height: 1.6; max-width: 400px; }
-        .btn-primary { padding: 12px 24px; background: linear-gradient(135deg, #7c3aed, #ec4899); border: none; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(124,58,237,0.3); white-space: nowrap; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
-        .btn-watch { padding: 6px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; color: #f0ece4; font-size: 12px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.2s, border-color 0.2s; white-space: nowrap; }
-        .btn-watch:hover { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+        <style>*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        /* Empty state */
-        .empty-state { text-align: center; padding: 80px 24px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; }
-        .empty-icon { font-size: 3rem; margin-bottom: 16px; }
-        .empty-state h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: #f0ece4; margin-bottom: 8px; }
-        .empty-state p { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--cm-bg);
+    color:var(--cm-ink);
+}
 
-        /* Mobile cards */
-        .mobile-cards { display: none; flex-direction: column; gap: 12px; margin-bottom: 32px; }
-        @media (max-width: 768px) { .mobile-cards { display: flex; } .table-wrap { display: none; } }
+/* ==========================
+        PAGE
+========================== */
 
-        .game-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, background 0.2s; }
-        .game-card:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.05); }
-        .card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-        .card-head .match-num { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-        .card-head h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece4; }
-        .card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .meta-item { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 8px 10px; }
-        .meta-item span { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
-        .meta-item strong { font-size: 13px; color: #f0ece4; }
+.page-wrap{
+    max-width:1200px;
+    margin:auto;
+    padding:0 24px 80px;
+}
 
-        /* Winner badges */
-        .badge-white { padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; font-size: 11px; font-weight: 600; color: #f0ece4; white-space: nowrap; }
-        .badge-black { padding: 4px 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-size: 11px; font-weight: 600; color: #9ca3af; white-space: nowrap; }
-        .badge-draw  { padding: 4px 10px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 100px; font-size: 11px; font-weight: 600; color: #60a5fa; white-space: nowrap; }
+/* ==========================
+        HERO
+========================== */
 
-        /* Table */
-        .table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        thead { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.07); }
-        th { padding: 14px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; text-align: left; font-family: 'Syne', sans-serif; }
-        td { padding: 14px 20px; font-size: 13px; color: #d1d5db; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .td-num { color: #6b7280; font-size: 12px; }
-        .td-player { color: #f0ece4; font-weight: 500; }
+.page-head{
+
+    margin:0 -24px 40px;
+
+    padding:60px 40px 35px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:30px;
+    flex-wrap:wrap;
+
+    border-bottom:1px solid var(--cm-line);
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(201,162,39,.10),
+        rgba(122,149,105,.06),
+        transparent
+    );
+
+    position:relative;
+    overflow:hidden;
+
+}
+
+.page-head::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:700px;
+    height:700px;
+
+    right:-180px;
+    top:-260px;
+
+    background:
+    radial-gradient(circle,
+    rgba(201,162,39,.12),
+    transparent 70%);
+
+}
+
+.page-head>*{
+
+    position:relative;
+    z-index:2;
+
+}
+
+.kicker{
+
+    font-family:'JetBrains Mono',monospace;
+
+    font-size:11px;
+
+    letter-spacing:.18em;
+
+    text-transform:uppercase;
+
+    color:var(--cm-brass-lt);
+
+    display:block;
+
+    margin-bottom:12px;
+
+}
+
+.page-title{
+
+    font-family:'Fraunces',serif;
+
+    font-size:clamp(2.4rem,5vw,3.4rem);
+
+    font-weight:700;
+
+    color:var(--cm-ink);
+
+    margin-bottom:10px;
+
+}
+
+.page-sub{
+
+    max-width:520px;
+
+    line-height:1.8;
+
+    color:var(--cm-ink-dim);
+
+    font-size:15px;
+
+}
+
+/* ==========================
+        BUTTONS
+========================== */
+
+.btn-primary{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    text-decoration:none;
+
+    padding:13px 24px;
+
+    border-radius:10px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#bbaf2dab;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--cm-brass),
+        #b8871d
+    );
+
+    transition:.25s;
+
+    box-shadow:
+    0 8px 22px rgba(201,162,39,.28);
+
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 12px 30px rgba(201,162,39,.45);
+
+}
+
+.btn-watch{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:8px 16px;
+
+    border-radius:8px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    text-decoration:none;
+
+    color:var(--cm-ink);
+
+    background:rgba(243,234,217,.03);
+
+    border:1px solid var(--cm-line);
+
+    transition:.25s;
+
+}
+
+.btn-watch:hover{
+
+    background:rgba(201,162,39,.12);
+
+    border-color:rgba(201,162,39,.45);
+
+    color:var(--cm-brass-lt);
+
+}
+
+/* ==========================
+      EMPTY STATE
+========================== */
+
+.empty-state{
+
+    background:var(--cm-bg-2);
+
+    border:1px solid var(--cm-line);
+
+    border-radius:20px;
+
+    padding:80px 40px;
+
+    text-align:center;
+
+}
+
+.empty-icon{
+
+    font-size:58px;
+
+    margin-bottom:20px;
+
+}
+
+.empty-state h2{
+
+    font-family:'Fraunces',serif;
+
+    font-size:32px;
+
+    margin-bottom:12px;
+
+    color:var(--cm-ink);
+
+}
+
+.empty-state p{
+
+    color:var(--cm-ink-dim);
+
+    font-size:15px;
+
+    line-height:1.8;
+
+    margin-bottom:30px;
+
+}
+/* ==========================
+      DESKTOP TABLE
+========================== */
+
+.table-wrap{
+
+    background:var(--cm-bg-2);
+
+    border:1px solid var(--cm-line);
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 12px 28px rgba(0,0,0,.25);
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:
+    linear-gradient(
+        180deg,
+        rgba(201,162,39,.10),
+        rgba(201,162,39,.04)
+    );
+
+    border-bottom:1px solid var(--cm-line);
+
+}
+
+th{
+
+    padding:18px 20px;
+
+    text-align:left;
+
+    font-family:'JetBrains Mono',monospace;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.12em;
+
+    color:var(--cm-brass-lt);
+
+}
+
+td{
+
+    padding:18px 20px;
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+    font-size:14px;
+
+    color:var(--cm-ink);
+
+    transition:.25s;
+
+}
+
+tbody tr:last-child td{
+
+    border-bottom:none;
+
+}
+
+tbody tr:hover td{
+
+    background:rgba(201,162,39,.05);
+
+}
+
+.td-num{
+
+    width:70px;
+
+    font-weight:700;
+
+    color:var(--cm-brass);
+
+}
+
+.td-player{
+
+    font-weight:600;
+
+    color:var(--cm-ink);
+
+}
+
+/* ==========================
+          BADGES
+========================== */
+
+.badge-white{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    background:
+    rgba(243,234,217,.08);
+
+    border:1px solid rgba(243,234,217,.18);
+
+    color:#f5f5f5;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+.badge-black{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    background:
+    rgba(0,0,0,.35);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    color:#d1d5db;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+
+.badge-draw{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    background:
+    rgba(201,162,39,.12);
+
+    border:1px solid rgba(201,162,39,.35);
+
+    color:var(--cm-brass-lt);
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+/* ==========================
+        MOBILE CARDS
+========================== */
+
+.mobile-cards{
+
+    display:none;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.game-card{
+
+    display:block;
+
+    text-decoration:none;
+
+    color:inherit;
+
+    background:var(--cm-bg-2);
+
+    border:1px solid var(--cm-line);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    transition:.25s;
+
+}
+
+.game-card:hover{
+
+    border-color:rgba(201,162,39,.35);
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 24px rgba(0,0,0,.28);
+
+}
+
+.card-head{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:16px;
+
+    margin-bottom:18px;
+
+}
+
+.match-num{
+
+    font-family:'JetBrains Mono',monospace;
+
+    font-size:11px;
+
+    color:var(--cm-brass-lt);
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    margin-bottom:6px;
+
+}
+
+.card-head h3{
+
+    font-family:'Fraunces',serif;
+
+    font-size:22px;
+
+    color:var(--cm-ink);
+
+}
+
+.card-meta{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:12px;
+
+}
+
+.meta-item{
+
+    background:rgba(243,234,217,.03);
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:12px;
+
+    padding:14px;
+
+}
+
+.meta-item span{
+
+    display:block;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.10em;
+
+    color:var(--cm-ink-faint);
+
+    margin-bottom:5px;
+
+}
+
+.meta-item strong{
+
+    color:var(--cm-ink);
+
+    font-size:15px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+        RESPONSIVE
+========================== */
+
+@media(max-width:768px){
+
+.page-head{
+
+padding:45px 24px 30px;
+
+margin:0 -24px 30px;
+
+}
+
+.page-title{
+
+font-size:2.4rem;
+
+}
+
+.table-wrap{
+
+display:none;
+
+}
+
+.mobile-cards{
+
+display:flex;
+
+}
+
+}
+
+@media(max-width:540px){
+
+.card-meta{
+
+grid-template-columns:1fr;
+
+}
+
+.page-wrap{
+
+padding:0 18px 60px;
+
+}
+
+.page-head{
+
+margin:0 -18px 25px;
+
+padding:40px 18px 25px;
+
+}
+
+.page-title{
+
+font-size:2rem;
+
+}
+
+.btn-primary{
+
+width:100%;
+
+justify-content:center;
+
+}
+
+}
     </style>
     </head>
 
     <body class="cm-body">
-        <%- include("../partials/navbar") %>
+        <%- include("../partials/navbar") %><main>
 
-        <main>
             <div class="page-wrap">
 
                 <div class="page-head">
+
                     <div>
-                        <span class="kicker">♟ Saved Matches</span>
+
+                        <span class="kicker">♚ ChessMaster Ranking</span>
+
                         <h1 class="page-title">Leaderboard</h1>
-                        <p class="page-sub">View recently saved chess matches,
-                            winners, total moves, and player names.</p>
+
+                        <p class="page-sub">
+                            Explore recently saved matches, winners, move count
+                            and replay your favourite games.
+                        </p>
+
                     </div>
-                    <a href="/play" class="btn-primary">♟ Play New Match</a>
+
+                    <a href="/play" class="btn-primary">
+                        ♟ Play New Match
+                    </a>
+
                 </div>
 
-                <% if (!games || games.length === 0) { %>
+                <% if(!games || games.length===0){ %>
 
                 <div class="empty-state">
-                    <div class="empty-icon">♟</div>
-                    <h2>No saved games yet</h2>
-                    <p>Play a match and save the result to see it here.</p>
-                    <a href="/play" class="btn-primary">Start Playing</a>
+
+                    <div class="empty-icon">🏆</div>
+
+                    <h2>No Games Found</h2>
+
+                    <p>
+                        Play and save your first chess match to appear on the
+                        leaderboard.
+                    </p>
+
+                    <a href="/play" class="btn-primary">
+                        Start Playing
+                    </a>
+
                 </div>
 
                 <% } else { %>
 
-                <!-- MOBILE CARDS -->
+                <!-- =========================
+        MOBILE CARDS
+========================== -->
+
                 <div class="mobile-cards">
-                    <% games.forEach((game, index) => { %>
+
+                    <% games.forEach((game,index)=>{ %>
+
                     <a href="/game/<%= game._id %>" class="game-card">
+
                         <div class="card-head">
+
                             <div>
-                                <div class="match-num">Match #<%= index + 1
-                                    %></div>
-                                <h3><%= game.whitePlayer %> vs <%=
-                                    game.blackPlayer %></h3>
+
+                                <div class="match-num">
+                                    Match #<%= index+1 %>
+                                </div>
+
+                                <h3>
+                                    <%= game.whitePlayer %> vs <%=
+                                    game.blackPlayer %>
+                                </h3>
+
                             </div>
-                            <% if (game.winner === "white") { %>
-                            <span class="badge-white">⬜ White</span>
-                            <% } else if (game.winner === "black") { %>
-                            <span class="badge-black">⬛ Black</span>
-                            <% } else { %>
-                            <span class="badge-draw">Draw</span>
-                            <% } %>
+
+                            <div>
+
+                                <% if(game.winner==="white"){ %>
+
+                                <span class="badge-white">
+                                    ⬜ White
+                                </span>
+
+                                <% }else if(game.winner==="black"){ %>
+
+                                <span class="badge-black">
+                                    ⬛ Black
+                                </span>
+
+                                <% }else{ %>
+
+                                <span class="badge-draw">
+                                    🤝 Draw
+                                </span>
+
+                                <% } %>
+
+                            </div>
+
                         </div>
+
                         <div class="card-meta">
-                            <div class="meta-item"><span>Moves</span><strong><%=
-                                    game.totalMoves %></strong></div>
-                            <div class="meta-item"><span>Date</span><strong><%=
-                                    new
+
+                            <div class="meta-item">
+                                <span>Moves</span>
+                                <strong><%= game.totalMoves %></strong>
+                            </div>
+
+                            <div class="meta-item">
+                                <span>Date</span>
+                                <strong><%= new
                                     Date(game.createdAt).toLocaleDateString()
-                                    %></strong></div>
-                            <div class="meta-item"><span>Mode</span><strong><%=
-                                    game.timeMode || 'Classic' %></strong></div>
-                            <div class="meta-item"><span>Time</span><strong><%=
-                                    game.timeControl || '-' %></strong></div>
+                                    %></strong>
+                            </div>
+
+                            <div class="meta-item">
+                                <span>Mode</span>
+                                <strong><%= game.timeMode || "Classic"
+                                    %></strong>
+                            </div>
+
+                            <div class="meta-item">
+                                <span>Time</span>
+                                <strong><%= game.timeControl || "-" %></strong>
+                            </div>
+
                         </div>
+
                     </a>
+
                     <% }) %>
+
                 </div>
 
-                <!-- DESKTOP TABLE -->
+                <!-- =========================
+      DESKTOP TABLE
+========================== -->
+
                 <div class="table-wrap">
+
                     <table>
+
                         <thead>
+
                             <tr>
+
                                 <th>#</th>
+
                                 <th>White Player</th>
+
                                 <th>Black Player</th>
+
                                 <th>Winner</th>
+
                                 <th>Moves</th>
+
                                 <th>Date</th>
+
                                 <th>Replay</th>
+
                             </tr>
+
                         </thead>
+
                         <tbody>
-                            <% games.forEach((game, index) => { %>
+
+                            <% games.forEach((game,index)=>{ %>
+
                             <tr>
-                                <td class="td-num"><%= index + 1 %></td>
-                                <td class="td-player"><%= game.whitePlayer
-                                    %></td>
-                                <td class="td-player"><%= game.blackPlayer
-                                    %></td>
-                                <td>
-                                    <% if (game.winner === "white") { %>
-                                    <span class="badge-white">⬜ White</span>
-                                    <% } else if (game.winner === "black") { %>
-                                    <span class="badge-black">⬛ Black</span>
-                                    <% } else { %>
-                                    <span class="badge-draw">Draw</span>
+
+                                <td class="td-num">
+
+                                    <% if(index===0){ %>🥇
+                                    <% }else if(index===1){ %>🥈
+                                    <% }else if(index===2){ %>🥉
+                                    <% }else{ %>
+                                    <%= index+1 %>
                                     <% } %>
+
                                 </td>
-                                <td><%= game.totalMoves %></td>
-                                <td><%= new
-                                    Date(game.createdAt).toLocaleDateString()
-                                    %></td>
+
+                                <td class="td-player">
+                                    <%= game.whitePlayer %>
+                                </td>
+
+                                <td class="td-player">
+                                    <%= game.blackPlayer %>
+                                </td>
+
                                 <td>
-                                    <a href="/game/<%= game._id %>"
-                                        class="btn-watch">▶ Watch</a>
+
+                                    <% if(game.winner==="white"){ %>
+
+                                    <span class="badge-white">
+                                        ⬜ White
+                                    </span>
+
+                                    <% }else if(game.winner==="black"){ %>
+
+                                    <span class="badge-black">
+                                        ⬛ Black
+                                    </span>
+
+                                    <% }else{ %>
+
+                                    <span class="badge-draw">
+                                        🤝 Draw
+                                    </span>
+
+                                    <% } %>
+
                                 </td>
+
+                                <td>
+                                    <%= game.totalMoves %>
+                                </td>
+
+                                <td>
+                                    <%= new
+                                    Date(game.createdAt).toLocaleDateString() %>
+                                </td>
+
+                                <td>
+
+                                    <a href="/game/<%= game._id %>"
+                                        class="btn-watch">
+
+                                        ▶ Watch
+
+                                    </a>
+
+                                </td>
+
                             </tr>
+
                             <% }) %>
+
                         </tbody>
+
                     </table>
+
                 </div>
 
                 <% } %>
 
             </div>
+
         </main>
 
         <%- include("../partials/footer") %>

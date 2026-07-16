@@ -36,6 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use(session({
   secret: process.env.SESSION_SECRET || "chessmastersecret",
   resave: false,
@@ -63,6 +64,10 @@ app.use("/", pageRoutes);
 app.use("/", settingsRoutes);
 app.use("/", friendRoutes);
 app.use((req, res) => { res.status(404).render("error"); });
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send(err.message || "Something went wrong");
+});
 
 let waitingPlayer = null;
 

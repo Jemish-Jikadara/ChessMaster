@@ -42,12 +42,48 @@
             box-shadow: 0 0 0 2px rgba(201,162,39,0.4), 0 8px 32px rgba(201,162,39,0.25);
             flex-shrink: 0;
         }
+        .profile-avatar{
+    overflow: hidden;
+}
+
+.profile-avatar-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
         .avatar-info { flex: 1; padding-bottom: 4px; }
         .profile-username { font-family:'Fraunces',serif; font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700; color:var(--cm-ink); margin:0 0 4px; letter-spacing:-0.02em; }
         .profile-fullname { font-size:14px; color:var(--cm-ink-dim); margin-bottom:10px; }
         .profile-meta { display:flex; flex-wrap:wrap; gap:10px; }
         .meta-pill { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--cm-ink-faint); background:rgba(243,234,217,0.03); border:1px solid var(--cm-line); padding:4px 10px; border-radius:100px; }
         .profile-bio { font-size:14px; color:var(--cm-ink-dim); line-height:1.6; margin-top:12px; max-width:560px; padding-bottom:20px; }
+        .profile-name-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.edit-profile-btn{
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    text-decoration:none;
+    font-size:18px;
+    background:rgba(201,162,39,0.08);
+    border:1px solid rgba(201,162,39,0.25);
+    color:var(--cm-brass-lt);
+    transition:.25s;
+}
+
+.edit-profile-btn:hover{
+    background:rgba(201,162,39,0.18);
+    transform:rotate(-10deg) scale(1.08);
+    border-color:var(--cm-brass);
+}
 
         .profile-actions { display:flex; gap:10px; flex-wrap:wrap; margin-left:auto; align-self:flex-start; padding-top:8px; }
 
@@ -171,10 +207,26 @@
             <div class="banner-inner">
                 <div class="avatar-row">
                     <div class="profile-avatar">
+                        <% if (user.profileImage) { %>
+                        <img
+                            src="<%= user.profileImage %>"
+                            alt="Profile"
+                            class="profile-avatar-img">
+                        <% } else { %>
                         <%= user.username.charAt(0).toUpperCase() %>
+                        <% } %>
                     </div>
                     <div class="avatar-info">
-                        <h1 class="profile-username"><%= user.username %></h1>
+                        <div class="profile-name-row">
+                            <h1 class="profile-username">
+                                <%= user.username %>
+                            </h1>
+
+                            <a href="/profile/edit" class="edit-profile-btn"
+                                title="Edit Profile">
+                                ✏️
+                            </a>
+                        </div>
                         <% if (user.fullName) { %>
                         <div class="profile-fullname"><%= user.fullName %></div>
                         <% } %>
@@ -287,7 +339,9 @@
                                     <% } else { %>
                                     <% games.forEach((game, index) => { %>
                                     <tr>
-                                        <td style="color:var(--cm-ink-faint);"><%= index + 1
+                                        <td
+                                            style="color:var(--cm-ink-faint);"><%=
+                                            index + 1
                                             %></td>
                                         <td class="td-p"><%= game.whitePlayer
                                             %></td>
@@ -297,7 +351,8 @@
                                             <% if (game.winner === "white") {
                                             %><span class="bw">White</span>
                                             <% } else if (game.winner ===
-                                            "black") { %><span class="bb">Black</span>
+                                            "black") { %><span
+                                                class="bb">Black</span>
                                             <% } else { %><span
                                                 class="bd">Draw</span><% } %>
                                         </td>

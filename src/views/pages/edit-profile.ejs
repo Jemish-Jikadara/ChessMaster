@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>ChessMaster | Edit Profile</title>
+
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/theme-redesign.css">
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet">
+
+        <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:var(--cm-bg);
+color:var(--cm-ink);
+}
+
+/* ========================= */
+
+.auth-wrap{
+
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+
+padding:70px 20px;
+
+background:
+linear-gradient(
+135deg,
+rgba(201,162,39,.08),
+rgba(122,149,105,.04),
+transparent
+);
+
+}
+
+.auth-card{
+
+width:100%;
+max-width:650px;
+
+background:var(--cm-bg-2);
+
+border:1px solid var(--cm-line);
+
+border-radius:22px;
+
+padding:40px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+
+}
+
+/* ========================= */
+
+.auth-kicker{
+
+font-size:11px;
+
+font-family:'JetBrains Mono',monospace;
+
+letter-spacing:.15em;
+
+text-transform:uppercase;
+
+color:var(--cm-brass);
+
+margin-bottom:8px;
+
+}
+
+.auth-title{
+
+font-family:'Fraunces',serif;
+
+font-size:38px;
+
+margin-bottom:8px;
+
+}
+
+.auth-sub{
+
+font-size:15px;
+
+color:var(--cm-ink-dim);
+
+margin-bottom:30px;
+
+line-height:1.6;
+
+}
+
+/* ========================= */
+
+.avatar-box{
+
+display:flex;
+
+justify-content:center;
+
+margin-bottom:30px;
+
+}
+
+.avatar{
+
+width:130px;
+height:130px;
+
+border-radius:50%;
+
+overflow:hidden;
+
+border:4px solid var(--cm-brass);
+
+box-shadow:0 0 25px rgba(201,162,39,.25);
+
+background:#111;
+
+}
+
+.avatar img{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+/* ========================= */
+
+.setup-form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.form-row{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:18px;
+
+}
+
+@media(max-width:650px){
+
+.form-row{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+.setup-form label{
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+font-size:12px;
+
+font-family:'JetBrains Mono',monospace;
+
+text-transform:uppercase;
+
+letter-spacing:.08em;
+
+color:var(--cm-ink-faint);
+
+}
+
+.setup-form input,
+.setup-form textarea,
+.setup-form select{
+
+padding:13px 16px;
+
+background:rgba(243,234,217,.03);
+
+border:1px solid var(--cm-line);
+
+border-radius:10px;
+
+color:var(--cm-ink);
+
+font-size:14px;
+
+outline:none;
+
+transition:.25s;
+
+}
+
+.setup-form input:focus,
+.setup-form textarea:focus,
+.setup-form select:focus{
+
+border-color:var(--cm-brass);
+
+box-shadow:0 0 0 3px rgba(201,162,39,.10);
+
+}
+
+.setup-form textarea{
+
+resize:none;
+
+height:90px;
+
+}
+
+.optional-tag{
+
+font-size:10px;
+
+color:var(--cm-ink-faint);
+
+text-transform:none;
+
+}
+/* ========================= */
+
+.button-row{
+
+display:flex;
+gap:15px;
+margin-top:25px;
+
+}
+
+.btn-save{
+
+flex:1;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:700;
+
+background:linear-gradient(
+135deg,
+var(--cm-brass),
+#b8871d
+);
+
+color:#1d1608;
+
+transition:.25s;
+
+}
+
+.btn-save:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 20px rgba(201,162,39,.30);
+
+}
+
+.btn-cancel{
+
+flex:1;
+
+padding:14px;
+
+border-radius:10px;
+
+border:1px solid var(--cm-line);
+
+text-decoration:none;
+
+text-align:center;
+
+color:var(--cm-ink);
+
+transition:.25s;
+
+}
+
+.btn-cancel:hover{
+
+border-color:var(--cm-brass);
+
+}
+
+</style>
+
+    </head>
+
+    <body class="cm-body">
+
+        <%- include("../partials/navbar") %>
+
+        <div class="auth-wrap">
+
+            <div class="auth-card">
+
+                <span class="auth-kicker">
+                    Edit Profile
+                </span>
+
+                <h1 class="auth-title">
+                    Update Your Profile
+                </h1>
+
+                <p class="auth-sub">
+                    Update your personal information and profile picture.
+                </p>
+
+                <div class="avatar-box">
+
+                    <div class="avatar">
+
+                        <img
+                            id="previewImage"
+                            src="<%= user.profileImage ? user.profileImage : '/images/default-avatar.png' %>"
+                            alt="Profile">
+
+                    </div>
+
+                </div>
+
+                <form
+                    action="/profile/edit"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="setup-form">
+
+                    <label>
+
+                        Profile Image
+                        <span class="optional-tag">
+                            optional
+                        </span>
+
+                        <input
+                            type="file"
+                            name="profileImage"
+                            accept="image/*"
+                            id="profileImageInput">
+
+                    </label>
+
+                    <label>
+
+                        Username *
+
+                        <input
+                            type="text"
+                            name="username"
+                            value="<%= user.username %>"
+                            required>
+
+                    </label>
+
+                    <div class="form-row">
+
+                        <label>
+
+                            Full Name
+
+                            <input
+                                type="text"
+                                name="fullName"
+                                value="<%= user.fullName || '' %>">
+
+                        </label>
+
+                        <label>
+
+                            Country
+
+                            <select name="country">
+
+                                <option value>Select Country</option>
+
+                                <option value="IN"
+                                    <%=user.country==="IN"?"selected":"" %>>🇮🇳
+                                    India</option>
+
+                                <option value="US"
+                                    <%=user.country==="US"?"selected":"" %>>🇺🇸
+                                    United States</option>
+
+                                <option value="GB"
+                                    <%=user.country==="GB"?"selected":"" %>>🇬🇧
+                                    United Kingdom</option>
+
+                                <option value="RU"
+                                    <%=user.country==="RU"?"selected":"" %>>🇷🇺
+                                    Russia</option>
+
+                                <option value="DE"
+                                    <%=user.country==="DE"?"selected":"" %>>🇩🇪
+                                    Germany</option>
+
+                                <option value="FR"
+                                    <%=user.country==="FR"?"selected":"" %>>🇫🇷
+                                    France</option>
+
+                                <option value="BR"
+                                    <%=user.country==="BR"?"selected":"" %>>🇧🇷
+                                    Brazil</option>
+
+                                <option value="CN"
+                                    <%=user.country==="CN"?"selected":"" %>>🇨🇳
+                                    China</option>
+
+                                <option value="JP"
+                                    <%=user.country==="JP"?"selected":"" %>>🇯🇵
+                                    Japan</option>
+
+                                <option value="AU"
+                                    <%=user.country==="AU"?"selected":"" %>>🇦🇺
+                                    Australia</option>
+
+                                <option value="CA"
+                                    <%=user.country==="CA"?"selected":"" %>>🇨🇦
+                                    Canada</option>
+
+                                <option value="OTHER"
+                                    <%=user.country==="OTHER"?"selected":""
+                                    %>>🌍 Other</option>
+
+                            </select>
+
+                        </label>
+
+                    </div>
+                    <label>
+
+                        Date Of Birth
+
+                        <input
+                            type="date"
+                            name="dateOfBirth"
+                            value="<%= user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '' %>">
+
+                    </label>
+
+                    <label>
+
+                        Bio
+                        <span class="optional-tag">
+                            optional
+                        </span>
+
+                        <textarea
+                            name="bio"
+                            maxlength="200"
+                            placeholder="Tell other players about yourself..."><%= user.bio || "" %></textarea>
+
+                    </label>
+
+                    <div class="button-row">
+
+                        <a
+                            href="/profile"
+                            class="btn-cancel">
+
+                            Cancel
+
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn-save">
+
+                            Save Changes →
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <%- include("../partials/footer") %>
+
+        <script>
+
+const fileInput=document.getElementById("profileImageInput");
+
+const preview=document.getElementById("previewImage");
+
+fileInput.addEventListener("change",(e)=>{
+
+const file=e.target.files[0];
+
+if(!file) return;
+
+const reader=new FileReader();
+
+reader.onload=function(ev){
+
+preview.src=ev.target.result;
+
+}
+
+reader.readAsDataURL(file);
+
+});
+
+</script>
+
+    </body>
+
+</html>

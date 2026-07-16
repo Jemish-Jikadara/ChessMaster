@@ -116,9 +116,11 @@ async function setupProfile(req, res) {
     user.bio = bio?.trim() || "";
     user.dateOfBirth = dateOfBirth || null;
     user.profileSetup = true;
+      if (req.file) {
+      user.profileImage = req.file.path; // Cloudinary hosted URL
+    }
 
     await user.save();
-
     req.session.setupEmail = null;
     req.session.user = {
       id: user._id,
@@ -128,7 +130,8 @@ async function setupProfile(req, res) {
       rapidRating: user.rapidRating,
       blitzRating: user.blitzRating,
       bulletRating: user.bulletRating,
-      boardTheme: user.boardTheme
+      boardTheme: user.boardTheme,
+      profileImage: user.profileImage
     };
 return req.session.save(() => {
   res.redirect("/profile");
@@ -173,7 +176,6 @@ async function loginUser(req, res) {
     res.redirect("/setup-profile");
   });
 }
-
     req.session.user = {
       id: user._id,
       username: user.username,
@@ -182,7 +184,8 @@ async function loginUser(req, res) {
       rapidRating: user.rapidRating,
       blitzRating: user.blitzRating,
       bulletRating: user.bulletRating,
-      boardTheme: user.boardTheme
+      boardTheme: user.boardTheme,
+      profileImage: user.profileImage
     };
 
     req.flash("success", "Logged in successfully.");
@@ -280,7 +283,90 @@ const bulletWinRate =
     });
 
 }
+// ── EDIT PROFILE PAGE ───────────────────────────
+async function showEditProfile(req, res) {
+  try {
+    const user = await User.findById(req.session.user.id).lean();
 
+    if (!user) {
+      req.flash("error", "User not found.");
+      return res.redirect("/profile");
+    }
+
+    res.render("pages/edit-profile", {
+      title: "Edit Profile",
+      user
+    });
+
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong.");
+    res.redirect("/profile");
+  }
+}
+// ── UPDATE PROFILE ──────────────────────────────
+async function updateProfile(req, res) {
+  try {
+
+    const {
+      username,
+      fullName,
+      country,
+      bio,
+      dateOfBirth
+    } = req.body;
+
+    const user = await User.findById(req.session.user.id);
+
+    if (!user) {
+      req.flash("error", "User not found.");
+      return res.redirect("/profile");
+    }
+
+    // username validation
+    if (!username || username.length < 3 || username.length > 24) {
+      req.flash("error", "Username must be 3-24 characters.");
+      return res.redirect("/profile/edit");
+    }
+
+    const existingUser = await User.findOne({
+      username,
+      _id: { $ne: user._id }
+    });
+
+    if (existingUser) {
+      req.flash("error", "Username already taken.");
+      return res.redirect("/profile/edit");
+    }
+
+    user.username = username.trim();
+    user.fullName = fullName?.trim() || "";
+    user.country = country || "";
+    user.bio = bio?.trim() || "";
+    user.dateOfBirth = dateOfBirth || null;
+
+    if (req.file) {
+      user.profileImage = req.file.path;
+    }
+
+    await user.save();
+
+    // Session Update
+    req.session.user.username = user.username;
+    req.session.user.profileImage = user.profileImage;
+
+    req.flash("success", "Profile updated successfully.");
+
+    req.session.save(() => {
+      res.redirect("/profile");
+    });
+
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Something went wrong.");
+    res.redirect("/profile/edit");
+  }
+}
 
 // ── LOGOUT ────────────────────────────────────
 function logoutUser(req, res) {
@@ -292,8 +378,15 @@ function logoutUser(req, res) {
 }
 
 module.exports = {
-  showRegister, registerUser,
-  showSetupProfile, setupProfile,
-  showLogin, loginUser,
-  showProfile, logoutUser,showStatus,
+  showRegister,
+  registerUser,
+  showSetupProfile,
+  setupProfile,
+  showLogin,
+  loginUser,
+  showProfile,
+  showEditProfile,
+  updateProfile,
+  logoutUser,
+  showStatus,
 };
