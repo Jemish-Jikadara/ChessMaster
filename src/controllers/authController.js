@@ -376,6 +376,25 @@ function logoutUser(req, res) {
     return res.redirect("/login");
   });
 }
+async function showFriends(req, res) {
+  try {
+
+    const user = await User.findById(req.session.user.id)
+      .populate("friends", "username fullName country profileImage")
+      .populate("friendRequests", "username fullName country profileImage")
+      .lean();
+
+    res.render("pages/friends", {
+      title: "Friends",
+      user
+    });
+
+  } catch (err) {
+    console.log(err);
+    req.flash("error","Something went wrong.");
+    res.redirect("/profile");
+  }
+}
 
 module.exports = {
   showRegister,
@@ -388,5 +407,6 @@ module.exports = {
   showEditProfile,
   updateProfile,
   logoutUser,
+  showFriends,
   showStatus,
 };

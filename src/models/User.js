@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
     type: String,
-    required: true,
+    required: false,
     unique: true,
     trim: true
    },

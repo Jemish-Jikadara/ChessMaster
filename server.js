@@ -70,12 +70,15 @@ app.use((err, req, res, next) => {
 });
 
 let waitingPlayer = null;
+let activeUsersCount = 0; // Starts at 0
 
 // roomId => { sockets: Set, moved: bool, firstMoveTimer: timeout }
 const rooms = {};
 const socketToRoom = {};
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
+  activeUsersCount++; // Add 1 to total users
+io.emit("activeUsersUpdate", activeUsersCount); // Tell ALL players the new number
 
   // ── MATCHMAKING ──
   socket.on("findMatch", ({ player, timeControl }) => {
@@ -284,6 +287,8 @@ rooms[roomId].timer = setInterval(() => {
     }
 
     delete socketToRoom[socket.id];
+    activeUsersCount = Math.max(0, activeUsersCount - 1); // Subtract 1 (never go below 0)
+io.emit("activeUsersUpdate", activeUsersCount); // Tell ALL players the new number
     console.log("Socket disconnected:", socket.id);
   });
 });

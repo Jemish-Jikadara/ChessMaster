@@ -39,6 +39,7 @@ router.get("/login", isGuest, authController.showLogin);
 router.post("/login", isGuest, authController.loginUser);
 
 router.get("/profile", isAuthenticated, authController.showProfile);
+router.get("/friends", isAuthenticated, authController.showFriends);
 router.get("/profile/status", isAuthenticated,authController.showStatus);
 router.post("/logout", isAuthenticated, authController.logoutUser);
 

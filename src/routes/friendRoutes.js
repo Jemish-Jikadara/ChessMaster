@@ -5,7 +5,8 @@ const {
   acceptFriendRequest,
   declineFriendRequest,
   removeFriend,
-  getFriendRequests
+  getFriendRequests,
+  showFriendsPage
 } = require("../controllers/friendController");
 const { isAuthenticated } = require("../middleware/authMiddleware");
 
@@ -17,5 +18,6 @@ router.post("/api/friends/accept", isAuthenticated, acceptFriendRequest);
 router.post("/api/friends/decline", isAuthenticated, declineFriendRequest);
 router.post("/api/friends/remove", isAuthenticated, removeFriend);
 router.get("/api/friends/requests", isAuthenticated, getFriendRequests);
+router.get("/friends", isAuthenticated, showFriendsPage);
 
 module.exports = router;

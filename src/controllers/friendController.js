@@ -131,8 +131,28 @@ async function getFriendRequests(req, res) {
     res.status(500).json({ success: false, message: error.message });
   }
 }
+async function showFriendsPage(req, res) {
+  try {
+    const user = await User.findById(req.session.user.id)
+      .populate("friends", "username fullName country profileImage")
+      .populate("friendRequests", "username fullName country profileImage")
+      .lean();
+
+    res.render("pages/friends", {
+      title: "Friends",
+      user,
+      friends: user.friends,
+      requests: user.friendRequests
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.redirect("/profile");
+  }
+}
 
 module.exports = {
+  showFriendsPage,
   searchUsers,
   sendFriendRequest,
   acceptFriendRequest,
